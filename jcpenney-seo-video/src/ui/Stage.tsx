@@ -1,27 +1,18 @@
 import React from "react";
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from "remotion";
 import { C } from "../theme";
+import { PaperTexture, TornSheet } from "./Paper";
 
 type Props = {
   readonly children: React.ReactNode;
   readonly tone?: "light" | "dark";
+  readonly seed?: string;
 };
 
-// Full-screen B-roll canvas: wipes in over the speaker and wipes out again.
-export const Stage: React.FC<Props> = ({ children, tone = "light" }) => {
+// Full-screen B-roll canvas: a paper sheet that tears in over the speaker
+// and tears away again.
+export const Stage: React.FC<Props> = ({ children, tone = "light", seed = "stage" }) => {
   const frame = useCurrentFrame();
-  const { durationInFrames } = useVideoConfig();
-
-  const enter = interpolate(frame, [0, 12], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.bezier(0.7, 0, 0.2, 1),
-  });
-  const exit = interpolate(frame, [durationInFrames - 10, durationInFrames], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.bezier(0.7, 0, 0.2, 1),
-  });
 
   const bg =
     tone === "light"
@@ -29,16 +20,12 @@ export const Stage: React.FC<Props> = ({ children, tone = "light" }) => {
       : `radial-gradient(90% 80% at 50% 30%, #3A2C26 0%, ${C.ink} 60%, #0F0B0A 100%)`;
 
   return (
-    <AbsoluteFill
-      style={{
-        clipPath: `inset(0% ${exit * 100}% 0% ${(1 - enter) * 100}%)`,
-      }}
-    >
+    <TornSheet seed={seed} rim={tone === "light" ? "#FBF8F2" : "#E9E1D4"}>
       <AbsoluteFill style={{ background: bg }} />
-      {/* Brick-course lines echoing the wall in the footage */}
+      {/* Ruled lines echoing the brick courses in the footage */}
       <AbsoluteFill
         style={{
-          opacity: tone === "light" ? 0.22 : 0.08,
+          opacity: tone === "light" ? 0.16 : 0.06,
           backgroundImage: `repeating-linear-gradient(0deg, transparent 0 58px, ${
             tone === "light" ? C.stone : C.sand
           } 58px 60px)`,
@@ -47,12 +34,13 @@ export const Stage: React.FC<Props> = ({ children, tone = "light" }) => {
       <AbsoluteFill
         style={{
           background:
-            "radial-gradient(60% 50% at 95% 100%, rgba(210,88,74,0.28) 0%, rgba(210,88,74,0) 70%)",
+            "radial-gradient(60% 50% at 95% 100%, rgba(210,88,74,0.24) 0%, rgba(210,88,74,0) 70%)",
         }}
       />
+      <PaperTexture tone={tone} />
       <AbsoluteFill
         style={{
-          translate: `${interpolate(frame, [0, 14], [60, 0], {
+          translate: `${interpolate(frame, [4, 20], [70, 0], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
             easing: Easing.bezier(0.16, 1, 0.3, 1),
@@ -61,15 +49,6 @@ export const Stage: React.FC<Props> = ({ children, tone = "light" }) => {
       >
         {children}
       </AbsoluteFill>
-      {/* Leading edge accent bar on the wipe */}
-      <AbsoluteFill
-        style={{
-          left: `${(1 - enter) * 100}%`,
-          width: 14,
-          background: C.clay,
-          opacity: enter < 1 ? 1 : 0,
-        }}
-      />
-    </AbsoluteFill>
+    </TornSheet>
   );
 };

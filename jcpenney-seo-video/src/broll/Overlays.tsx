@@ -4,6 +4,7 @@ import { C, SAFE, body, display } from "../theme";
 import { f } from "../timeline";
 import { BookIcon, CheckIcon, CrossIcon, ShirtIcon, SofaIcon, TvIcon } from "../ui/Icons";
 import { mix, pop, prog } from "../ui/motion";
+import { Tape, paperCard } from "../ui/Paper";
 
 type SceneProps = { readonly start: number };
 
@@ -250,7 +251,7 @@ export const Lesson: React.FC<SceneProps> = ({ start }) => {
         <div style={{ background: C.clay, padding: "0 26px", display: "flex", alignItems: "center" }}>
           <BookIcon size={64} color={C.white} />
         </div>
-        <div style={{ background: C.cream, padding: "20px 34px" }}>
+        <div style={{ ...paperCard, padding: "20px 34px" }}>
           <div style={{ fontFamily: body, fontWeight: 800, fontSize: 28, color: C.clayDeep, letterSpacing: "0.12em" }}>
             SEO INDUSTRY KA
           </div>
@@ -327,11 +328,19 @@ const Panel: React.FC<{ readonly children: React.ReactNode }> = ({ children }) =
           bottom: 0,
           width: 860,
           translate: `${x}px 0px`,
-          background: `linear-gradient(160deg, #FBF6EF 0%, ${C.cream} 50%, ${C.sand} 100%)`,
-          boxShadow: "20px 0 60px rgba(0,0,0,0.35)",
+          filter: "drop-shadow(18px 0 26px rgba(0,0,0,0.4))",
         }}
       >
-        <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 12, background: C.clay }} />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            ...paperCard,
+            clipPath:
+              "polygon(0 0, 97% 0, 99% 4%, 96.5% 9%, 99.5% 15%, 97% 22%, 100% 29%, 96.8% 36%, 99% 43%, 97.2% 50%, 99.6% 57%, 96.6% 64%, 99.2% 71%, 97% 78%, 99.8% 85%, 96.9% 92%, 98.5% 100%, 0 100%)",
+          }}
+        />
+        <Tape style={{ right: 10, top: 40, rotate: "38deg" }} />
         <div style={{ position: "absolute", left: SAFE.x, top: 130, right: 90 }}>{children}</div>
       </div>
     </AbsoluteFill>

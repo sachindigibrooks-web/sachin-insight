@@ -9,3 +9,6 @@ out
 # Bundled output and the 99MB source footage (download it, see README)
 build
 public/source.mp4
+public/broll
+public/music
+public/sfx

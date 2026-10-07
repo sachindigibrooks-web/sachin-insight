@@ -4,6 +4,7 @@ import { C, SAFE, body, display } from "../theme";
 import { f } from "../timeline";
 import { CheckIcon, CrossIcon, SearchIcon } from "../ui/Icons";
 import { Stage } from "../ui/Stage";
+import { StockClip } from "../ui/StockClip";
 import { mix, pop, prog } from "../ui/motion";
 
 type SceneProps = { readonly start: number };
@@ -33,7 +34,7 @@ const Content: React.FC<{ readonly children: React.ReactNode; readonly style?: R
   </div>
 );
 
-/* ---------- Saal 2011 · billion dollar brand ---------- */
+/* ---------- Saal 2011 ---------- */
 export const Year2011: React.FC<SceneProps> = ({ start }) => {
   const { frame, at } = useAt(start);
   const year = Math.round(
@@ -44,105 +45,43 @@ export const Year2011: React.FC<SceneProps> = ({ start }) => {
     }),
   );
   const yearIn = prog(frame, at(8.6), 12);
-  const bil = prog(frame, at(11.2), 16);
-  const dollars = interpolate(frame, [at(11.2), at(12.6)], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.out(Easing.cubic),
-  });
-  const world = prog(frame, at(13.38), 16);
-
-  const dots = new Array(70).fill(0).map((_, i) => {
-    const lat = (random(`lat${i}`) - 0.5) * 2;
-    const lon = random(`lon${i}`) * Math.PI * 2 + frame * 0.01;
-    const x = Math.cos(lon) * Math.sqrt(1 - lat * lat);
-    const z = Math.sin(lon);
-    return { x: 180 + x * 160, y: 180 + lat * 160, front: z > 0, i };
-  });
-
+  const sub = prog(frame, at(10.04), 12);
   return (
-    <Stage>
-      <Content>
-        <div style={{ display: "flex", height: "100%", alignItems: "center", justifyContent: "space-between" }}>
-          <div>
-            <div
-              style={{
-                fontFamily: body,
-                fontWeight: 800,
-                fontSize: 36,
-                letterSpacing: "0.2em",
-                color: C.clayDeep,
-                opacity: yearIn,
-              }}
-            >
-              SAAL
-            </div>
-            <div
-              style={{
-                fontFamily: display,
-                fontSize: 300,
-                lineHeight: 0.85,
-                color: C.ink,
-                opacity: yearIn,
-                scale: String(mix(bil, 1, 0.62)),
-                transformOrigin: "left top",
-              }}
-            >
-              {year}
-            </div>
-            <div style={{ marginTop: mix(bil, 0, -110), opacity: bil }}>
-              <div style={{ fontFamily: display, fontSize: 150, lineHeight: 0.9, color: C.clay }}>
-                ${Math.round(dollars * 1e9).toLocaleString("en-US")}
-              </div>
-              <div
-                style={{
-                  marginTop: 10,
-                  display: "inline-block",
-                  padding: "10px 22px",
-                  background: C.ink,
-                  color: C.cream,
-                  borderRadius: 10,
-                  fontFamily: body,
-                  fontWeight: 900,
-                  fontSize: 40,
-                  letterSpacing: "0.08em",
-                }}
-              >
-                DOLLAR BRAND
-              </div>
-            </div>
-          </div>
-          <div style={{ opacity: world, scale: String(mix(world, 0.8, 1)) }}>
-            <svg width={470} height={470} viewBox="0 0 360 360">
-              <circle cx={180} cy={180} r={168} fill="none" stroke={C.stone} strokeWidth={3} />
-              <ellipse cx={180} cy={180} rx={168} ry={60} fill="none" stroke={C.sand} strokeWidth={2} />
-              <ellipse cx={180} cy={180} rx={70} ry={168} fill="none" stroke={C.sand} strokeWidth={2} />
-              {dots.map((d) => (
-                <circle
-                  key={d.i}
-                  cx={d.x}
-                  cy={d.y}
-                  r={d.front ? 6 : 3}
-                  fill={d.front ? C.clay : C.stone}
-                  opacity={d.front ? 0.95 : 0.4}
-                />
-              ))}
-            </svg>
-            <div
-              style={{
-                textAlign: "center",
-                fontFamily: body,
-                fontWeight: 900,
-                fontSize: 36,
-                color: C.ink,
-                letterSpacing: "0.06em",
-              }}
-            >
-              POORI DUNIYA JAANTI THI
-            </div>
-          </div>
+    <Stage seed="year">
+      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", paddingBottom: 230 }}>
+        <div style={{ fontFamily: body, fontWeight: 800, fontSize: 40, letterSpacing: "0.3em", color: C.clayDeep, opacity: yearIn }}>
+          SAAL
         </div>
-      </Content>
+        <div
+          style={{
+            fontFamily: display,
+            fontSize: 380,
+            lineHeight: 0.85,
+            color: C.ink,
+            opacity: yearIn,
+            scale: String(mix(yearIn, 1.2, 1)),
+          }}
+        >
+          {year}
+        </div>
+        <div
+          style={{
+            marginTop: 16,
+            padding: "12px 30px",
+            background: C.ink,
+            color: C.cream,
+            borderRadius: 10,
+            fontFamily: body,
+            fontWeight: 900,
+            fontSize: 42,
+            letterSpacing: "0.1em",
+            opacity: sub,
+            rotate: `${mix(sub, -6, -2)}deg`,
+          }}
+        >
+          EK COMPANY THI...
+        </div>
+      </AbsoluteFill>
     </Stage>
   );
 };
@@ -180,7 +119,7 @@ export const Serp: React.FC<SceneProps> = ({ start }) => {
   const shift = prog(frame, at(25.2), 14);
 
   return (
-    <Stage>
+    <Stage seed="s1">
       <Content style={{ display: "flex", gap: 60 }}>
         <div style={{ flex: 1 }}>
           <div
@@ -266,7 +205,7 @@ export const Gone: React.FC<SceneProps> = ({ start }) => {
   const shake = gone > 0 && gone < 1.05 ? (random(`s${frame}`) - 0.5) * 16 : 0;
 
   return (
-    <Stage tone="dark">
+    <Stage seed="s2" tone="dark">
       <Content style={{ translate: `${shake}px ${shake / 2}px` }}>
         <div
           style={{
@@ -331,7 +270,7 @@ export const Gone: React.FC<SceneProps> = ({ start }) => {
 /* ---------- SEO cheating: link scheme network ---------- */
 export const Cheating: React.FC<SceneProps> = ({ start }) => {
   const { frame, at } = useAt(start);
-  const net = prog(frame, at(38.2), 40, Easing.inOut(Easing.cubic));
+  const net = prog(frame, at(39.6), 24, Easing.inOut(Easing.cubic));
   const stamp = pop(frame, at(40.66), 12);
   const cx = 1180 - SAFE.x;
   const cy = 330;
@@ -341,7 +280,7 @@ export const Cheating: React.FC<SceneProps> = ({ start }) => {
     return { x: cx + Math.cos(ang) * r * 1.3, y: cy + Math.sin(ang) * r * 0.8, d: i / 14 };
   });
   return (
-    <Stage tone="dark">
+    <Stage seed="s3" tone="dark">
       <Content>
         <svg width={1680} height={700} style={{ position: "absolute", left: 0, top: 0 }}>
           {nodes.map((n, i) => {
@@ -400,32 +339,19 @@ export const Cheating: React.FC<SceneProps> = ({ start }) => {
   );
 };
 
-/* ---------- Caught: manual penalty ---------- */
+/* ---------- Caught: penalty stamp over crime-scene tape ---------- */
 export const Caught: React.FC<SceneProps> = ({ start }) => {
   const { frame, at } = useAt(start);
-  const lens = prog(frame, at(46.9), 30, Easing.inOut(Easing.cubic));
   const stamp = pop(frame, at(48.4), 10);
   return (
-    <Stage tone="dark">
+    <StockClip src="broll/police-tape.mp4" seed="caught" trimSeconds={1}>
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", paddingBottom: 200 }}>
-        <svg
-          width={300}
-          height={300}
-          viewBox="0 0 48 48"
-          style={{
-            position: "absolute",
-            translate: `${mix(lens, -520, 380)}px ${Math.sin(lens * Math.PI) * -90 - 100}px`,
-            opacity: 1 - stamp * 0.6,
-          }}
-        >
-          <circle cx={20} cy={20} r={13} stroke={C.sand} strokeWidth={3.5} fill="rgba(243,236,226,0.06)" />
-          <path d="M30 30l12 12" stroke={C.sand} strokeWidth={5} strokeLinecap="round" />
-        </svg>
         <div
           style={{
             padding: "24px 60px",
             border: `12px solid ${C.clay}`,
             borderRadius: 24,
+            background: "rgba(31,26,23,0.55)",
             rotate: "-6deg",
             scale: String(mix(stamp, 2.4, 1)),
             opacity: Math.min(1, stamp * 2),
@@ -438,7 +364,7 @@ export const Caught: React.FC<SceneProps> = ({ start }) => {
           </div>
         </div>
       </AbsoluteFill>
-    </Stage>
+    </StockClip>
   );
 };
 
@@ -450,7 +376,7 @@ export const Reveal: React.FC<SceneProps> = ({ start }) => {
   const sub = prog(frame, at(53.06), 14);
   const showName = flip > 0.5;
   return (
-    <Stage>
+    <Stage seed="s5">
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", paddingBottom: 220 }}>
         <div style={{ fontFamily: body, fontWeight: 800, fontSize: 34, letterSpacing: "0.2em", color: C.clayDeep, opacity: mystery }}>
           WOH COMPANY THI...
@@ -569,7 +495,7 @@ export const TypesOfSeo: React.FC<SceneProps> = ({ start }) => {
     );
   };
   return (
-    <Stage>
+    <Stage seed="s6">
       <Content>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 30, opacity: title, translate: `0px ${mix(title, 30, 0)}px` }}>
           <div style={{ fontFamily: display, fontSize: 210, lineHeight: 0.85, color: C.ink }}>
