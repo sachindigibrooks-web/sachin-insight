@@ -1,10 +1,10 @@
 import React from "react";
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
-import { C, SAFE, body, display } from "../theme";
+import { C, SAFE, SAFE_V, body, display, useLayout } from "../theme";
 import { f } from "../timeline";
 import { BookIcon, CheckIcon, CrossIcon, ShirtIcon, SofaIcon, TvIcon } from "../ui/Icons";
 import { mix, pop, prog } from "../ui/motion";
-import { Tape, paperCard } from "../ui/Paper";
+import { Tape, TornSheet, paperCard } from "../ui/Paper";
 
 type SceneProps = { readonly start: number };
 
@@ -30,6 +30,50 @@ export const HookText: React.FC<SceneProps> = ({ start }) => {
   const a = prog(frame, at(1.76), 12);
   const b = prog(frame, at(3.8), 14);
   const dash = prog(frame, at(1.9), 40, Easing.inOut(Easing.cubic));
+  const { v } = useLayout();
+  if (v) {
+    return (
+      <AbsoluteFill style={{ opacity: exit, alignItems: "center" }}>
+        <div
+          style={{
+            position: "absolute",
+            top: 1075,
+            padding: "10px 36px 4px",
+            ...paperCard,
+            fontFamily: display,
+            fontSize: 120,
+            lineHeight: 1,
+            color: C.ink,
+            opacity: a,
+            rotate: `${mix(a, -8, -3)}deg`,
+            scale: String(mix(a, 1.2, 1)),
+            boxShadow: "0 16px 40px rgba(0,0,0,0.35)",
+          }}
+        >
+          SHORT<span style={{ color: C.clay }}>CUT?</span>
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            top: 1228,
+            padding: "8px 22px",
+            background: C.clay,
+            color: C.white,
+            fontFamily: body,
+            fontWeight: 900,
+            fontSize: 40,
+            borderRadius: 12,
+            opacity: b,
+            rotate: "2deg",
+            translate: `0px ${mix(b, 20, 0)}px`,
+            boxShadow: "0 12px 30px rgba(0,0,0,0.3)",
+          }}
+        >
+          BHAARI PAD GAYA
+        </div>
+      </AbsoluteFill>
+    );
+  }
   return (
     <AbsoluteFill style={{ opacity: exit }}>
       <div style={{ position: "absolute", left: SAFE.x, top: 150, width: 560 }}>
@@ -92,13 +136,14 @@ export const StoryTag: React.FC<SceneProps> = ({ start }) => {
   const { frame, at } = useAt(start);
   const exit = useExit();
   const a = prog(frame, at(6.98), 14);
+  const { v } = useLayout();
   return (
     <AbsoluteFill style={{ opacity: exit }}>
       <div
         style={{
           position: "absolute",
-          left: SAFE.x,
-          top: SAFE.y + 20,
+          left: v ? SAFE_V.x : SAFE.x,
+          top: v ? 140 : SAFE.y + 20,
           display: "flex",
           alignItems: "center",
           gap: 18,
@@ -138,6 +183,7 @@ export const StoryTag: React.FC<SceneProps> = ({ start }) => {
 export const Checks: React.FC<SceneProps> = ({ start }) => {
   const { frame, at } = useAt(start);
   const exit = useExit();
+  const { v } = useLayout();
   const items: [string, number][] = [
     ["Website", 26.75],
     ["Content", 27.72],
@@ -145,7 +191,7 @@ export const Checks: React.FC<SceneProps> = ({ start }) => {
   ];
   return (
     <AbsoluteFill style={{ opacity: exit }}>
-      <div style={{ position: "absolute", left: SAFE.x, top: 200, display: "flex", flexDirection: "column", gap: 22 }}>
+      <div style={{ position: "absolute", left: v ? 90 : SAFE.x, top: v ? 990 : 200, display: "flex", flexDirection: "column", gap: 22 }}>
         {items.map(([label, t]) => {
           const p = prog(frame, at(t), 12);
           return (
@@ -196,18 +242,18 @@ export const Kyun: React.FC<SceneProps> = ({ start }) => {
   const exit = useExit(6);
   const p = pop(frame, at(36.1), 14);
   const q = pop(frame, at(36.5), 14);
+  const { v } = useLayout();
   return (
     <AbsoluteFill style={{ opacity: exit }}>
       <div
         style={{
           position: "absolute",
-          right: SAFE.x,
-          top: 170,
+          ...(v ? { left: 0, right: 0, top: 1060, justifyContent: "center" } : { right: SAFE.x, top: 170 }),
           display: "flex",
           alignItems: "flex-start",
           fontFamily: display,
-          color: C.white,
-          textShadow: "0 10px 40px rgba(0,0,0,0.5)",
+          color: v ? C.ink : C.white,
+          textShadow: v ? "0 6px 30px rgba(255,255,255,0.6)" : "0 10px 40px rgba(0,0,0,0.5)",
         }}
       >
         <span style={{ fontSize: 210, lineHeight: 0.9, scale: String(p) }}>KYUN</span>
@@ -233,13 +279,14 @@ export const Lesson: React.FC<SceneProps> = ({ start }) => {
   const exit = useExit();
   const a = prog(frame, at(55.3), 16);
   const b = prog(frame, at(58.52), 14);
+  const { v } = useLayout();
   return (
     <AbsoluteFill style={{ opacity: exit }}>
       <div
         style={{
           position: "absolute",
-          left: SAFE.x,
-          top: SAFE.y + 30,
+          left: v ? SAFE_V.x : SAFE.x,
+          top: v ? SAFE_V.top + 20 : SAFE.y + 30,
           display: "flex",
           alignItems: "stretch",
           borderRadius: 20,
@@ -255,7 +302,7 @@ export const Lesson: React.FC<SceneProps> = ({ start }) => {
           <div style={{ fontFamily: body, fontWeight: 800, fontSize: 28, color: C.clayDeep, letterSpacing: "0.12em" }}>
             SEO INDUSTRY KA
           </div>
-          <div style={{ fontFamily: display, fontSize: 86, lineHeight: 1, color: C.ink }}>
+          <div style={{ fontFamily: display, fontSize: v ? 76 : 86, lineHeight: 1, color: C.ink }}>
             SABSE BADA{" "}
             <span style={{ color: C.clay, display: "inline-block", scale: String(mix(b, 0.6, 1)), opacity: b }}>
               LESSON
@@ -272,6 +319,7 @@ export const EndCta: React.FC<SceneProps> = ({ start }) => {
   const { frame, at } = useAt(start);
   const { durationInFrames } = useVideoConfig();
   const a = prog(frame, at(77.0), 12);
+  const { v } = useLayout();
   const fade = interpolate(frame, [durationInFrames - 12, durationInFrames], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -281,8 +329,7 @@ export const EndCta: React.FC<SceneProps> = ({ start }) => {
       <div
         style={{
           position: "absolute",
-          right: SAFE.x,
-          top: SAFE.y + 40,
+          ...(v ? { left: SAFE_V.x, right: SAFE_V.x, top: 1000, justifyContent: "center" } : { right: SAFE.x, top: SAFE.y + 40 }),
           display: "flex",
           alignItems: "center",
           gap: 20,
@@ -291,7 +338,7 @@ export const EndCta: React.FC<SceneProps> = ({ start }) => {
           color: C.white,
           borderRadius: 16,
           fontFamily: display,
-          fontSize: 80,
+          fontSize: v ? 66 : 80,
           lineHeight: 1,
           clipPath: `inset(0 0 0 ${(1 - a) * 100}% round 16px)`,
           boxShadow: "0 16px 50px rgba(0,0,0,0.35)",
@@ -318,6 +365,18 @@ const Panel: React.FC<{ readonly children: React.ReactNode }> = ({ children }) =
     easing: Easing.bezier(0.7, 0, 0.84, 0),
   });
   const x = mix(enter, -900, 0) + exit * -900;
+  const { v } = useLayout();
+  if (v) {
+    return (
+      <TornSheet seed="panel">
+        <AbsoluteFill style={{ ...paperCard }} />
+        <Tape style={{ right: 60, top: 150, rotate: "24deg" }} />
+        <div style={{ position: "absolute", left: 130, top: 250, width: 650, scale: "1.26", transformOrigin: "top left" }}>
+          {children}
+        </div>
+      </TornSheet>
+    );
+  }
   return (
     <AbsoluteFill>
       <div

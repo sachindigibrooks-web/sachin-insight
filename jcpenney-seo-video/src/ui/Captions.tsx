@@ -1,13 +1,14 @@
 import React from "react";
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { PAGES } from "../captions";
-import { C, body } from "../theme";
+import { C, SAFE_V, body, useLayout } from "../theme";
 
 // Word-by-word animated subtitles, centred inside the bottom safe area.
 export const Captions: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
+  const { v } = useLayout();
 
   const page = PAGES.find((p) => t >= p.start && t < p.end);
   if (!page) return null;
@@ -22,15 +23,15 @@ export const Captions: React.FC = () => {
     <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center", pointerEvents: "none" }}>
       <div
         style={{
-          marginBottom: 104,
-          maxWidth: 1920 - 2 * 240,
+          marginBottom: v ? SAFE_V.bottom + 20 : 104,
+          maxWidth: v ? 1080 - 2 * 90 : 1920 - 2 * 240,
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "center",
           gap: "0 18px",
           fontFamily: body,
           fontWeight: 900,
-          fontSize: 66,
+          fontSize: v ? 70 : 66,
           lineHeight: 1.15,
           letterSpacing: "-0.01em",
           opacity: pageIn,

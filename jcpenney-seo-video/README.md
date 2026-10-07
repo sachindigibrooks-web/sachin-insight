@@ -22,7 +22,8 @@ Remotion project that edits `DSC_0053.mp4` (Hinglish talking head about JCPenney
 
 ```bash
 npm run dev                 # Remotion Studio
-npx remotion render JCPenneySEO out/JCPenney-SEO-edit.mp4 --crf=20
+npx remotion render JCPenneySEO out/JCPenney-SEO-edit.mp4 --crf=20        # 16:9
+npx remotion render JCPenneySEO-Reels out/JCPenney-SEO-Reels.mp4 --crf=22 # 9:16 Reels
 ```
 
 Scene timings are written in **source-video seconds**; `f()` in `src/timeline.ts`

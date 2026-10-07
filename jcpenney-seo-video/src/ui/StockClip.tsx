@@ -1,7 +1,7 @@
 import React from "react";
 import { Video } from "@remotion/media";
 import { AbsoluteFill, Easing, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
-import { C, SAFE, body, display } from "../theme";
+import { C, SAFE, SAFE_V, body, display, useLayout } from "../theme";
 import { PaperTexture, Tape, TornSheet, paperCard } from "./Paper";
 import { mix, prog } from "./motion";
 
@@ -51,18 +51,19 @@ export const PaperLabel: React.FC<{ readonly text: string; readonly color?: stri
   style,
 }) => {
   const frame = useCurrentFrame();
+  const { v } = useLayout();
   const p = prog(frame, delay, 12);
   return (
     <div
       style={{
         position: "absolute",
-        left: SAFE.x,
-        top: SAFE.y + 20,
+        left: v ? SAFE_V.x : SAFE.x,
+        top: v ? SAFE_V.top + 20 : SAFE.y + 20,
         padding: "18px 34px 14px",
         ...paperCard,
         color,
         fontFamily: display,
-        fontSize: 96,
+        fontSize: v ? 88 : 96,
         lineHeight: 1,
         letterSpacing: "0.01em",
         rotate: `${mix(p, -9, -2)}deg`,
@@ -89,6 +90,7 @@ export const StockClip: React.FC<Props> = ({
   children,
 }) => {
   const frame = useCurrentFrame();
+  const { v } = useLayout();
 
   if (variant === "full") {
     return (
@@ -110,10 +112,10 @@ export const StockClip: React.FC<Props> = ({
       <div
         style={{
           position: "absolute",
-          right: SAFE.x + 10,
-          top: 110,
-          width: 1040,
-          height: 640,
+          right: v ? 70 : SAFE.x + 10,
+          top: v ? 290 : 110,
+          width: v ? 940 : 1040,
+          height: v ? 640 : 640,
           padding: 22,
           paddingBottom: 70,
           background: "#FBF8F2",

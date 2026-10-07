@@ -2,6 +2,7 @@ import React from "react";
 import { Video } from "@remotion/media";
 import { AbsoluteFill, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { SEGMENTS, f } from "../timeline";
+import { useLayout } from "../theme";
 
 // Punch-in level per jump cut. Alternating framing hides the cuts.
 const ZOOMS = [1, 1.12, 1, 1.08, 1.16, 1, 1.12, 1, 1.22, 1, 1.1, 1, 1.08, 1, 1.14, 1];
@@ -17,9 +18,11 @@ export const SPLITS: [number, number][] = [
 export const Speaker: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const { v } = useLayout();
 
+  // In 9:16 the split panels become full-screen sheets, so the speaker stays put.
   let shift = 0;
-  for (const [s, e] of SPLITS) {
+  for (const [s, e] of v ? [] : SPLITS) {
     shift += interpolate(frame, [f(s), f(s) + 12, f(e) - 12, f(e)], [0, 1, 1, 0], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
@@ -53,10 +56,10 @@ export const Speaker: React.FC = () => {
             objectFit="cover"
             style={{
               position: "absolute",
-              width: "100%",
-              height: "100%",
+              // 9:16: scale the 16:9 source to full height and centre on the face.
+              ...(v ? { width: 3413, height: 1920, left: -1064 } : { width: "100%", height: "100%" }),
               scale: String(ZOOMS[i % ZOOMS.length]),
-              transformOrigin: "47% 32%",
+              transformOrigin: v ? "47% 30%" : "47% 32%",
               filter: "contrast(1.08) saturate(1.1) brightness(1.02)",
             }}
           />
@@ -70,6 +73,12 @@ export const Speaker: React.FC = () => {
         }}
       />
       <AbsoluteFill style={{ background: "rgba(210,88,74,0.05)", mixBlendMode: "soft-light" }} />
+      {v ? (
+        // Darken the lower frame so captions read over the white shirt.
+        <AbsoluteFill
+          style={{ background: "linear-gradient(180deg, rgba(20,12,10,0) 52%, rgba(20,12,10,0.55) 72%, rgba(20,12,10,0.35) 100%)" }}
+        />
+      ) : null}
     </AbsoluteFill>
   );
 };

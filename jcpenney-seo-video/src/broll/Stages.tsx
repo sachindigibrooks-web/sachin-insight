@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill, Easing, interpolate, random, useCurrentFrame } from "remotion";
-import { C, SAFE, body, display } from "../theme";
+import { C, SAFE, SAFE_V, body, display, useLayout } from "../theme";
 import { f } from "../timeline";
 import { CheckIcon, CrossIcon, SearchIcon } from "../ui/Icons";
 import { Stage } from "../ui/Stage";
@@ -12,31 +12,35 @@ type SceneProps = { readonly start: number };
 const useAt = (start: number) => {
   const frame = useCurrentFrame();
   const at = (src: number) => f(src) - f(start);
-  return { frame, at };
+  const { v } = useLayout();
+  return { frame, at, v };
 };
 
 // Content lives in the upper ~75% so it never collides with the captions.
 const Content: React.FC<{ readonly children: React.ReactNode; readonly style?: React.CSSProperties }> = ({
   children,
   style,
-}) => (
-  <div
-    style={{
-      position: "absolute",
-      left: SAFE.x,
-      right: SAFE.x,
-      top: SAFE.y,
-      bottom: 290,
-      ...style,
-    }}
-  >
-    {children}
-  </div>
-);
+}) => {
+  const { v } = useLayout();
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: v ? SAFE_V.x : SAFE.x,
+        right: v ? SAFE_V.x : SAFE.x,
+        top: v ? SAFE_V.top + 30 : SAFE.y,
+        bottom: v ? 560 : 290,
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
 
 /* ---------- Saal 2011 ---------- */
 export const Year2011: React.FC<SceneProps> = ({ start }) => {
-  const { frame, at } = useAt(start);
+  const { frame, at, v } = useAt(start);
   const year = Math.round(
     interpolate(frame, [at(8.7), at(9.6)], [1995, 2011], {
       extrapolateLeft: "clamp",
@@ -48,7 +52,7 @@ export const Year2011: React.FC<SceneProps> = ({ start }) => {
   const sub = prog(frame, at(10.04), 12);
   return (
     <Stage seed="year">
-      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", paddingBottom: 230 }}>
+      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", paddingBottom: v ? 560 : 230 }}>
         <div style={{ fontFamily: body, fontWeight: 800, fontSize: 40, letterSpacing: "0.3em", color: C.clayDeep, opacity: yearIn }}>
           SAAL
         </div>
@@ -106,7 +110,7 @@ const ResultRow: React.FC<{ readonly title: string; readonly url: string; readon
 );
 
 export const Serp: React.FC<SceneProps> = ({ start }) => {
-  const { frame, at } = useAt(start);
+  const { frame, at, v } = useAt(start);
   const query = "dresses";
   const typed = Math.round(
     interpolate(frame, [at(22.0), at(22.9)], [0, query.length], {
@@ -120,7 +124,7 @@ export const Serp: React.FC<SceneProps> = ({ start }) => {
 
   return (
     <Stage seed="s1">
-      <Content style={{ display: "flex", gap: 60 }}>
+      <Content style={{ display: "flex", gap: v ? 20 : 60, flexDirection: v ? "column-reverse" : "row" }}>
         <div style={{ flex: 1 }}>
           <div
             style={{
@@ -164,7 +168,7 @@ export const Serp: React.FC<SceneProps> = ({ start }) => {
         </div>
         <div
           style={{
-            width: 440,
+            width: v ? "100%" : 440,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -195,7 +199,7 @@ export const Serp: React.FC<SceneProps> = ({ start }) => {
 
 /* ---------- Front page ... GONE ---------- */
 export const Gone: React.FC<SceneProps> = ({ start }) => {
-  const { frame, at } = useAt(start);
+  const { frame, at, v } = useAt(start);
   const glitch = interpolate(frame, [at(32.9), at(33.8)], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -248,11 +252,11 @@ export const Gone: React.FC<SceneProps> = ({ start }) => {
           })}
         </div>
       </Content>
-      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", paddingBottom: 160 }}>
+      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", paddingBottom: v ? 560 : 160 }}>
         <div
           style={{
             fontFamily: display,
-            fontSize: 420,
+            fontSize: v ? 300 : 420,
             lineHeight: 1,
             color: C.clay,
             scale: String(gone),
@@ -269,20 +273,20 @@ export const Gone: React.FC<SceneProps> = ({ start }) => {
 
 /* ---------- SEO cheating: link scheme network ---------- */
 export const Cheating: React.FC<SceneProps> = ({ start }) => {
-  const { frame, at } = useAt(start);
+  const { frame, at, v } = useAt(start);
   const net = prog(frame, at(39.6), 24, Easing.inOut(Easing.cubic));
   const stamp = pop(frame, at(40.66), 12);
-  const cx = 1180 - SAFE.x;
-  const cy = 330;
+  const cx = v ? 470 : 1180 - SAFE.x;
+  const cy = v ? 720 : 330;
   const nodes = new Array(14).fill(0).map((_, i) => {
     const ang = (i / 14) * Math.PI * 2 + 0.3;
     const r = 230 + random(`r${i}`) * 90;
-    return { x: cx + Math.cos(ang) * r * 1.3, y: cy + Math.sin(ang) * r * 0.8, d: i / 14 };
+    return { x: cx + Math.cos(ang) * r * (v ? 0.95 : 1.3), y: cy + Math.sin(ang) * r * (v ? 0.9 : 0.8), d: i / 14 };
   });
   return (
     <Stage seed="s3" tone="dark">
       <Content>
-        <svg width={1680} height={700} style={{ position: "absolute", left: 0, top: 0 }}>
+        <svg width={v ? 940 : 1680} height={v ? 1110 : 700} style={{ position: "absolute", left: 0, top: 0 }}>
           {nodes.map((n, i) => {
             const p = Math.max(0, Math.min(1, (net - n.d * 0.6) / 0.4));
             return (
@@ -318,8 +322,7 @@ export const Cheating: React.FC<SceneProps> = ({ start }) => {
         <div
           style={{
             position: "absolute",
-            left: 0,
-            bottom: 0,
+            ...(v ? { left: 150, top: 660 } : { left: 0, bottom: 0 }),
             padding: "12px 34px",
             border: `8px solid ${C.clay}`,
             borderRadius: 14,
@@ -341,11 +344,11 @@ export const Cheating: React.FC<SceneProps> = ({ start }) => {
 
 /* ---------- Caught: penalty stamp over crime-scene tape ---------- */
 export const Caught: React.FC<SceneProps> = ({ start }) => {
-  const { frame, at } = useAt(start);
+  const { frame, at, v } = useAt(start);
   const stamp = pop(frame, at(48.4), 10);
   return (
     <StockClip src="broll/police-tape.mp4" seed="caught" trimSeconds={1}>
-      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", paddingBottom: 200 }}>
+      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", paddingBottom: v ? 560 : 200 }}>
         <div
           style={{
             padding: "24px 60px",
@@ -370,14 +373,14 @@ export const Caught: React.FC<SceneProps> = ({ start }) => {
 
 /* ---------- Reveal: JCPenney ---------- */
 export const Reveal: React.FC<SceneProps> = ({ start }) => {
-  const { frame, at } = useAt(start);
+  const { frame, at, v } = useAt(start);
   const mystery = prog(frame, 6, 12);
   const flip = prog(frame, at(50.86), 16, Easing.bezier(0.65, 0, 0.35, 1));
   const sub = prog(frame, at(53.06), 14);
   const showName = flip > 0.5;
   return (
     <Stage seed="s5">
-      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", paddingBottom: 220 }}>
+      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", paddingBottom: v ? 560 : 220 }}>
         <div style={{ fontFamily: body, fontWeight: 800, fontSize: 34, letterSpacing: "0.2em", color: C.clayDeep, opacity: mystery }}>
           WOH COMPANY THI...
         </div>
@@ -393,7 +396,7 @@ export const Reveal: React.FC<SceneProps> = ({ start }) => {
             opacity: mystery,
           }}
         >
-          <div style={{ fontFamily: display, fontSize: 230, lineHeight: 1, color: C.white, letterSpacing: "0.02em" }}>
+          <div style={{ fontFamily: display, fontSize: v ? 170 : 230, lineHeight: 1, color: C.white, letterSpacing: "0.02em" }}>
             {showName ? "JCPENNEY" : "? ? ? ? ?"}
           </div>
         </div>
@@ -431,7 +434,7 @@ export const Reveal: React.FC<SceneProps> = ({ start }) => {
 
 /* ---------- Types of SEO: what this video is (and isn't) ---------- */
 export const TypesOfSeo: React.FC<SceneProps> = ({ start }) => {
-  const { frame, at } = useAt(start);
+  const { frame, at, v } = useAt(start);
   const title = prog(frame, at(67.1), 16);
   const yes: [string, number][] = [
     ["Real story", 69.4],
@@ -498,17 +501,17 @@ export const TypesOfSeo: React.FC<SceneProps> = ({ start }) => {
     <Stage seed="s6">
       <Content>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 30, opacity: title, translate: `0px ${mix(title, 30, 0)}px` }}>
-          <div style={{ fontFamily: display, fontSize: 210, lineHeight: 0.85, color: C.ink }}>
+          <div style={{ fontFamily: display, fontSize: v ? 160 : 210, lineHeight: 0.85, color: C.ink }}>
             TYPES OF <span style={{ color: C.clay }}>SEO</span>
           </div>
         </div>
-        <div style={{ display: "flex", gap: 40, marginTop: 50 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 18, width: 600 }}>
+        <div style={{ display: "flex", gap: v ? 18 : 40, marginTop: 50, flexDirection: v ? "column" : "row" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 18, width: v ? "100%" : 600 }}>
             {yes.map(([l, t]) => (
               <Row key={l} label={l} t={t} good />
             ))}
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 18, width: 640 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 18, width: v ? "100%" : 640 }}>
             {no.map(([l, t]) => (
               <Row key={l} label={l} t={t} good={false} />
             ))}

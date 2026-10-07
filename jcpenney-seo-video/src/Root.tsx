@@ -4,13 +4,23 @@ import { FPS } from "./timeline";
 
 export const RemotionRoot: React.FC = () => {
   return (
-    <Composition
-      id="JCPenneySEO"
-      component={Main}
-      durationInFrames={MAIN_FRAMES}
-      fps={FPS}
-      width={1920}
-      height={1080}
-    />
+    <>
+      <Composition
+        id="JCPenneySEO"
+        component={Main}
+        durationInFrames={MAIN_FRAMES}
+        fps={FPS}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="JCPenneySEO-Reels"
+        component={Main}
+        durationInFrames={MAIN_FRAMES}
+        fps={FPS}
+        width={1080}
+        height={1920}
+      />
+    </>
   );
 };

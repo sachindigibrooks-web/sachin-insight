@@ -1,5 +1,5 @@
 import { loadFont } from "@remotion/fonts";
-import { staticFile } from "remotion";
+import { staticFile, useVideoConfig } from "remotion";
 
 // Palette sampled from the footage: cream brick wall, warm red glow,
 // terracotta flowers and olive leaves.
@@ -25,3 +25,12 @@ loadFont({ family: body, url: staticFile("fonts/Montserrat.woff2"), weight: "100
 
 // Safe area for a 1920x1080 frame.
 export const SAFE = { x: 120, y: 90 } as const;
+
+// Layout helper: the same scenes render as 16:9 (1920x1080) or 9:16 Reels (1080x1920).
+export const useLayout = () => {
+  const { width, height } = useVideoConfig();
+  return { v: height > width, W: width, H: height };
+};
+
+// Reels safe area: keep clear of the Instagram header and the caption/button overlay.
+export const SAFE_V = { x: 70, top: 220, bottom: 430 } as const;

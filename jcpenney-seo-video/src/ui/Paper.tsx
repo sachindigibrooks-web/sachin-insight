@@ -1,19 +1,17 @@
 import React from "react";
 import { AbsoluteFill, Easing, interpolate, random, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
-import { C } from "../theme";
+import { C, useLayout } from "../theme";
 
-const W = 1920;
-const H = 1080;
 const STEPS = 30;
 
 // Polygon covering everything right of a ragged vertical tear at `edge` px.
-const tornPolygon = (edge: number, seed: string, inset = 0) => {
+const tornPolygon = (edge: number, seed: string, W: number, H: number, inset = 0) => {
   const pts: string[] = [`${W + 200}px -100px`];
   for (let i = 0; i <= STEPS; i++) {
     const y = (i / STEPS) * (H + 200) - 100;
     const j = (random(`${seed}-${i}`) - 0.5) * 46 + (random(`${seed}-b${i}`) - 0.5) * 18;
     // Slight diagonal so the tear doesn't read as a straight wipe.
-    const slant = (i / STEPS - 0.5) * 120;
+    const slant = (i / STEPS - 0.5) * (H > W ? 220 : 120);
     pts.push(`${edge + j + slant - inset}px ${y}px`);
   }
   pts.push(`${W + 200}px ${H + 100}px`);
@@ -48,6 +46,7 @@ type SheetProps = {
 export const TornSheet: React.FC<SheetProps> = ({ children, seed, enterFrames = 14, exitFrames = 12, rim = "#FBF8F2" }) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
+  const { W, H } = useLayout();
 
   const enter = interpolate(frame, [0, enterFrames], [W + 160, -160], {
     extrapolateLeft: "clamp",
@@ -71,8 +70,8 @@ export const TornSheet: React.FC<SheetProps> = ({ children, seed, enterFrames = 
 
   return (
     <AbsoluteFill style={{ rotate: `${settle}deg`, filter: "drop-shadow(-14px 0 18px rgba(20,12,8,0.35))" }}>
-      <AbsoluteFill style={{ background: rim, clipPath: tornPolygon(edge, `${s}-rim`, 12) }} />
-      <AbsoluteFill style={{ clipPath: tornPolygon(edge, s) }}>{children}</AbsoluteFill>
+      <AbsoluteFill style={{ background: rim, clipPath: tornPolygon(edge, `${s}-rim`, W, H, 12) }} />
+      <AbsoluteFill style={{ clipPath: tornPolygon(edge, s, W, H) }}>{children}</AbsoluteFill>
     </AbsoluteFill>
   );
 };
