@@ -16,6 +16,7 @@ get https://assets.mixkit.co/videos/42121/42121-720.mp4 broll/online-shopping.mp
 get https://assets.mixkit.co/videos/31372/31372-720.mp4 broll/cctv-thieves.mp4
 get https://assets.mixkit.co/videos/32790/32790-720.mp4 broll/police-tape.mp4
 get https://assets.mixkit.co/videos/50726/50726-720.mp4 broll/library.mp4
+get https://assets.mixkit.co/videos/1781/1781-720.mp4   broll/laptop-typing.mp4
 
 # Music: "Curiosity" (Mixkit Stock Music Free License)
 get https://assets.mixkit.co/music/480/480.mp3 music/curiosity.mp3
