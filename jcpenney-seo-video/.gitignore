@@ -1,0 +1,11 @@
+node_modules
+dist
+.DS_Store
+.env
+
+# Ignore the output video from Git but not videos you import into src/.
+out
+
+# Bundled output and the 99MB source footage (download it, see README)
+build
+public/source.mp4
