@@ -1,0 +1,4 @@
+node_modules
+out/*
+!out/Sri_Aurobindo_Consciousness_EN.mp4
+audio/takes/*.wav
