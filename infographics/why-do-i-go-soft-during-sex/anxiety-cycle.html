@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1350px; }
+  body {
+    font-family: "Inter Display", "Inter", sans-serif;
+    background: linear-gradient(180deg, #ffffff 0%, #f4f6f9 100%);
+    color: #0f2341; position: relative; overflow: hidden;
+  }
+  .header { position: absolute; top: 72px; left: 0; right: 0; text-align: center; }
+  .tag { display: inline-flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 700;
+         letter-spacing: .16em; text-transform: uppercase; color: #c8102e; background: #fdecee;
+         border: 1.5px solid #f3b4bd; padding: 10px 20px; border-radius: 999px; }
+  .tag i { width: 9px; height: 9px; border-radius: 50%; background: #c8102e; display: block; }
+  h1 { font-size: 76px; font-weight: 800; letter-spacing: -.025em; margin-top: 26px; line-height: 1; }
+  h1 span { color: #c8102e; }
+  .sub { font-size: 29px; color: #4a5568; margin-top: 18px; font-weight: 500; }
+
+  .ring { position: absolute; left: 0; top: 0; }
+  .node { position: absolute; width: 290px; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 22px;
+          padding: 20px 22px 22px; text-align: center;
+          box-shadow: 0 14px 30px rgba(15,35,65,.08); transform: translate(-50%, -50%); }
+  .num { width: 44px; height: 44px; border-radius: 50%; background: #c8102e; color: #fff; font-weight: 800;
+         font-size: 22px; display: flex; align-items: center; justify-content: center; margin: -44px auto 10px;
+         box-shadow: 0 0 0 6px #fff; }
+  .node h3 { font-size: 27px; line-height: 1.15; font-weight: 800; letter-spacing: -.01em; }
+  .node p { font-size: 19px; line-height: 1.35; color: #4a5568; margin-top: 8px; font-weight: 500; }
+
+  .center { position: absolute; left: 540px; top: 760px; width: 300px; height: 300px; border-radius: 50%;
+            transform: translate(-50%, -50%); background: #0f2341; color: #fff; text-align: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 34px;
+            box-shadow: 0 0 0 12px #e9eef5, 0 24px 50px rgba(15,35,65,.22); }
+  .center .k { font-size: 16px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #ff8a96; }
+  .center h2 { font-size: 34px; font-weight: 800; line-height: 1.05; margin-top: 8px; letter-spacing: -.01em; }
+  .center ul { list-style: none; margin-top: 14px; font-size: 19px; line-height: 1.5; font-weight: 600; color: #dbe5f2; }
+  .center li::before { content: "✓ "; color: #ff8a96; font-weight: 800; }
+
+  .footer { position: absolute; left: 70px; right: 70px; bottom: 56px; }
+  .gp { background: #fdecee; border: 1.5px solid #f3b4bd; border-radius: 18px; padding: 20px 26px;
+        font-size: 24px; font-weight: 600; color: #8a0c20; text-align: center; }
+  .gp b { color: #c8102e; }
+  .meta { display: flex; justify-content: space-between; margin-top: 22px; font-size: 18px; color: #718096; font-weight: 500; }
+  .meta b { color: #0f2341; font-weight: 700; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="tag"><i></i>Men's Health Guide</div>
+    <h1>The <span>Anxiety Cycle</span></h1>
+    <div class="sub">How worry can make you go soft during sex</div>
+  </div>
+
+  <!-- ring + clockwise arrows; centre (540,760), r = 290 -->
+  <svg class="ring" width="1080" height="1350" viewBox="0 0 1080 1350">
+    <defs>
+      <marker id="ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#c8102e"/>
+      </marker>
+    </defs>
+    <circle cx="540" cy="760" r="290" fill="none" stroke="#e2e8f0" stroke-width="3" stroke-dasharray="2 12" stroke-linecap="round"/>
+    <!-- arcs between nodes (top→right→bottom→left→top), drawn clockwise -->
+    <path d="M 690 512 A 290 290 0 0 1 788 610" fill="none" stroke="#c8102e" stroke-width="5" stroke-linecap="round" marker-end="url(#ah)"/>
+    <path d="M 788 910 A 290 290 0 0 1 690 1008" fill="none" stroke="#c8102e" stroke-width="5" stroke-linecap="round" marker-end="url(#ah)"/>
+    <path d="M 390 1008 A 290 290 0 0 1 292 910" fill="none" stroke="#c8102e" stroke-width="5" stroke-linecap="round" marker-end="url(#ah)"/>
+    <path d="M 292 610 A 290 290 0 0 1 390 512" fill="none" stroke="#c8102e" stroke-width="5" stroke-linecap="round" marker-end="url(#ah)"/>
+  </svg>
+
+  <div class="node" style="left:540px; top:470px">
+    <div class="num">1</div>
+    <h3>Worry about performance</h3>
+    <p>"What if it happens again?"</p>
+  </div>
+  <div class="node" style="left:830px; top:760px; width:270px">
+    <div class="num">2</div>
+    <h3>Focus shifts away from arousal</h3>
+    <p>You start monitoring instead of feeling</p>
+  </div>
+  <div class="node" style="left:540px; top:1050px">
+    <div class="num">3</div>
+    <h3>Erection fades</h3>
+    <p>Anxiety gets in the way of arousal</p>
+  </div>
+  <div class="node" style="left:250px; top:760px; width:270px">
+    <div class="num">4</div>
+    <h3>More worry next time</h3>
+    <p>The memory adds pressure</p>
+  </div>
+
+  <div class="center">
+    <div class="k">Break the cycle</div>
+    <h2>Take the pressure off</h2>
+    <ul><li>Slow down</li><li>Talk to your partner</li><li>Focus on sensation</li></ul>
+  </div>
+
+  <div class="footer">
+    <div class="gp">Keeps happening? <b>Speak to a GP or sexual health clinic.</b></div>
+    <div class="meta"><span>Sources: NHS · Journal of Andrology</span><b>vigrxplus.uk.com</b></div>
+  </div>
+</body>
+</html>
