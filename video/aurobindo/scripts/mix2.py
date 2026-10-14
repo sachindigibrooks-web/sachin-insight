@@ -1,6 +1,6 @@
 """v2 mix: real recorded foley/SFX (Mixkit, free licence), "Vastness" (Mixkit) aligned so its swell lands on SUPERMIND,
 a quiet synthesized tanpura bed in D, and the narration. Sound-design notes are inline next to each cue."""
-import json, subprocess
+import json, os, subprocess
 import numpy as np
 import librosa
 import pyloudnorm as pyln
@@ -82,9 +82,11 @@ def S(name):
 
 
 bus = np.zeros((N, 2))
+CUES = []  # every placed sound, for the timeline editor export (scripts/export_editor.py)
 
 
-def put(at, src, gdb, start=0.0, dur=None, fin=0.0, fout=0.05, rate=1.0):
+def put(at, src, gdb, start=0.0, dur=None, fin=0.0, fout=0.05, rate=1.0, label=None):
+    name = src if isinstance(src, str) else label
     y = S(src) if isinstance(src, str) else src
     y = y[int(start * SR):]
     if rate != 1.0:
@@ -101,6 +103,7 @@ def put(at, src, gdb, start=0.0, dur=None, fin=0.0, fout=0.05, rate=1.0):
     e = min(N, s + len(y))
     if e > s:
         bus[s:e] += y[: e - s] * db(gdb)
+        CUES.append(dict(at=round(at, 3), name=name, gain=gdb, start=start, dur=dur, fin=fin, fout=fout, rate=rate, audio=y[: e - s]))
 
 
 # HOOK: inner noise. A wind bed and slow heart, then the montage explodes into crowd + traffic + racing clock,
@@ -168,13 +171,13 @@ put(B['phenk'] - 0.15, 'papers_wind', -15, dur=2.0, fout=0.5)
 put(B['phenk'] - 0.1, 'whoosh_fast', -17)
 for a in [B['teen'], 40.24, 40.44]:
     put(a, 'pencil', -14, start=0.1, dur=0.35, fout=0.05)
-put(B['shaant'] - 0.02, sfx.water_drop(), -12)
+put(B['shaant'] - 0.02, sfx.water_drop(), -12, label='water_drop (synth)')
 put(B['shaant'], 'rain_light', -27, start=8, dur=1.4, fin=0.4, fout=0.6)
 put(B['shaant'] + 0.05, 'bell_chime', -19)
 
 # PRACTICE: a breath in, harp opens the music back up; the eye gets a single heartbeat; "Wahi aap ho" lands with light
 put(B['aaj'] - 0.15, 'swoosh_windy', -21)
-put(B['aaj'] - 0.1, sfx.breath(1.8, True), -26)
+put(B['aaj'] - 0.1, sfx.breath(1.8, True), -26, label='breath (synth)')
 put(B['aaj'] + 0.6, 'harp_sweep', -27)
 put(B['kyunki'] - 0.3, 'whoosh_tunnel', -25, dur=1.6, fout=0.4)
 put(46.3, 'heartbeat_single', -17)
@@ -188,9 +191,20 @@ put(B['yoga'], 'bell_chime', -14)
 put(B['yoga'] + 0.1, 'sparkle_whoosh', -22)
 put(B['follow'], 'paper_quick', -17)
 
-bus *= (db(3) * db(-4 * duck))[:, None]
+sfx_gain = db(3) * db(-4 * duck)  # SFX sit +3 dB and duck 4 dB under the voice
+bus *= sfx_gain[:, None]
 mix = voice_st + music + tan + bus
 mix *= np.clip((DUR - t) / 0.4, 0, 1)[:, None]
 sf.write('out/mix_premaster.wav', mix.astype(np.float32), SR, subtype='FLOAT')
 print('voice', round(meter.integrated_loudness(voice_st), 1), 'music', round(meter.integrated_loudness(music), 1),
       'sfx', round(meter.integrated_loudness(bus), 1), 'mix', round(meter.integrated_loudness(mix), 1), 'OFF', round(OFF, 2))
+
+if os.environ.get('STEMS'):
+    # stems + per-cue audio for the timeline editor; summing the stems reproduces mix_premaster.wav
+    os.makedirs('out/stems', exist_ok=True)
+    fade = np.clip((DUR - t) / 0.4, 0, 1)[:, None]
+    for k, y in [('voice', voice_st), ('music', music), ('tanpura', tan), ('sfx', bus)]:
+        sf.write(f'out/stems/{k}.wav', (y * fade).astype(np.float32), SR, subtype='FLOAT')
+    np.save('out/stems/sfx_gain.npy', sfx_gain[::SR // 100].astype(np.float32))
+    import pickle
+    pickle.dump(CUES, open('out/stems/cues.pkl', 'wb'))

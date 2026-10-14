@@ -73,3 +73,36 @@ After feedback that v1 looked AI-generated, the video was rebuilt around real fo
 ### v2 credits
 - Video clips, music ("Vastness") and SFX: Mixkit (mixkit.co), Mixkit Free License. Free for social media and commercial use; no attribution required.
 - The Ether Vox credit above applies only to v1.
+
+## Timeline editor (`editor/`)
+
+`editor/index.html` is a browser timeline editor for this video. It has:
+
+- **Preview:** a muted proxy of the render. You hear the stems, not the video's own audio.
+- **Picture tracks:** a filmstrip, the scenes, B-roll, photos, graphics, titles, hand notes and captions. The picture tracks are read from `src/scenes.tsx`.
+- **Audio tracks:** waveforms for the voice, music and tanpura stems, each with mute and solo.
+- **SFX:** all 72 cues placed by `mix2.py`. Each cue plays live from its own file, so if you move one, trim it or change its level, you hear the change straight away.
+- **Snapping:** to the word beats, word boundaries, scene cuts and the edges of other clips.
+- **History:** undo and redo. Edits are kept in the browser.
+- **Export:**
+  - an edit list (JSON) to hand back to Claude for a re-render,
+  - FCP7 XML for Premiere and Resolve,
+  - `put()` lines for `mix2.py`,
+  - a CSV cue sheet.
+
+**Rebuild the data after any change to the mix or the render:**
+
+```
+STEMS=1 python3 scripts/mix2.py      # stems + per-cue audio into out/stems/
+python3 scripts/export_editor.py     # editor/data/: project.json, stems, cue mp3s, proxy, filmstrip
+node editor/xmeml.js                 # editor/Aurobindo_timeline.xml
+```
+
+**Open it locally:** run `cd editor && python3 -m http.server`, then open http://localhost:8000. It has to be served over HTTP, because opening the file directly (file://) blocks `fetch()`.
+
+**Premiere / Resolve:** import `editor/Aurobindo_timeline.xml`. When the app asks to relink, point it at the `video/aurobindo/` folder. The tracks are:
+
+- the B-roll lanes,
+- the final render on top as a reference picture,
+- the three stems,
+- one clip per SFX cue, at its level.
