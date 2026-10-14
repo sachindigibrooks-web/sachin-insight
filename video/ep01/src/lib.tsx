@@ -237,3 +237,33 @@ export const NumTag: React.FC<{n: string; at: number; color?: string; style?: Re
 		</div>
 	);
 };
+
+/** Image cutout "sticker": white die-cut outline, drop shadow, animated entrance/exit and a gentle idle float. */
+export const Cut: React.FC<{
+	src: string; at: number; x: number; y: number; w: number; rot?: number; from?: 'b' | 'l' | 'r' | 't' | 'pop';
+	out?: number; outline?: number; float?: number; style?: React.CSSProperties; filter?: string;
+}> = ({src, at, x, y, w, rot = 0, from = 'pop', out, outline = 6, float = 8, style, filter}) => {
+	const t = useT();
+	if (t < at - 0.05) return null;
+	const p = pop(t, at, 210, 12);
+	const o = out !== undefined ? ease(t, out, 0.22, Easing.in(Easing.cubic)) : 0;
+	if (o >= 1) return null;
+	const off = {b: [0, 1400], t: [0, -1400], l: [-1300, 0], r: [1300, 0], pop: [0, 0]}[from];
+	const k = 1 - Math.min(1, p);
+	const ol = outline
+		? [`${outline}px 0 0 #fff`, `-${outline}px 0 0 #fff`, `0 ${outline}px 0 #fff`, `0 -${outline}px 0 #fff`].map((s) => `drop-shadow(${s})`).join(' ')
+		: '';
+	const s = from === 'pop' ? lerp(0, 1, p) : 1;
+	return (
+		<Img
+			src={staticFile(`img/${src}.png`)}
+			style={{
+				position: 'absolute', left: x, top: y, width: w,
+				transform: `translate(${off[0] * k + (from === 'r' || from === 'l' ? 0 : 0)}px, ${off[1] * k + Math.sin(t * 2.1 + x) * float + o * 900}px) rotate(${rot + Math.sin(t * 1.4 + y) * 1.6 + (1 - p) * 8}deg) scale(${s * (1 - o * 0.3)})`,
+				filter: `${ol} drop-shadow(14px 24px 18px rgba(0,0,0,.5)) ${filter ?? ''}`,
+				opacity: 1 - o,
+				...style,
+			}}
+		/>
+	);
+};

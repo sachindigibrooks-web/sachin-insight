@@ -284,6 +284,25 @@ put(68.42, sfx.hit(0.35, 110), -11)
 put(69.75 - 0.8, sfx.reverse_swell(0.8), -16)
 put(69.75, sfx.impact(1.0, 62, 0.9), -9)
 
+
+# ---- image cutouts (v2)
+put(B['nahiNa'] + 0.02, sfx.whoosh(0.35, 300, 3000, 0.75, 0, 0), -15)
+put(B['haan'] - 0.25, sfx.swish, -18)
+put(B['answer'] + 0.05, sfx.servo(0.4), -17)
+put(B['rank1'] + 0.5, sfx.ding(1567.98, 0.8), -18)
+put(B['click2'] - 0.05, sfx.fuse(B['zero'] - B['click2'] + 0.05), -15)
+put(23.3, sfx.whoosh(0.4, 400, 4500, 0.7, 0.8, 0.2), -15)
+put(32.25, sfx.swish, -16)
+put(B['cite'] + 0.12, sfx.ding(2093.0, 0.6), -14)
+put(B['kaise'], sfx.hum(0.9), -17)
+put(B['kaise'] + 0.02, sfx.ding(1760.0, 0.5), -20)
+put(B['wahin'] - 0.3, sfx.whoosh(1.3, 300, 2500, 0.5, -0.9, 0.9), -16)
+put(B['ignore'] - 0.45, sfx.whoosh(0.35, 300, 3000, 0.75, 0.6, 0.6), -16)
+for i in range(3):
+    put(B['ignore'] + 0.68 + i * 0.08, sfx.paper(0.18, 0.6), -16)
+put(B['ignore'] + 0.72, sfx.clang(0.9), -13)
+put(B['warna'] - 0.05, sfx.whoosh(0.3, 300, 3000, 0.75, 0.7, 0.7), -18)
+
 # ---------------------------------------------------------------- sum
 # SFX get a touch of ducking too so consonants stay clear
 bus *= (db(-5 * duck))[:, None]

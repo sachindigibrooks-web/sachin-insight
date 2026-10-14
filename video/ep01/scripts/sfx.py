@@ -263,3 +263,41 @@ def drone(dur=2.2, freq=55):
     s += _lp(rng.standard_normal(n), 300) * 0.3
     s *= np.minimum(1, t / 0.3) * np.minimum(1, (dur - t) / 0.6)
     return _norm(np.stack([s, np.roll(s, 800)], 1))
+
+
+def servo(dur=0.4):
+    """Robot servo whir: buzzy pitch glide up then settle."""
+    n = _n(dur)
+    t = np.arange(n) / SR
+    f = 180 + 260 * np.sin(np.pi * t / dur) ** 0.7
+    s = signal.sawtooth(2 * np.pi * np.cumsum(f) / SR) * 0.6 + signal.square(2 * np.pi * np.cumsum(f * 2.01) / SR) * 0.2
+    s = _bp(s, 300, 4000) * _env(n, 0.1, 1, 1.2)
+    return _norm(_st(s, 0.4))
+
+
+def fuse(dur=0.7):
+    """Burning fuse: hissy band noise with random sparks (crackles)."""
+    n = _n(dur)
+    x = _bp(rng.standard_normal(n), 3000, 11000) * 0.5
+    sparks = (rng.random(n) > 0.9993).astype(float)
+    x += _hp(np.convolve(sparks, np.exp(-np.arange(200) / 25), 'same') * rng.choice([-1, 1], n), 1500) * 2.5
+    x *= np.minimum(1, np.arange(n) / _n(0.05))
+    return _norm(_st(x, -0.5))
+
+
+def clang(dur=0.9):
+    """Metal trash-can hit: inharmonic partials with fast-decaying highs."""
+    n = _n(dur)
+    t = np.arange(n) / SR
+    s = sum(a * np.sin(2 * np.pi * f * t) * np.exp(-t * d) for f, a, d in [(310, 1, 6), (742, 0.7, 9), (1187, 0.5, 13), (1903, 0.35, 18), (2711, 0.2, 25)])
+    s += _bp(rng.standard_normal(n), 1500, 6000) * np.exp(-t * 60) * 0.8
+    return _norm(_st(s, 0.5))
+
+
+def hum(dur=0.8):
+    """Light-bulb buzz (mains hum + harmonics) with a switch click in front."""
+    n = _n(dur)
+    t = np.arange(n) / SR
+    s = sum(np.sin(2 * np.pi * 50 * k * t) / k for k in (1, 2, 3, 5)) * 0.4 * _env(n, 0.05, 1, 1.5)
+    s[:_n(0.012)] += _hp(rng.standard_normal(_n(0.012)), 2000) * 2
+    return _norm(_st(s))

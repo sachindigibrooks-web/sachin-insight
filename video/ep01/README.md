@@ -36,3 +36,22 @@ npx remotion render src/index.ts Ep01 out/ep01_silent.mp4 --codec=h264 --crf=20 
 ffmpeg -i out/ep01_silent.mp4 -i out/mix_master.wav -map 0:v -map 1:a -c:v copy -c:a aac -b:a 256k -shortest out/final.mp4
 ```
 `scripts/transcribe.py` (faster-whisper) regenerates `words_raw.json` if the voice take changes. `scripts/textures.py` regenerates the backgrounds.
+
+## Image cutouts (v2)
+Each scene has one or two stickers with a white die-cut outline, drop shadow, entrance animation and idle float. Each sticker has its own synthesized SFX.
+
+| Scene | Cutout | Moment | Source |
+|---|---|---|---|
+| Nahi na? | shocked man (also peeks in at the end) | rises on "Nahi" | AI-generated (Ideogram 4.0) for this project |
+| AI answers | chrome robot | on "answer" | AI-generated (Ideogram 4.0) |
+| Zero | gold #1 trophy, falls grey on ZERO | on "number one" | AI-generated (Ideogram 4.0) |
+| Zero | lit cartoon bomb with fuse hiss, explodes on ZERO | on "click" | rawpixel, CC0 |
+| Game change | red megaphone | on "Toh bhai" | rawpixel, CC0 |
+| Cite | vintage pointing hand, gold medal | "yahan!", "Cite" | rawpixel, CC0 |
+| Kaise? | glowing light bulb with hum | on "kaise" | rawpixel, CC0 |
+| AI reads everywhere | magnifying glass sweep | on "wahin" | rawpixel, CC0 |
+| Ignored | vintage trash can; the copies fly in with a clang | on "ignore" | rawpixel, CC0 |
+
+- The rawpixel images are CC0 (public domain): free for commercial use, no attribution needed. Details are in `public/img/CREDITS.json`.
+- Their baked-in preview checkerboards were removed with BiRefNet (MIT licence, `scripts/cutout.py`) plus `scripts/fill_holes.py`.
+- Pinterest and Instagram images were deliberately not used, because they are usually copyrighted and can get a Reel claimed or muted.

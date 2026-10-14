@@ -1,7 +1,7 @@
 import React from 'react';
-import {AbsoluteFill, Easing} from 'remotion';
+import {AbsoluteFill, Easing, Img, staticFile} from 'remotion';
 import {
-	B, Bg, clamp01, Clip, COLORS, Crumple, Cursor, DEVA, ease, extrude, HEAVY, KLine, lerp, MARKER, MarkerPath, NumTag, Paper, Pencil,
+	B, Bg, clamp01, Clip, COLORS, Cut, Crumple, Cursor, DEVA, ease, extrude, HEAVY, KLine, lerp, MARKER, MarkerPath, NumTag, Paper, Pencil,
 	Phone, pop, Ripple, SANS, Stamp, TL, TYPE, useT, Word,
 } from './lib';
 
@@ -90,6 +90,7 @@ const Nahi = () => {
 			<Abs x={0} y={330} w={1080}>
 				<KLine size={230} color="red" items={[['Nahi', B.nahiNa], ['na?', B.nahiNa + 0.28]]} style={{flexDirection: 'column', alignItems: 'center'}} />
 			</Abs>
+			<Cut src="man" at={B.nahiNa + 0.08} x={150} y={830} w={780} from="b" out={B.haan - 0.2} outline={0} float={4} />
 			<Paper w={760} h={340} seed="tab" style={{left: 160, top: lerp(1900, 900, card), transform: `rotate(${lerp(10, -4, card)}deg)`}}>
 				<div style={{position: 'absolute', left: 50, top: 50, fontFamily: TYPE, fontSize: 40, color: '#333'}}>www.aapki-website.in</div>
 				<div style={{position: 'absolute', left: 50, top: 120, fontFamily: TYPE, fontSize: 64, color: '#111'}}>Visits today:</div>
@@ -132,8 +133,9 @@ const Ai = () => {
 				display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: HEAVY, fontSize: 96, color: '#fff', textShadow: extrude(5, '#126b22')}}>AI</div>
 			{pill('AI MODE', B.aiMode, -2.4, 330)}
 			{pill('AI OVERVIEW', B.aiOverview, 0.5, 300)}
+			<Cut src="robot" at={B.answer + 0.05} x={690} y={1060} w={360} from="r" rot={-4} />
 			{t > B.hindi && (
-				<div style={{position: 'absolute', left: 300, top: 1380, transform: `rotate(-8deg) scale(${lerp(2.4, 1, hp)})`, opacity: clamp01(hp * 2),
+				<div style={{position: 'absolute', left: 60, top: 1380, transform: `rotate(-8deg) scale(${lerp(2.4, 1, hp)})`, opacity: clamp01(hp * 2),
 					background: '#ff7a00', color: '#fff', fontFamily: DEVA, fontWeight: 700, fontSize: 96, padding: '6px 46px 0', borderRadius: 18,
 					boxShadow: '10px 14px 0 #8a3b00, 0 24px 30px rgba(0,0,0,.4)'}}>हिंदी में भी</div>
 			)}
@@ -161,6 +163,19 @@ const Zero = () => {
 				<Abs x={430} y={250}><Stamp at={B.rank1 + 0.45} text="#1" color="#16a34a" rot={-8} size={150} /></Abs>
 				<MarkerPath w={300} h={120} at={19.3} dur={0.25} color="#16a34a" d="M10 60 L90 105 L280 10" style={{left: 470, top: 400}} />
 			</Paper>
+			<Cut src="trophy" at={B.rank1 + 0.5} x={710} y={1180} w={300} rot={6}
+				filter={t > B.zero ? 'grayscale(1) brightness(.55)' : undefined}
+				style={t > B.zero ? {transform: `rotate(${lerp(6, 78, ease(t, B.zero, 0.5, Easing.in(Easing.quad)))}deg) translateY(${ease(t, B.zero, 0.5) * 160}px)`} : undefined} />
+			{t < B.zero + 0.12 && (
+				<Cut src="bomb" at={B.click2} x={40} y={1260} w={330} from="l" rot={-8}
+					style={{transform: `translate(${Math.sin(t * 70) * 5 * ease(t, B.click2, 0.6)}px, 0) scale(${t > B.zero ? lerp(1, 2.4, ease(t, B.zero, 0.12)) : 1})`,
+						opacity: t > B.zero ? 1 - ease(t, B.zero, 0.12) : 1}} />
+			)}
+			{t > B.zero && t < B.zero + 0.4 && (
+				<div style={{position: 'absolute', left: 205 - 450 * ease(t, B.zero, 0.4), top: 1425 - 450 * ease(t, B.zero, 0.4), width: 900 * ease(t, B.zero, 0.4),
+					height: 900 * ease(t, B.zero, 0.4), borderRadius: '50%', background: 'radial-gradient(circle,#fff6c0 0%,#ffb000 35%,#ff3d00 60%,rgba(255,61,0,0) 72%)',
+					opacity: 1 - ease(t, B.zero + 0.1, 0.3)}} />
+			)}
 			{t > B.zero && (
 				<div style={{position: 'absolute', left: 0, width: 1080, top: 650, textAlign: 'center', fontFamily: HEAVY, fontSize: 330, color: COLORS.red[0],
 					textShadow: extrude(26, '#3d0000', 0.7), transform: `scale(${lerp(3, 1, z)}) rotate(${-4 + (1 - z) * 10}deg)`, letterSpacing: -10}}>ZERO</div>
@@ -176,6 +191,8 @@ const GameChange = () => {
 	return (
 		<Scene id="gamechange" tex="wood" dir="u">
 			<Crumple seed="c" style={{left: 40, top: 150}} />
+			<Cut src="megaphone" at={23.35} x={560} y={1400} w={500} from="r" rot={-18}
+				style={t > B.badal && t < B.badal + 0.6 ? {translate: `${Math.sin(t * 80) * 6}px 0`} : undefined} />
 			<Clip style={{left: 860, top: 260, transform: 'rotate(20deg)'}} />
 			<Paper w={940} h={1180} seed="news" tex="newsprint" style={{left: 70, top: lerp(-1400, 330, np), transform: `rotate(${lerp(-25, 3, np)}deg)`}}>
 				<div style={{position: 'absolute', left: 40, right: 40, top: 40, textAlign: 'center', fontFamily: 'serif', fontWeight: 900, fontSize: 92, color: '#151515',
@@ -227,8 +244,9 @@ const Cite = () => {
 					<div style={{padding: '18px 30px', borderRadius: 50, background: '#ffd21f', fontFamily: SANS, fontWeight: 900, fontSize: 38, color: '#1b1b1b',
 						transform: `scale(${chip})`, boxShadow: `0 0 ${40 * chip}px rgba(255,210,31,.9)`}}>aapka-brand.in</div>
 				</div>
-				{t > 32.3 && <div style={{position: 'absolute', left: 520, top: 650, fontFamily: MARKER, fontSize: 64, color: '#e3262b', transform: `rotate(-6deg) scale(${pop(t, 32.32)})`}}>yahan!</div>}
-				<MarkerPath w={200} h={140} at={32.4} dur={0.2} width={10} d="M150 130 C 120 80, 110 60, 60 20 M60 20 L70 70 M60 20 L110 30" style={{left: 450, top: 560}} />
+				{t > 32.3 && <div style={{position: 'absolute', left: 90, top: 650, fontFamily: MARKER, fontSize: 64, color: '#e3262b', transform: `rotate(-6deg) scale(${pop(t, 32.32)})`}}>yahan!</div>}
+				<Cut src="hand" at={32.3} x={360} y={700} w={330} rot={-62} from="b" outline={0} float={5} />
+				<Cut src="medal" at={B.cite + 0.12} x={640} y={-120} w={230} rot={14} />
 				<Abs x={60} y={250}><Stamp at={B.cite} text="Cite hona chahiye" color="#16a34a" rot={-9} size={66} style={{background: 'rgba(255,255,255,.85)'}} /></Abs>
 			</div>
 		</Scene>
@@ -244,6 +262,8 @@ const Teen = () => {
 				<KLine size={110} items={[['Ab', 34.7], ['ye', 35.02], ['hoga', 35.22]]} />
 				<div style={{textAlign: 'center', marginTop: 10}}><Word at={B.kaise} text="kaise?" size={220} color="yellow" /></div>
 			</Abs>
+			<Cut src="bulb" at={B.kaise} x={450} y={620} w={180} rot={8} outline={0}
+				filter={`drop-shadow(0 0 ${40 + 25 * Math.abs(Math.sin(t * 9))}px rgba(255,230,80,.9))`} />
 			<div style={{position: 'absolute', left: 0, width: 1080, top: 880, display: 'flex', justifyContent: 'center', gap: 40}}>
 				{['1', '2', '3'].map((n, i) => {
 					const p = pop(t, B.teen + i * 0.2, 300, 11);
@@ -331,6 +351,12 @@ const Two = () => {
 			<div style={{position: 'absolute', left: 440, top: 1190, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle at 35% 30%,#7dff8c,#22b53a 60%,#127a24)',
 				border: '10px solid #fff', transform: `scale(${core})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: HEAVY, fontSize: 84, color: '#fff',
 				boxShadow: `0 0 ${60 * core}px rgba(62,224,90,.8)`}}>AI</div>
+			{t > B.wahin - 0.3 && (
+				<Img src={staticFile('img/magnifier.png')} style={{position: 'absolute', width: 380,
+					left: lerp(-420, 720, ease(t, B.wahin - 0.3, 1.3, Easing.inOut(Easing.cubic))),
+					top: 560 + Math.sin(ease(t, B.wahin - 0.3, 1.3) * Math.PI * 2) * 70, transform: 'rotate(-10deg)',
+					filter: 'drop-shadow(16px 26px 18px rgba(0,0,0,.5))'}} />
+			)}
 			<Abs x={0} y={1420} w={1080}>
 				<KLine size={74} items={[['wahin', B.wahin], ['se', 51.52], ['padhta', 51.66], ['hai', 52.04]]} />
 			</Abs>
@@ -362,7 +388,7 @@ const Three = () => {
 				const p = ease(t, B.copy + 0.25 + i * 0.12, 0.3, Easing.out(Easing.back(1.4)));
 				return (
 					<div key={i} style={{position: 'absolute', left: 560 + i * 60, top: 820 + i * 70, width: 360, height: 460, background: '#f4f4f4', borderRadius: 14,
-						transform: `rotate(${4 + i * 5}deg) scale(${p})`, boxShadow: '10px 16px 20px rgba(0,0,0,.45)', filter: ignored ? 'grayscale(1) brightness(.6)' : undefined,
+						transform: `translate(${ease(t, B.ignore + 0.35 + i * 0.08, 0.35, Easing.in(Easing.cubic)) * (330 - i * 60)}px, ${ease(t, B.ignore + 0.35 + i * 0.08, 0.35, Easing.in(Easing.cubic)) * (620 - i * 70)}px) rotate(${4 + i * 5 + ease(t, B.ignore + 0.35, 0.35) * 90}deg) scale(${p * (1 - 0.75 * ease(t, B.ignore + 0.35 + i * 0.08, 0.35))})`, boxShadow: '10px 16px 20px rgba(0,0,0,.45)', filter: ignored ? 'grayscale(1) brightness(.6)' : undefined,
 						padding: 30, boxSizing: 'border-box'}}>
 						{[0, 1, 2, 3, 4, 5].map((k) => <div key={k} style={{height: 18, borderRadius: 9, background: '#c4c4c4', marginBottom: 26, width: `${90 - (k % 3) * 18}%`}} />)}
 						<div style={{position: 'absolute', bottom: 24, right: 26, fontFamily: SANS, fontWeight: 800, fontSize: 28, color: '#999'}}>copy ({i + 1})</div>
@@ -376,6 +402,7 @@ const Three = () => {
 				return <div key={k} style={{position: 'absolute', left: 120 + i * 430, top: 1250, transform: `scale(${p})`, padding: '22px 40px', background: '#262626', color: '#fff',
 					fontFamily: HEAVY, fontSize: 64, borderRadius: 22, boxShadow: '0 12px 0 #000, 0 24px 30px rgba(0,0,0,.5)'}}>{k}</div>;
 			})}
+			<Cut src="trash" at={B.ignore - 0.45} x={720} y={1340} w={300} from="b" rot={-4} />
 			<Abs x={330} y={1020}><Stamp at={B.ignore} text="Ignored" color="#ff2a2a" rot={-14} size={120} style={{background: 'rgba(255,255,255,.85)'}} /></Abs>
 		</Scene>
 	);
@@ -422,6 +449,7 @@ const Cta = () => {
 			{t > B.warna && (
 				<Abs x={0} y={1378} w={1080}><KLine size={80} colors={['white', 'red', 'white', 'white']} items={[['warna', B.warna], ['miss', 68.42], ['ho', 68.68], ['jayega', 68.86]]} /></Abs>
 			)}
+			<Cut src="man" at={B.warna - 0.05} x={660} y={1500} w={430} from="b" rot={-6} outline={0} />
 			{t > 69.6 && (
 				<div style={{position: 'absolute', inset: 0, background: `rgba(0,0,0,${0.85 * ease(t, 69.6, 0.4)})`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
 					<div style={{width: 960, textAlign: 'center'}}><Word at={69.75} text="SEO badal gaya hai" size={92} color="yellow" /></div>
