@@ -1,0 +1,5 @@
+node_modules/
+out/*
+!out/SEO_Ep01_Rank1_Phir_Bhi_Zero_Click.mp4
+scripts/voice16k.raw
+audio/voice_proc.wav
