@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: "Inter"; src: local("Inter Display Bold"), local("InterDisplay-Bold"); font-weight: 800; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1600px; height: 900px; }
+  body {
+    font-family: "Inter Display", "Inter", sans-serif;
+    background: radial-gradient(1200px 700px at 85% 50%, #23406b 0%, #132a4a 45%, #0b1b33 100%);
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  /* soft decorative pulse line - a nod to circulation, nothing explicit */
+  .pulse { position: absolute; left: 0; bottom: 70px; width: 1600px; height: 160px; opacity: .16; }
+  .glow { position: absolute; right: 120px; top: 120px; width: 620px; height: 620px; border-radius: 50%;
+          background: radial-gradient(circle, rgba(201,31,46,.35) 0%, rgba(201,31,46,0) 65%); }
+  .left { position: absolute; left: 96px; top: 0; bottom: 0; width: 860px; display: flex; flex-direction: column; justify-content: center; }
+  .tag { display: inline-flex; align-items: center; gap: 12px; align-self: flex-start;
+         font-size: 22px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+         color: #ffd7da; background: rgba(201,31,46,.22); border: 1px solid rgba(255,140,150,.45);
+         padding: 12px 22px; border-radius: 999px; margin-bottom: 38px; }
+  .tag i { width: 10px; height: 10px; border-radius: 50%; background: #ff5363; display: block; }
+  h1 { font-size: 96px; line-height: 1.02; font-weight: 800; letter-spacing: -.02em; margin-bottom: 30px; }
+  h1 span { color: #ff5d6c; }
+  h2 { font-size: 40px; line-height: 1.25; font-weight: 500; color: #d6e2f3; margin-bottom: 44px; }
+  .chips { display: flex; gap: 16px; flex-wrap: wrap; }
+  .chip { display: flex; align-items: center; gap: 12px; font-size: 25px; font-weight: 600; color: #eaf1fb;
+          background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18);
+          padding: 14px 22px; border-radius: 14px; }
+  .chip svg { width: 26px; height: 26px; flex: none; }
+  .right { position: absolute; right: 110px; top: 50%; transform: translateY(-50%) rotate(-3deg); }
+  .card { width: 560px; background: #fff; border-radius: 28px; padding: 22px;
+          box-shadow: 0 40px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.4); }
+  .card img { width: 100%; height: 330px; object-fit: cover; object-position: 50% 52%; display: block; border-radius: 14px; }
+  .note { position: absolute; right: 110px; bottom: 44px; font-size: 19px; color: rgba(214,226,243,.75); }
+  .brand { position: absolute; left: 96px; bottom: 44px; font-size: 21px; font-weight: 600; color: rgba(214,226,243,.8); letter-spacing: .02em; }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <svg class="pulse" viewBox="0 0 1600 160" preserveAspectRatio="none">
+    <polyline fill="none" stroke="#ff6b78" stroke-width="5" stroke-linejoin="round"
+      points="0,90 720,90 760,90 790,30 830,150 870,10 905,120 935,90 1600,90"/>
+  </svg>
+
+  <div class="left">
+    <div class="tag"><i></i>Men's Health Guide</div>
+    <h1>Why Do I Go Soft<br><span>During Sex?</span></h1>
+    <h2>Causes, Fixes and When to See a GP</h2>
+    <div class="chips">
+      <div class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ff7a86" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        Common causes
+      </div>
+      <div class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ff7a86" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        Practical fixes
+      </div>
+      <div class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ff7a86" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        When to see a GP
+      </div>
+    </div>
+  </div>
+
+  <div class="right"><div class="card"><img src="vigrx-plus-box.jpg" alt=""></div></div>
+  <div class="note">Food supplement · not a medicine</div>
+  <div class="brand">vigrxplus.uk.com</div>
+</body>
+</html>
