@@ -1,335 +1,327 @@
 import React from 'react';
-import {AbsoluteFill, Easing, Img, random, staticFile} from 'remotion';
-import {B, C, clamp01, Dust, ease, Eye, Label, Leak, lerp, Line, Nebula, Photo, Ring, soft, Thought, TL, useT, W} from './lib';
+import {AbsoluteFill, Easing, random} from 'remotion';
+import {antic, B, Big, Burn, C, clamp01, Clip, ease, Hand, lerp, LowerThird, Mark, Print, rgbSplit, scribble, spr, useT} from './lib';
 
-/** Soft dissolve between scenes: fade + slight scale + blur, no hard whips (calm format). */
-const Scene: React.FC<{id: string; children: React.ReactNode}> = ({id, children}) => {
+const In: React.FC<{s: number; e: number; children: React.ReactNode}> = ({s, e, children}) => {
 	const t = useT();
-	const sc = TL.scenes.find((s) => s.id === id)!;
-	const D = 0.45;
-	if (t < sc.s - D || t > sc.e + D) return null;
-	const enter = ease(t, sc.s - D, D * 2, Easing.inOut(Easing.cubic));
-	const exit = ease(t, sc.e - D * 0.5, D, Easing.in(Easing.cubic));
-	return (
-		<AbsoluteFill style={{opacity: enter * (1 - exit), transform: `scale(${lerp(1.06, 1, enter) * lerp(1, 0.97, exit)})`,
-			filter: enter < 0.99 || exit > 0.01 ? `blur(${(1 - enter) * 14 + exit * 10}px)` : undefined}}>
-			{children}
-		</AbsoluteFill>
-	);
+	return t >= s && t < e ? <>{children}</> : null;
 };
-
-const Abs: React.FC<{x?: number; y: number; w?: number; style?: React.CSSProperties; children: React.ReactNode}> = ({x = 0, y, w = 1080, style, children}) => (
+const Abs: React.FC<{y: number; x?: number; w?: number; style?: React.CSSProperties; children: React.ReactNode}> = ({y, x = 0, w = 1080, style, children}) => (
 	<div style={{position: 'absolute', left: x, top: y, width: w, ...style}}>{children}</div>
 );
 
-const THOUGHTS = ['deadline', 'EMI', 'log kya kahenge?', 'kal ki meeting', 'notifications', 'kya main kaafi hoon?', 'past', 'future',
-	'what if...', 'comparison', 'career', 'reels', 'exam', 'phone', 'galti', 'kal kya hoga?'];
+/** Punch-in zoom on a cut (camera "push" accent). */
+const Punch: React.FC<{at: number; amt?: number; children: React.ReactNode}> = ({at, amt = 0.08, children}) => {
+	const t = useT();
+	const k = t < at ? 0 : Math.exp(-(t - at) * 7);
+	return <AbsoluteFill style={{transform: `scale(${1 + amt * k})`}}>{children}</AbsoluteFill>;
+};
 
-/* 1. HOOK: overthinking chatter freezes, then the witness-eye opens */
+const NOISE = ['EMI', 'log kya kahenge?', 'deadline', 'kal ka kya?', 'galti ho gayi', 'phone check karo', 'exam', 'career', 'kya main kaafi hoon?', 'meeting', 'past', 'future'];
+
+/* ---------- 1. HOOK ---------- */
 const Hook = () => {
 	const t = useT();
-	const freeze = Math.min(t, B.abSocho + 0.15);
-	const fade = 1 - ease(t, 4.9, 0.6);
+	const montage = ['v/crowd.mp4', 'v/timer.mp4', 'v/rubeyes.mp4', 'v/rainnight.mp4'];
+	const cutLen = (B.abSocho - B.kitne) / montage.length;
+	const frozen = t >= B.abSocho && t < 4.95;
+	const shake = t > B.kitne && t < B.abSocho ? Math.sin(t * 61) * 6 : 0;
 	return (
-		<Scene id="hook">
-			<Photo src="broll/overthink.jpg" s={0} e={6.5} from={1.0} to={1.18} tone="indigo" dim={0.35}
-				style={{filter: t > B.abSocho ? `grayscale(${ease(t, B.abSocho, 0.5)})` : undefined}} />
-			{THOUGHTS.map((txt, i) => {
-				const at = B.kitne + i * 0.13;
-				if (t < at) return null;
-				const ang = random(`a${i}`) * Math.PI * 2;
-				const r0 = 180 + random(`r${i}`) * 300;
-				const k = freeze - at;
-				const x = 540 + Math.cos(ang + k * 0.5) * (r0 + k * 30);
-				const y = 900 + Math.sin(ang + k * 0.5) * (r0 * 1.3 + k * 30) + Math.sin(k * 6 + i) * (t < B.abSocho ? 8 : 0);
-				return <Thought key={i} text={txt} x={x} y={y} o={ease(t, at, 0.25) * fade * (t > B.abSocho ? 0.6 : 1)} scale={0.8 + random(`s${i}`) * 0.4} />;
-			})}
-			<Abs y={230}>
-				<Line size={96} items={[['Ek', 0.0], ['second', 0.28], ['ruko...', 0.54, true]]} style={{opacity: 1 - ease(t, 4.7, 0.4)}} />
-			</Abs>
-			{t > 4.7 && (
-				<>
-					<Abs y={250}>
-						<Line size={104} items={[['Inhe', 4.98], ['dekh', B.dekh, true], ['kaun', B.kaun], ['raha', 5.88], ['hai?', 6.08]]} />
-					</Abs>
-					<Eye at={B.dekh} cx={540} cy={930} w={560} />
-					<Ring cx={540} cy={930} at={B.dekh + 0.6} max={520} />
-				</>
-			)}
-		</Scene>
+		<>
+			<In s={0} e={B.kitne}>
+				<Clip src="v/worried.mp4" at={0} until={B.kitne} grade="cool" push={[1.02, 1.12]} />
+				<Abs y={250}><Big size={170} items={[['Ek', 0.02], ['second', 0.28], ['ruko...', 0.54, 'serif']]} /></Abs>
+			</In>
+			<In s={B.kitne} e={4.95}>
+				<AbsoluteFill style={{transform: `translate(${shake}px, ${shake * 0.6}px)`, filter: frozen ? `grayscale(${ease(t, B.abSocho, 0.3)}) contrast(1.2)` : rgbSplit(6)}}>
+					{montage.map((m, i) => {
+						const s = B.kitne + i * cutLen;
+						const e = i === montage.length - 1 ? 4.95 : s + cutLen;
+						// freeze: hold the montage on its last frame by stopping the clip's clock
+						return frozen ? (i === montage.length - 1 ? <Clip key={m} src={m} at={s} until={e} rate={0.02} grade="night" push={[1.1, 1.1]} /> : null)
+							: t >= s && t < e ? <Punch key={m} at={s} amt={0.1}><Clip src={m} at={s} until={e} grade="night" push={[1.06, 1.12]} /></Punch> : null;
+					})}
+				</AbsoluteFill>
+				{NOISE.map((w, i) => {
+					const at = B.kitne + i * 0.11;
+					if (t < at) return null;
+					const x = 120 + random(`nx${i}`) * 800;
+					const y = 330 + random(`ny${i}`) * 1050;
+					return <Hand key={w} at={at} dur={0.18} size={44 + random(`ns${i}`) * 30} rot={(random(`nr${i}`) - 0.5) * 24} color={i % 3 === 0 ? C.coral : C.ivory}
+						style={{left: x - 150, top: y, opacity: frozen ? 0.35 : 1}}>{w}</Hand>;
+				})}
+				<Abs y={250}><Big size={150} items={[['Kitne', B.kitne], ['thoughts?', B.thoughts, 'coral']]} /></Abs>
+				{frozen && <Abs y={820}><Big size={190} items={[['Ab', B.abSocho], ['socho...', 4.12, 'serif']]} /></Abs>}
+			</In>
+			<In s={4.95} e={6.62}>
+				<Clip src="v/eye.mp4" at={4.95} until={6.6} grade="warm" push={[1.0, 1.25]} dim={0.15} />
+				<Mark at={B.dekh + 0.1} dur={0.5} width={10} d={scribble('eye', 520, 980, 330, 230)} />
+				<Abs y={240}><Big size={130} items={[['Inhe', 4.98], ['dekh', B.dekh], ['kaun', B.kaun, 'gold'], ['raha', 5.88], ['hai?', 6.08]]} /></Abs>
+			</In>
+		</>
 	);
 };
 
-/* 2. INTRO: freedom fighter -> yogi; the 1908 photograph */
+/* ---------- 2. INTRO ---------- */
 const Intro = () => {
 	const t = useT();
-	const ph = soft(t, 6.6);
 	return (
-		<Scene id="intro">
-			<Nebula />
-			<Dust n={50} />
-			<Abs y={170}>
-				<Label at={B.freedom} out={B.yogi - 0.1} style={{fontSize: 44}}>Freedom Fighter</Label>
+		<In s={6.5} e={11.62}>
+			<Clip src="v/flag.mp4" at={6.5} until={8.0} grade="warm" push={[1.05, 1.15]} dim={0.4} />
+			{t > 7.5 && <Clip src="v/candle.mp4" at={7.5} until={11.6} grade="gold" push={[1.0, 1.1]} dim={0.15} style={{opacity: ease(t, 7.5, 0.5)}} />}
+			<Abs y={220} style={{opacity: 1 - ease(t, B.yogi - 0.1, 0.25)}}><Big size={140} items={[['Freedom', B.freedom], ['fighter', 7.02]]} /></Abs>
+			<Abs y={220} style={{opacity: ease(t, B.yogi - 0.05, 0.2)}}>
+				<Big size={110} items={[['Freedom fighter', B.yogi - 0.05]]} />
+				<Big size={150} items={[['se', B.yogi, 'serif'], ['YOGI', B.yogi + 0.1, 'gold']]} />
 			</Abs>
-			<Abs y={170}>
-				<Label at={B.yogi} style={{fontSize: 44}}>Freedom Fighter  →  Yogi</Label>
-			</Abs>
-			<div style={{position: 'absolute', left: 290, top: 300, width: 500, height: 750, transform: `translateY(${(1 - ph) * 60}px)`, opacity: ph}}>
-				<div style={{position: 'absolute', inset: -18, border: `2px solid ${C.gold}`, borderRadius: '250px 250px 14px 14px', opacity: 0.8}} />
-				<div style={{position: 'absolute', inset: 0, borderRadius: '240px 240px 8px 8px', overflow: 'hidden', boxShadow: '0 30px 60px rgba(0,0,0,.6)'}}>
-					<Img src={staticFile('photo/front.jpg')} style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 20%',
-						filter: 'grayscale(1) sepia(.5) contrast(1.1) brightness(.95)', transform: `scale(${lerp(1.1, 1.0, ease(t, 6.6, 5, Easing.linear))})`}} />
-					<AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(233,180,76,.12), rgba(13,17,48,.45))', mixBlendMode: 'multiply'}} />
-				</div>
-			</div>
-			<Abs y={1110}>
-				<Line size={120} items={[['Sri', B.sri], ['Aurobindo', 8.56, true]]} />
-				<Label at={9.0} style={{marginTop: 18, fontSize: 34}}>1872 – 1950</Label>
-			</Abs>
-			{t > B.chaabi - 0.1 && (
-				<svg width={140} height={70} viewBox="0 0 140 70" style={{position: 'absolute', left: 470, top: 1360, overflow: 'visible', opacity: ease(t, B.chaabi, 0.4)}}>
-					<circle cx={24} cy={35} r={20} fill="none" stroke={C.gold} strokeWidth={5} pathLength={1} strokeDasharray="1 1" strokeDashoffset={1 - ease(t, B.chaabi, 0.6)} />
-					<path d="M44 35 H130 M110 35 V55 M124 35 V50" stroke={C.gold} strokeWidth={5} fill="none" pathLength={1} strokeDasharray="1 1" strokeDashoffset={1 - ease(t, B.chaabi + 0.2, 0.6)} />
-				</svg>
-			)}
-			<Leak at={B.yogi} x={50} y={30} />
-		</Scene>
+			<Mark at={B.yogi + 0.15} dur={0.3} width={10} d="M260 300 L820 280" style={{opacity: 0.9}} />
+			<Print src="photo/front.jpg" at={B.yogi + 0.25} x={300} y={600} w={480} h={560} rot={-4} caption="Alipore, 1908" />
+			<LowerThird at={B.sri} out={11.3} name="SRI AUROBINDO" sub="1872 – 1950  ·  Philosopher · Yogi" y={1330} />
+			<Hand at={B.chaabi} size={50} rot={7} style={{left: 590, top: 540}}>yahi sawaal = chaabi</Hand>
+			<Burn at={B.yogi + 0.1} x={60} />
+		</In>
 	);
 };
 
-const STEPS = [
-	{k: 'Matter', sub: 'padarth  ·  shareer', at: () => B.matter, y: 1330},
-	{k: 'Life', sub: 'praan  ·  energy', at: () => B.life, y: 1090},
-	{k: 'Mind', sub: 'vichaar  ·  thoughts', at: () => B.mind, y: 850},
-	{k: 'Supermind', sub: 'satya-chetna  ·  direct knowing', at: () => B.supermind, y: 470},
+const STEPS: [string, string, number, string][] = [
+	['MATTER', 'padarth · shareer', 0, 'v/mountain.mp4'],
+	['LIFE', 'praan · energy', 1, 'v/forest.mp4'],
+	['MIND', 'vichaar · thoughts', 2, 'v/rainnight.mp4'],
 ];
 
-/** The ladder of consciousness: steps light up as they are named; an orb climbs. */
-const Ladder: React.FC<{shift?: number; superOn?: boolean; lowFade?: number}> = ({shift = 0, superOn, lowFade = 0}) => {
-	const t = useT();
-	const orbStep = t < B.life ? 0 : t < B.mind ? 1 : 2;
-	const orbY = STEPS[orbStep].y - 34;
-	const stuck = t > B.atke && t < B.par;
-	const jitter = stuck ? Math.sin(t * 40) * 6 : 0;
+/** Mini ladder infographic on the left edge: rungs fill as each level is named. */
+const MiniLadder: React.FC<{active: number; superLit?: number; show: number}> = ({active, superLit = 0, show}) => {
+	const labels = ['MATTER', 'LIFE', 'MIND', 'SUPERMIND'];
 	return (
-		<div style={{position: 'absolute', inset: 0, transform: `translateY(${shift}px)`}}>
-			<div style={{position: 'absolute', left: 538, top: STEPS[3].y, width: 3, height: STEPS[0].y - STEPS[3].y, background: `linear-gradient(${C.gold}00, ${C.gold}88)`}} />
-			{STEPS.map((s, i) => {
-				const isSuper = i === 3;
-				const lit = isSuper ? (superOn ? ease(t, B.supermind, 0.6) : 0) : ease(t, s.at(), 0.5);
-				const show = (isSuper ? ease(t, 12.9, 0.8) : ease(t, 12.9 + i * 0.15, 0.6)) * (i < 2 ? 1 - lowFade : i === 2 ? 1 - lowFade * 0.6 : 1);
+		<div style={{position: 'absolute', left: 60, top: 520, width: 230, height: 760, opacity: show}}>
+			<div style={{position: 'absolute', left: 18, top: 0, width: 4, height: 760, background: 'rgba(246,239,227,.5)'}} />
+			<div style={{position: 'absolute', left: 120, top: 0, width: 4, height: 760, background: 'rgba(246,239,227,.5)'}} />
+			{labels.map((l, i) => {
+				const y = 700 - i * 220;
+				const on = i === 3 ? superLit : i <= active ? 1 : 0;
+				const cur = i === active && i < 3;
 				return (
-					<div key={s.k} style={{position: 'absolute', left: 190, top: s.y, width: 700, opacity: show}}>
-						<div style={{height: 3, background: lit > 0 ? C.gold : 'rgba(244,235,221,.25)', boxShadow: lit > 0 ? `0 0 ${24 * lit}px ${C.gold}` : undefined,
-							borderTop: isSuper && !superOn ? '3px dashed rgba(244,235,221,.35)' : undefined, transform: `scaleX(${lerp(0.6, 1, show)})`}} />
-						<div style={{position: 'absolute', left: 0, top: -96, fontFamily: 'Caps', fontWeight: 600, fontSize: isSuper ? 66 : 60, letterSpacing: '0.12em',
-							color: lit > 0 ? (isSuper ? C.goldSoft : C.ivory) : 'rgba(244,235,221,.35)', textShadow: lit > 0 ? `0 0 ${30 * lit}px rgba(233,180,76,.6)` : undefined}}>
-							{isSuper && !superOn ? 'Supermind ?' : s.k}
-						</div>
-						<div style={{position: 'absolute', right: 0, top: 14, fontFamily: 'Serif', fontStyle: 'italic', fontWeight: 500, fontSize: 36, color: C.ivory, opacity: 0.6 * Math.max(lit, isSuper ? 0 : 0.3)}}>{s.sub}</div>
-						{lit > 0 && !isSuper && <Ring cx={350} cy={0} at={s.at()} max={380} width={2} />}
+					<div key={l} style={{position: 'absolute', left: 18, top: y, width: 106, height: 6, background: on ? C.gold : 'rgba(246,239,227,.35)',
+						boxShadow: on ? `0 0 18px ${C.gold}` : undefined}}>
+						<div style={{position: 'absolute', left: 124, top: -22, fontFamily: 'Display', fontSize: i === 3 ? 34 : 38, color: on ? (cur ? C.marker : C.ivory) : 'rgba(246,239,227,.45)',
+							letterSpacing: 2, whiteSpace: 'nowrap'}}>{l}</div>
 					</div>
 				);
-			})}
-			{t > B.matter - 0.2 && !superOn && (
-				<div style={{position: 'absolute', left: 540 - 34 + jitter, top: orbY - 40 + (t < B.matter ? 40 : 0), width: 68, height: 68, borderRadius: '50%',
-					background: `radial-gradient(circle at 40% 35%, #fff, ${stuck ? C.coral : C.goldSoft} 45%, ${stuck ? C.coral : C.gold} 70%)`,
-					boxShadow: `0 0 50px ${stuck ? C.coral : C.gold}`, transition: 'none', opacity: ease(t, B.matter - 0.2, 0.3)}} />
-			)}
-			{t > B.overthink - 0.1 && !superOn && ['kal?', 'kyun?', 'agar...', 'log', 'galti'].map((w, i) => {
-				const a = t * 2.4 + i * 1.25;
-				return <Thought key={w} text={w} x={540 + Math.cos(a) * 190} y={orbY + Math.sin(a) * 90} o={ease(t, B.overthink + i * 0.1, 0.3) * (1 - ease(t, B.par - 0.3, 0.3))} scale={0.75} />;
 			})}
 		</div>
 	);
 };
 
-/* 3. LADDER: Matter -> Life -> Mind (stuck, overthinking) */
-const LadderScene = () => (
-	<Scene id="ladder">
-		<Photo src="broll/stairs_pondy.jpg" s={11.6} e={21.3} from={1.2} to={1.05} tone="indigo" dim={0.62} />
-		<Dust n={40} opacity={0.6} />
-		<Abs y={140}>
-			<Line size={84} items={[['Consciousness', B.consciousness, true]]} />
-			<Line size={84} items={[['ek', 13.48], ['seedhi', B.seedhi, true], ['hai', 14.18]]} />
-		</Abs>
-		<Ladder />
-	</Scene>
-);
+/* ---------- 3. LADDER ---------- */
+const Ladder = () => {
+	const t = useT();
+	const active = t < B.life ? 0 : t < B.mind ? 1 : 2;
+	const lad = ease(t, 12.6, 0.6);
+	const draw = ease(t, 12.9, 1.2, Easing.inOut(Easing.cubic));
+	return (
+		<In s={11.6} e={21.44}>
+			{t < B.matter - 0.05 && (
+				<>
+					<Clip src="v/stars.mp4" at={11.6} until={B.matter} grade="cool" push={[1.1, 1.2]} dim={0.45} />
+					<Abs y={300}>
+						<Big size={120} items={[['Consciousness', B.consciousness, 'gold']]} />
+						<Big size={160} items={[['ek', 13.48], ['seedhi', B.seedhi], ['hai', 14.18]]} />
+					</Abs>
+					<svg width={1080} height={1920} style={{position: 'absolute', left: 0, top: 0}}>
+						{[0, 1].map((k) => <line key={k} x1={400 + k * 280} y1={1500} x2={400 + k * 280} y2={1500 - 620 * draw} stroke={C.ivory} strokeWidth={6} />)}
+						{[0, 1, 2, 3].map((k) => <line key={k} x1={400} x2={400 + 280 * ease(t, 13.2 + k * 0.18, 0.3)} y1={1440 - k * 160} y2={1440 - k * 160} stroke={C.gold} strokeWidth={8} />)}
+					</svg>
+				</>
+			)}
+			{t >= B.matter - 0.05 && STEPS.map(([name, sub, i, src]) => {
+				const s = [B.matter, B.life, B.mind][i] - 0.05;
+				const e = i < 2 ? [B.life, B.mind][i] - 0.05 : 21.44;
+				if (t < s || t >= e) return null;
+				return (
+					<Punch key={name} at={s} amt={0.06}>
+						<Clip src={src} at={s} until={e} grade={i === 2 ? 'night' : 'warm'} push={[1.04, 1.12]} dim={i === 2 ? 0.45 : 0.3}
+							style={i === 2 ? {filter: 'blur(6px)'} : undefined} />
+						{i === 2 && (
+							<AbsoluteFill style={{transform: `translateY(${lerp(80, 0, ease(t, s, 0.6))}px)`}}>
+								<Clip src="v/pensive.webm" transparent at={s} until={e} grade="warm" push={[1.0, 1.04]} style={{top: 420, left: 140, width: 900, height: 1500}} />
+							</AbsoluteFill>
+						)}
+						<Abs y={230} x={330} w={700}>
+							<Big size={180} align="left" items={[[name, s + 0.05, i === 2 ? 'coral' : undefined]]} />
+						</Abs>
+						<Hand at={s + 0.3} size={52} color={C.ivory} rot={-3} style={{left: 340, top: 450}}>({sub})</Hand>
+					</Punch>
+				);
+			})}
+			<MiniLadder active={active} show={t >= B.matter - 0.05 ? lad : 0} />
+			{t > B.atke && (
+				<>
+					<Hand at={B.atke} size={66} rot={-8} style={{left: 560, top: 640}}>yahin atke hain!</Hand>
+					<Mark at={B.atke + 0.3} dur={0.35} d="M760 720 C 760 790, 720 830, 660 850 M660 850 L700 815 M660 850 L705 868" width={8} />
+				</>
+			)}
+			{t > B.overthink - 0.1 && ['kal?', 'kyun?', 'agar...', 'log', 'galti', 'EMI'].map((w, i) => {
+				const a = t * 2.2 + i * 1.05;
+				return <Hand key={w} at={B.overthink + i * 0.08} dur={0.2} size={48} color={i % 2 ? C.coral : C.ivory} rot={Math.sin(a) * 10}
+					style={{left: 600 + Math.cos(a) * 260 - 60, top: 930 + Math.sin(a) * 140}}>{w}</Hand>;
+			})}
+			<Burn at={B.matter - 0.05} x={30} dur={0.5} />
+		</In>
+	);
+};
 
-/* 4. SUPERMIND: the camera rises; the top step ignites; man is a transitional being */
+/* ---------- 4. SUPERMIND ---------- */
 const Super = () => {
 	const t = useT();
-	const rise = ease(t, B.upar - 0.2, 0.9, Easing.inOut(Easing.cubic));
-	const burst = ease(t, B.supermind, 1.2);
-	const part2 = t > B.insaan - 0.3;
-	const p2 = ease(t, B.insaan - 0.3, 0.6);
+	const burst = ease(t, B.supermind, 0.9);
 	return (
-		<Scene id="super">
-			<Photo src="broll/milkyway.jpg" s={21.3} e={31.6} from={1.15} to={1.0} tone="indigo" dim={0.45} />
-			<div style={{opacity: 1 - p2}}>
-				<Ladder shift={lerp(0, 520, rise)} superOn={t > B.supermind} lowFade={ease(t, B.supermind + 0.4, 0.8)} />
-				{t > B.supermind && (
-					<div style={{position: 'absolute', left: 540, top: 470 + lerp(0, 520, rise), width: 0, height: 0}}>
-						{Array.from({length: 18}, (_, i) => (
-							<div key={i} style={{position: 'absolute', left: 0, top: 0, width: 900 * burst, height: 4, transformOrigin: '0 50%',
-								transform: `rotate(${i * 20 + t * 6}deg)`, background: `linear-gradient(90deg, ${C.goldSoft}cc, rgba(233,180,76,0))`, opacity: 0.55}} />
-						))}
-					</div>
-				)}
-				<Abs y={170}>
-					<Line size={78} items={[['Par', B.par], ['Mind', 21.74, true], ['aakhri', B.aakhri], ['step', 22.6], ['nahi', 22.78]]} style={{opacity: 1 - ease(t, B.supermind + 0.6, 0.4)}} />
+		<In s={21.44} e={31.7}>
+			<In s={21.44} e={B.supermind}>
+				<Clip src="v/nebula.mp4" at={21.44} until={B.supermind} grade="cool" push={[1.0, 1.5]} dim={0.4} />
+				<Abs y={360}><Big size={130} items={[['Par', B.par], ['MIND', 21.74, 'coral'], ['aakhri', B.aakhri], ['step', 22.6], ['nahi', 22.78]]} /></Abs>
+				<Mark at={22.85} dur={0.3} d="M180 650 L900 610" width={12} color={C.coral} />
+				<Hand at={B.upar} size={80} rot={-4} style={{left: 360, top: 980}}>upar dekho ↑</Hand>
+			</In>
+			<In s={B.supermind} e={28.6}>
+				<Punch at={B.supermind} amt={0.12}>
+					<Clip src="v/sunclouds.mp4" at={B.supermind} until={28.6} grade="gold" push={[1.15, 1.0]} dim={0.15} />
+				</Punch>
+				<AbsoluteFill style={{background: `radial-gradient(circle at 50% 42%, rgba(255,240,200,${0.7 * (1 - burst)}) 0%, rgba(0,0,0,0) 60%)`, mixBlendMode: 'screen'}} />
+				<Abs y={360}><Big size={140} items={[['SUPERMIND', B.supermind, 'gold']]} /></Abs>
+				<Abs y={660}>
+					<Big size={96} items={[['chetna', 25.3], ['jo', 26.02], ['sochti', B.sochti], ['nahi...', 26.74]]} />
 				</Abs>
-				{t > B.sochti - 0.3 && (
-					<Abs y={150}>
-						<div style={{position: 'relative', display: 'flex', justifyContent: 'center'}}>
-							<Line size={80} items={[['chetna', 25.3], ['jo', 26.02], ['sochti', B.sochti], ['nahi...', 26.74]]} />
+				<Mark at={26.5} dur={0.3} d="M505 740 L845 732" width={10} color={C.coral} />
+				<Abs y={830}><Big size={150} items={[['seedha', 27.38, 'serif'], ['JAANTI', B.jaanti, 'gold'], ['hai', 28.28]]} /></Abs>
+			</In>
+			<In s={28.6} e={31.7}>
+				<Clip src="v/dusk.mp4" at={28.6} until={31.7} grade="warm" push={[1.05, 1.15]} dim={0.3} />
+				<Abs y={250}>
+					<Big size={140} items={[['Insaan', B.insaan], ['final', 29.28], ['nahi', 29.66, 'coral']]} />
+					<Big size={120} items={[['transitional', B.transitional, 'gold'], ['being', 30.92, 'serif']]} />
+				</Abs>
+				<div style={{position: 'absolute', left: 110, top: 1240, width: 860, opacity: ease(t, 29.0, 0.4)}}>
+					<div style={{height: 5, background: 'rgba(246,239,227,.4)'}} />
+					<div style={{height: 5, marginTop: -5, width: `${lerp(0, 67, ease(t, 29.0, 1.0))}%`, background: C.gold}} />
+					{['MATTER', 'LIFE', 'MIND', 'SUPERMIND'].map((s, i) => (
+						<div key={s} style={{position: 'absolute', left: `${i * 33.3}%`, top: -13, transform: 'translateX(-50%)', textAlign: 'center'}}>
+							<div style={{width: 30, height: 30, borderRadius: '50%', margin: '0 auto', background: i < 3 ? C.gold : C.ink, border: `4px solid ${C.gold}`}} />
+							<div style={{fontFamily: 'Display', fontSize: 34, color: C.ivory, marginTop: 12, letterSpacing: 2}}>{s}</div>
 						</div>
-						<div style={{position: 'absolute', left: 452, top: 46, width: 238 * ease(t, 26.5, 0.35), height: 5, background: C.gold, boxShadow: `0 0 14px ${C.gold}`}} />
-						<Line size={96} items={[['seedha', 27.38], ['JAANTI', B.jaanti, true], ['hai', 28.28]]} style={{marginTop: 10}} />
-					</Abs>
-				)}
-			</div>
-			{part2 && (
-				<AbsoluteFill style={{opacity: p2}}>
-					<Photo src="broll/cosmos_man.jpg" s={28.5} e={31.6} from={1.08} to={1.0} tone="indigo" dim={0.3} />
-					<Abs y={260}>
-						<Line size={100} items={[['Insaan', B.insaan], ['final', 29.28], ['nahi', 29.66]]} />
-						<Line size={110} items={[['transitional', B.transitional, true], ['being', 30.92, true]]} style={{marginTop: 14}} />
-					</Abs>
-					<div style={{position: 'absolute', left: 120, top: 1230, width: 840}}>
-						<div style={{height: 3, background: 'rgba(244,235,221,.35)'}} />
-						<div style={{height: 3, marginTop: -3, width: `${lerp(0, 66, ease(t, 29.0, 1.0))}%`, background: C.gold, boxShadow: `0 0 16px ${C.gold}`}} />
-						{['Matter', 'Life', 'Mind', 'Supermind'].map((s, i) => (
-							<div key={s} style={{position: 'absolute', left: `${i * 33.3}%`, top: -12, transform: 'translateX(-50%)', textAlign: 'center'}}>
-								<div style={{width: 26, height: 26, borderRadius: '50%', margin: '0 auto', background: i < 3 ? C.gold : 'transparent', border: `3px solid ${C.gold}`,
-									opacity: ease(t, 29.0 + i * 0.25, 0.3)}} />
-								<div style={{fontFamily: 'Caps', fontSize: 30, color: C.ivory, marginTop: 14, letterSpacing: '0.1em', opacity: ease(t, 29.0 + i * 0.25, 0.3)}}>{s}</div>
-							</div>
-						))}
-						<div style={{position: 'absolute', left: `${lerp(58, 72, ease(t, 30.3, 1.2, Easing.inOut(Easing.quad)))}%`, top: -110, transform: 'translateX(-50%)',
-							fontFamily: 'Sans', fontWeight: 800, fontSize: 30, color: C.indigo, background: C.goldSoft, padding: '8px 18px', borderRadius: 30,
-							opacity: ease(t, 29.7, 0.3), whiteSpace: 'nowrap'}}>aap yahan ho</div>
-					</div>
-				</AbsoluteFill>
-			)}
-			<Leak at={B.supermind} x={50} y={45} dur={1.4} />
-		</Scene>
+					))}
+				</div>
+				<Hand at={29.9} size={58} rot={-6} style={{left: 520, top: 1100}}>aap yahan ho</Hand>
+				<Mark at={30.3} dur={0.35} d="M640 1170 C 650 1200, 660 1210, 672 1222 M672 1222 L640 1210 M672 1222 L668 1188" width={7} />
+			</In>
+			<Burn at={B.supermind} x={50} dur={1.0} />
+		</In>
 	);
 };
 
-/* 5. STORY 1908: "sit, don't think, watch the mind" -> thoughts thrown out -> silent in 3 days */
+/* ---------- 5. STORY 1908 ---------- */
 const Story = () => {
 	const t = useT();
-	const calm = ease(t, B.shaant - 0.2, 0.8);
-	const tht = ['kal', 'darr', 'plan', 'yaadein', 'shor', 'chinta'];
+	const tally = [B.teen, 40.24, 40.44];
 	return (
-		<Scene id="story">
-			<Nebula />
-			<Dust n={40} opacity={0.6} />
-			<div style={{opacity: 1 - calm}}>
-				<div style={{position: 'absolute', left: 80, top: 210, width: 330, height: 490, borderRadius: 10, overflow: 'hidden', boxShadow: '0 24px 50px rgba(0,0,0,.6)',
-					border: `2px solid ${C.gold}88`, opacity: ease(t, 31.8, 0.6), transform: `rotate(-3deg) translateY(${(1 - ease(t, 31.8, 0.8)) * 40}px)`}}>
-					<Img src={staticFile('photo/profile.jpg')} style={{width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(1) sepia(.5) contrast(1.1)'}} />
+		<In s={31.7} e={42.25}>
+			<In s={31.7} e={B.baitho - 0.1}>
+				<Clip src="v/smoke.mp4" at={31.7} until={B.baitho} grade="mono" push={[1.0, 1.1]} dim={0.3} />
+				<Print src="photo/profile.jpg" at={31.9} x={80} y={420} w={430} h={540} rot={-5} caption="1908" />
+				<Abs y={470} x={540} w={500}>
+					<div style={{fontFamily: 'Display', fontSize: 210, color: C.gold, lineHeight: 1, transform: `scale(${0.9 + 0.1 * spr(t, B.y1908)})`, opacity: ease(t, B.y1908, 0.3)}}>
+						{t < B.y1908 + 0.7 ? String(Math.round(lerp(1872, 1908, ease(t, B.y1908, 0.7)))) : '1908'}
+					</div>
+				</Abs>
+				<Hand at={32.84} size={56} color={C.ivory} rot={-3} style={{left: 560, top: 730}}>ek yogi ne kaha...</Hand>
+			</In>
+			<In s={B.baitho - 0.1} e={B.shaant - 0.1}>
+				<Clip src="v/candle.mp4" at={B.baitho - 0.1} until={B.shaant} trim={2} grade="gold" push={[1.08, 1.2]} dim={0.25} />
+				<div style={{position: 'absolute', left: 0, width: 1080, top: 300}}>
+					<Big size={170} items={[['Baitho.', B.baitho]]} />
+					<Big size={170} items={[['Socho', B.soChoMat], ['mat.', 35.64, 'coral']]} />
+					<Big size={170} items={[['Bas', B.dekho - 0.6, 'serif'], ['dekho.', B.dekho - 0.35, 'gold']]} />
 				</div>
-				<div style={{position: 'absolute', left: 470, top: 300, fontFamily: 'Serif', fontWeight: 700, fontSize: 230, color: C.gold,
-					textShadow: '0 0 40px rgba(233,180,76,.45)', opacity: ease(t, B.y1908, 0.5)}}>
-					{t < B.y1908 + 0.8 ? String(Math.round(lerp(1872, 1908, ease(t, B.y1908, 0.8)))) : '1908'}
-				</div>
-				<Label at={32.84} style={{position: 'absolute', left: 470, top: 560, textAlign: 'left', fontSize: 32}}>ek yogi ki salaah</Label>
-				<div style={{position: 'absolute', left: 0, width: 1080, top: 820, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
-					fontFamily: 'Serif', fontWeight: 700, fontSize: 110, color: C.ivory, textShadow: '0 6px 30px rgba(0,0,0,.6)'}}>
-					<W at={B.baitho}>Baitho.</W>
-					<W at={B.soChoMat}>Socho mat.</W>
-					<W at={B.dekho - 0.6} gold>Bas dekho.</W>
-				</div>
-				{t > B.thoughts2 - 0.1 && tht.map((w, i) => {
-					const ang = (i / tht.length) * Math.PI * 2 + 0.4;
-					const fly = ease(t, B.phenk - 0.1 + i * 0.04, 0.5, Easing.in(Easing.cubic));
-					const r = 360 + fly * 900;
-					return <Thought key={w} text={w} x={540 + Math.cos(ang) * r} y={1010 + Math.sin(ang) * r * 0.9} o={ease(t, B.thoughts2 + i * 0.08, 0.25) * (1 - fly)} color={C.coral} />;
+				{t > B.thoughts2 - 0.1 && ['kal', 'darr', 'plan', 'yaadein', 'shor', 'chinta', 'EMI'].map((w, i) => {
+					const ang = (i / 7) * Math.PI * 2 + 0.3;
+					const fly = ease(t, B.phenk - 0.1 + i * 0.03, 0.55, Easing.in(Easing.cubic));
+					const r = 300 + fly * 1100;
+					return <Hand key={w} at={B.thoughts2 + i * 0.07} dur={0.2} size={56} color={i % 2 ? C.coral : C.ivory} rot={(random(`st${i}`) - 0.5) * 20}
+						style={{left: 470 + Math.cos(ang) * r, top: 1080 + Math.sin(ang) * r * 0.6, opacity: 1 - fly, filter: fly > 0.05 ? `blur(${fly * 12}px)` : undefined}}>{w}</Hand>;
 				})}
-				<div style={{position: 'absolute', left: 0, width: 1080, top: 1290, display: 'flex', justifyContent: 'center', gap: 40, opacity: ease(t, B.teen - 0.1, 0.3)}}>
-					{[0, 1, 2].map((i) => {
-						const on = ease(t, [B.teen, 40.24, 40.44][i], 0.25);
-						return <div key={i} style={{width: 120, height: 120, borderRadius: '50%', border: `3px solid ${C.gold}`, background: `rgba(233,180,76,${0.85 * on})`,
-							display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Caps', fontSize: 44, color: on > 0.5 ? C.indigo : C.gold}}>{i + 1}</div>;
-					})}
-				</div>
-			</div>
-			{t > B.shaant - 0.3 && (
-				<AbsoluteFill style={{opacity: calm}}>
-					<Photo src="broll/lake.jpg" s={B.shaant - 0.3} e={42.2} from={1.08} to={1.0} tone="teal" dim={0.25} />
-					{[0, 0.5, 1.0].map((d, i) => <Ring key={i} cx={540} cy={1180} at={B.shaant + d} dur={2.2} max={460} color={C.ivory} width={2} />)}
-					<Abs y={560}><Line size={150} items={[['Shaant.', B.shaant, true]]} /></Abs>
-				</AbsoluteFill>
-			)}
-		</Scene>
+				{t > B.teen - 0.1 && (
+					<div style={{position: 'absolute', left: 300, top: 1180, width: 480, opacity: ease(t, B.teen - 0.1, 0.2)}}>
+						<div style={{fontFamily: 'Display', fontSize: 64, color: C.ivory, letterSpacing: 3}}>TEEN DIN</div>
+						<svg width={480} height={140} viewBox="0 0 480 140">
+							{tally.map((a, i) => (
+								<path key={i} d={`M${40 + i * 70} 20 L${46 + i * 70} 125`} stroke={C.marker} strokeWidth={12} strokeLinecap="round" pathLength={1}
+									strokeDasharray="1 1" strokeDashoffset={1 - ease(t, a, 0.18)} style={{filter: 'url(#rough)'}} />
+							))}
+						</svg>
+					</div>
+				)}
+			</In>
+			<In s={B.shaant - 0.1} e={42.25}>
+				<Clip src="v/ripples.mp4" at={B.shaant - 0.1} until={42.3} trim={4} grade="night" push={[1.0, 1.06]} dim={0.3} />
+				<Abs y={520}><Big size={200} items={[['Shaant.', B.shaant, 'serif']]} /></Abs>
+			</In>
+		</In>
 	);
 };
 
-/* 6. PRACTICE: one minute of watching; the watcher is you */
+/* ---------- 6. PRACTICE ---------- */
 const Practice = () => {
 	const t = useT();
-	const toEye = ease(t, B.kyunki - 0.2, 0.7);
-	const ring = ease(t, B.minute, 4.2, Easing.inOut(Easing.quad));
+	const ring = ease(t, B.minute, 2.4, Easing.inOut(Easing.quad));
 	return (
-		<Scene id="practice">
-			<Photo src="broll/meditate.jpg" s={42.2} e={46} from={1.12} to={1.0} tone="warm" dim={0.3} />
-			<div style={{opacity: 1 - toEye}}>
-				<Abs y={230}>
-					<Line size={92} items={[['Aaj', B.aaj], ['bas', 42.54], ['ek', 42.94], ['minute', B.minute, true]]} />
-					<Line size={84} items={[['apne', 43.9], ['thoughts', 44.22], ['ko', 44.6], ['dekho', 44.7, true]]} style={{marginTop: 8}} />
+		<In s={42.25} e={48.5}>
+			<In s={42.25} e={B.kyunki - 0.05}>
+				<Clip src="v/meditate.mp4" at={42.25} until={B.kyunki} grade="gold" push={[1.04, 1.14]} dim={0.25} />
+				<Abs y={260}>
+					<Big size={130} items={[['Aaj', B.aaj], ['bas', 42.54], ['ek', 42.94], ['minute', B.minute, 'gold']]} />
+					<Big size={100} items={[['apne', 43.9, 'serif'], ['thoughts', 44.22], ['ko', 44.6, 'serif'], ['dekho', 44.7, 'gold']]} />
 				</Abs>
-				<svg width={420} height={420} viewBox="0 0 420 420" style={{position: 'absolute', left: 330, top: 760, transform: 'rotate(-90deg)', opacity: ease(t, B.minute, 0.4)}}>
-					<circle cx={210} cy={210} r={190} fill="none" stroke="rgba(244,235,221,.25)" strokeWidth={6} />
-					<circle cx={210} cy={210} r={190} fill="none" stroke={C.gold} strokeWidth={8} strokeLinecap="round" pathLength={1} strokeDasharray="1 1" strokeDashoffset={1 - ring}
-						style={{filter: `drop-shadow(0 0 10px ${C.gold})`}} />
+				<svg width={300} height={300} viewBox="0 0 300 300" style={{position: 'absolute', left: 390, top: 900, transform: 'rotate(-90deg)', opacity: ease(t, B.minute, 0.3)}}>
+					<circle cx={150} cy={150} r={130} fill="none" stroke="rgba(246,239,227,.3)" strokeWidth={6} />
+					<circle cx={150} cy={150} r={130} fill="none" stroke={C.gold} strokeWidth={8} strokeLinecap="round" pathLength={1} strokeDasharray="1 1" strokeDashoffset={1 - ring} />
 				</svg>
-				<div style={{position: 'absolute', left: 330, top: 760, width: 420, height: 420, display: 'flex', alignItems: 'center', justifyContent: 'center',
-					fontFamily: 'Caps', fontSize: 64, color: C.ivory, opacity: ease(t, B.minute, 0.4), transform: `scale(${1 + Math.sin(t * 1.6) * 0.03})`}}>1:00</div>
-			</div>
-			{t > B.kyunki - 0.3 && (
-				<AbsoluteFill style={{opacity: toEye}}>
-					<Photo src="broll/eye.jpg" s={B.kyunki - 0.3} e={48.5} from={1.0} to={1.35} tone="warm" dim={0.2} />
-					<AbsoluteFill style={{background: 'radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 30%, rgba(13,17,48,.75) 75%)'}} />
-					<Abs y={260}>
-						<Line size={86} items={[['Kyunki', B.kyunki], ['jo', 45.68], ['dekh', B.joDekh, true], ['raha', 46.28], ['hai...', 46.56]]} />
-					</Abs>
-					<Abs y={1150}>
-						<Line size={150} items={[['Wahi', B.wahi], ['aap', B.aap, true], ['ho.', 47.84]]} />
-					</Abs>
-				</AbsoluteFill>
-			)}
-			<Leak at={B.wahi} x={50} y={60} />
-		</Scene>
+				<div style={{position: 'absolute', left: 390, top: 900, width: 300, height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center',
+					fontFamily: 'Display', fontSize: 72, color: C.ivory, opacity: ease(t, B.minute, 0.3)}}>1:00</div>
+			</In>
+			<In s={B.kyunki - 0.05} e={B.wahi - 0.1}>
+				<Clip src="v/eye.mp4" at={B.kyunki - 0.05} until={B.wahi} trim={6} grade="warm" push={[1.1, 1.6]} dim={0.15} />
+				<Abs y={260}><Big size={120} items={[['Kyunki', B.kyunki], ['jo', 45.68], ['dekh', B.joDekh, 'gold'], ['raha', 46.28], ['hai...', 46.56, 'serif']]} /></Abs>
+			</In>
+			<In s={B.wahi - 0.1} e={48.5}>
+				<Punch at={B.wahi - 0.1} amt={0.1}><Clip src="v/sunrise.mp4" at={B.wahi - 0.1} until={48.5} grade="gold" push={[1.05, 1.15]} dim={0.15} /></Punch>
+				<Abs y={640}><Big size={210} items={[['Wahi', B.wahi], ['aap', B.aap, 'gold'], ['ho.', 47.84, 'serif']]} /></Abs>
+			</In>
+			<Burn at={B.wahi - 0.1} x={45} dur={0.8} />
+		</In>
 	);
 };
 
-/* 7. END: All life is Yoga */
+/* ---------- 7. END ---------- */
 const End = () => {
 	const t = useT();
-	const out = ease(t, 52.4, 1.0);
+	const out = ease(t, 52.5, 0.9);
 	return (
-		<Scene id="end">
-			<Photo src="broll/lotus.jpg" s={48.4} e={53.5} from={1.12} to={1.0} tone="indigo" dim={0.35} />
-			<Dust n={60} />
-			<Abs y={520}>
-				<div style={{fontFamily: 'Serif', fontStyle: 'italic', fontWeight: 500, fontSize: 150, color: C.ivory, textAlign: 'center', lineHeight: 1.0, textShadow: '0 6px 34px rgba(0,0,0,.6)'}}>
-					<W at={B.all}>All</W> <W at={48.88}>life</W><br /><W at={49.36}>is</W> <W at={B.yoga} gold>Yoga.</W>
-				</div>
-				<Label at={49.9} style={{marginTop: 40, fontSize: 38}}>— Sri Aurobindo</Label>
+		<In s={48.5} e={53.6}>
+			<Clip src="v/lotus.mp4" at={48.5} until={53.5} grade="warm" push={[1.05, 1.15]} dim={0.3} />
+			<Abs y={480}>
+				<Big size={170} items={[['All', B.all, 'serif'], ['life', 48.88, 'serif']]} />
+				<Big size={170} items={[['is', 49.36, 'serif'], ['Yoga.', B.yoga, 'gold']]} />
 			</Abs>
-			<div style={{position: 'absolute', left: 340, top: 1190, width: 400, height: 110, borderRadius: 60, border: `3px solid ${C.gold}`, display: 'flex',
-				alignItems: 'center', justifyContent: 'center', fontFamily: 'Caps', fontSize: 46, letterSpacing: '0.2em', color: C.gold,
-				opacity: ease(t, B.follow, 0.5), transform: `scale(${0.9 + 0.1 * soft(t, B.follow)})`, background: `rgba(13,17,48,${0.4 + 0.3 * Math.abs(Math.sin(t * 2))})`}}>Follow</div>
-			<AbsoluteFill style={{background: C.indigo, opacity: out}} />
-		</Scene>
+			<Hand at={50.0} size={56} color={C.ivory} rot={-3} style={{left: 560, top: 880}}>— Sri Aurobindo</Hand>
+			<div style={{position: 'absolute', left: 360, top: 1150, width: 360, height: 104, borderRadius: 52, background: C.gold, display: 'flex', alignItems: 'center',
+				justifyContent: 'center', fontFamily: 'Display', fontSize: 52, color: C.ink, letterSpacing: 3, transform: `scale(${spr(t, B.follow)})`,
+				boxShadow: '0 12px 30px rgba(0,0,0,.4)'}}>FOLLOW</div>
+			<AbsoluteFill style={{background: C.ink, opacity: out}} />
+		</In>
 	);
 };
 
 export const Scenes = () => (
 	<>
-		<Hook /><Intro /><LadderScene /><Super /><Story /><Practice /><End />
+		<Hook /><Intro /><Ladder /><Super /><Story /><Practice /><End />
 	</>
 );

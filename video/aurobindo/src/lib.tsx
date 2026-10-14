@@ -1,28 +1,25 @@
 import React from 'react';
-import {AbsoluteFill, continueRender, delayRender, Easing, Img, random, spring, staticFile, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, continueRender, delayRender, Easing, Img, OffthreadVideo, random, Sequence, spring, staticFile, useCurrentFrame} from 'remotion';
 import tl from './timeline.json';
 
-/* Palette chosen for the psychology of the topic:
-   indigo = introspection/depth, violet = spirituality, saffron-gold = illumination/hope (Indian spiritual cue),
-   ivory = clarity, teal = calm, coral = restlessness (used only for overthinking). */
+/* Editorial-documentary look. Colour: warm cinematic grade (teal shadows / amber highlights);
+   saffron-gold accent = illumination & hope, ivory text = clarity, coral only for overthinking. */
 export const C = {
-	indigo: '#0d1130',
-	indigo2: '#161b45',
-	violet: '#2b1f4f',
-	gold: '#e9b44c',
-	goldSoft: '#f5d48a',
-	ivory: '#f4ebdd',
-	teal: '#5fb3b3',
-	coral: '#e4572e',
+	ink: '#0b0d14',
+	gold: '#f2b84b',
+	ivory: '#f6efe3',
+	coral: '#ff5a3c',
+	marker: '#ffd84a',
+	teal: '#2a5d63',
 };
 
 const FONTS: [string, string, string, string][] = [
+	['Display', 'Anton-400-latin', '400', 'normal'],
 	['Serif', 'CormorantGaramond-700-normal', '700', 'normal'],
-	['Serif', 'CormorantGaramond-500-normal', '500', 'normal'],
 	['Serif', 'CormorantGaramond-500-italic', '500', 'italic'],
-	['Caps', 'Cinzel-600-normal', '600', 'normal'],
+	['Hand', 'Kalam-700-latin', '700', 'normal'],
+	['Hand', 'Kalam-700-devanagari', '700', 'normal'],
 	['Sans', 'Inter-900-latin', '400 900', 'normal'],
-	['Deva', 'Hind-700-devanagari', '700', 'normal'],
 ];
 if (typeof document !== 'undefined') {
 	const h = delayRender('fonts');
@@ -40,123 +37,158 @@ export const useT = () => useCurrentFrame() / FPS;
 export const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
 export const ease = (t: number, a: number, d: number, fn = Easing.out(Easing.cubic)) => fn(clamp01((t - a) / d));
 export const lerp = (a: number, b: number, p: number) => a + (b - a) * p;
-export const soft = (t: number, a: number) => (t < a ? 0 : spring({frame: (t - a) * FPS, fps: FPS, config: {damping: 20, stiffness: 90, mass: 0.8}}));
-
-/** Calm word reveal: fades up from a soft blur on its spoken beat. */
-export const W: React.FC<{at: number; children: React.ReactNode; gold?: boolean; style?: React.CSSProperties}> = ({at, children, gold, style}) => {
-	const t = useT();
-	const p = ease(t, at - 0.05, 0.55);
-	return (
-		<span style={{display: 'inline-block', opacity: p, transform: `translateY(${(1 - p) * 26}px)`, filter: `blur(${(1 - p) * 8}px)`,
-			color: gold ? C.gold : undefined, textShadow: gold ? `0 0 ${28 * p}px rgba(233,180,76,.55)` : undefined, ...style}}>
-			{children}
-		</span>
-	);
+export const spr = (t: number, a: number, stiff = 170, damp = 14) =>
+	t < a ? 0 : spring({frame: (t - a) * FPS, fps: FPS, config: {damping: damp, stiffness: stiff, mass: 0.7}});
+/** Anticipation: dip slightly below 0 before shooting past 1 and settling (classic animation principle). */
+export const antic = (t: number, a: number) => {
+	if (t < a - 0.12) return 0;
+	if (t < a) return -0.06 * Math.sin(((t - (a - 0.12)) / 0.12) * Math.PI);
+	return spr(t, a, 210, 12);
 };
 
-export const Line: React.FC<{items: [string, number, boolean?][]; size?: number; font?: string; style?: React.CSSProperties; color?: string}> = ({
-	items, size = 110, font = 'Serif', style, color = C.ivory,
-}) => (
-	<div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: `0 ${size * 0.26}px`, fontFamily: font, fontWeight: 700,
-		fontSize: size, lineHeight: 1.05, color, textShadow: '0 6px 30px rgba(0,0,0,.55)', ...style}}>
-		{items.map(([w, a, g], i) => <W key={i} at={a} gold={g}>{w}</W>)}
-	</div>
-);
-
-export const Label: React.FC<{at: number; children: React.ReactNode; style?: React.CSSProperties; color?: string; out?: number}> = ({at, children, style, color = C.gold, out}) => {
-	const t = useT();
-	const p = ease(t, at, 0.6) * (out !== undefined ? 1 - ease(t, out, 0.35) : 1);
-	return (
-		<div style={{fontFamily: 'Caps', fontWeight: 600, fontSize: 40, letterSpacing: `${0.32 + (1 - p) * 0.4}em`, color, opacity: p, textAlign: 'center',
-			textShadow: '0 2px 18px rgba(0,0,0,.6)', ...style}}>{children}</div>
-	);
+const GRADE: Record<string, string> = {
+	warm: 'contrast(1.08) saturate(.92) sepia(.12) brightness(.92)',
+	cool: 'contrast(1.1) saturate(.8) hue-rotate(-6deg) brightness(.85)',
+	night: 'contrast(1.12) saturate(.85) brightness(.75)',
+	mono: 'grayscale(1) contrast(1.15) brightness(.85)',
+	gold: 'contrast(1.05) saturate(1.05) sepia(.2) brightness(.95)',
 };
 
-/** Graded photo with slow Ken Burns; tone pulls it into the indigo/gold palette. */
-export const Photo: React.FC<{src: string; s: number; e: number; from?: number; to?: number; x?: number; y?: number; tone?: 'indigo' | 'warm' | 'sepia' | 'teal'; dim?: number; style?: React.CSSProperties}> = ({
-	src, s, e, from = 1.12, to = 1.0, x = 0, y = 0, tone = 'indigo', dim = 0.35, style,
+/** Full-bleed stock clip that starts playing at global time `at`, graded and slowly pushed in. */
+export const Clip: React.FC<{src: string; at: number; until: number; trim?: number; grade?: string; push?: [number, number]; dim?: number; rate?: number; style?: React.CSSProperties; freezeAt?: number; transparent?: boolean}> = ({
+	src, at, until, trim = 0, grade = 'warm', push = [1.04, 1.14], dim = 0.25, rate = 1, style, transparent,
 }) => {
 	const t = useT();
-	const k = clamp01((t - s) / Math.max(0.1, e - s));
-	const filt = {indigo: 'saturate(.65) contrast(1.08) brightness(.9)', warm: 'saturate(.8) contrast(1.05) sepia(.15)', sepia: 'grayscale(1) sepia(.55) contrast(1.15)', teal: 'saturate(.7) hue-rotate(-8deg) contrast(1.05)'}[tone];
-	const over = {indigo: 'linear-gradient(180deg, rgba(13,17,48,.35), rgba(43,31,79,.55))', warm: 'linear-gradient(180deg, rgba(233,180,76,.12), rgba(13,17,48,.5))', sepia: 'linear-gradient(180deg, rgba(233,180,76,.15), rgba(13,17,48,.45))', teal: 'linear-gradient(180deg, rgba(95,179,179,.15), rgba(13,17,48,.55))'}[tone];
+	if (t < at - 0.6 || t > until + 0.6) return null;
+	const k = clamp01((t - at) / Math.max(0.1, until - at));
 	return (
 		<AbsoluteFill style={{overflow: 'hidden', ...style}}>
-			<Img src={staticFile(src)} style={{width: '100%', height: '100%', objectFit: 'cover', filter: filt,
-				transform: `scale(${lerp(from, to, Easing.inOut(Easing.quad)(k))}) translate(${x * k}px, ${y * k}px)`}} />
-			<AbsoluteFill style={{background: over, mixBlendMode: 'multiply'}} />
-			<AbsoluteFill style={{background: `rgba(13,17,48,${dim})`}} />
+			<Sequence from={Math.round((at - 0.6) * FPS)} layout="none">
+				<OffthreadVideo src={staticFile(src)} muted transparent={transparent} startFrom={Math.max(0, Math.round((trim - 0.6) * FPS))} playbackRate={rate}
+					style={{width: '100%', height: '100%', objectFit: 'cover', filter: GRADE[grade], transform: `scale(${lerp(push[0], push[1], Easing.inOut(Easing.quad)(k))})`}} />
+			</Sequence>
+			{!transparent && <AbsoluteFill style={{background: `linear-gradient(180deg, rgba(11,13,20,${dim + 0.25}) 0%, rgba(11,13,20,${dim * 0.4}) 38%, rgba(11,13,20,${dim * 0.5}) 62%, rgba(11,13,20,${dim + 0.35}) 100%)`}} />}
 		</AbsoluteFill>
 	);
 };
 
-/** Slowly drifting nebula of indigo/violet light: the "inner space" backdrop. */
-export const Nebula: React.FC = () => {
-	const t = useT();
-	const blob = (cx: number, cy: number, r: number, col: string, sp: number, ph: number) =>
-		`radial-gradient(circle at ${cx + Math.sin(t * sp + ph) * 8}% ${cy + Math.cos(t * sp * 0.8 + ph) * 6}%, ${col} 0%, rgba(0,0,0,0) ${r}%)`;
-	return (
-		<AbsoluteFill style={{background: [blob(30, 30, 45, 'rgba(70,52,140,.55)', 0.12, 0), blob(75, 65, 50, 'rgba(36,60,140,.5)', 0.09, 2),
-			blob(50, 90, 40, 'rgba(233,180,76,.12)', 0.07, 4), `linear-gradient(180deg, ${C.indigo} 0%, ${C.indigo2} 55%, ${C.violet} 100%)`].join(',')}} />
-	);
-};
-
-/** Gold dust: deterministic particles rising and twinkling (consciousness motif). */
-export const Dust: React.FC<{n?: number; opacity?: number}> = ({n = 70, opacity = 0.8}) => {
+/** Big condensed display line with a masked slide-up reveal per word. */
+export const Big: React.FC<{items: [string, number, ('gold' | 'serif' | 'coral')?][]; size?: number; style?: React.CSSProperties; align?: 'center' | 'left'}> = ({
+	items, size = 150, style, align = 'center',
+}) => {
 	const t = useT();
 	return (
-		<AbsoluteFill style={{pointerEvents: 'none'}}>
-			{Array.from({length: n}, (_, i) => {
-				const sp = 18 + random(`s${i}`) * 40;
-				const x = random(`x${i}`) * 1080 + Math.sin(t * 0.6 + i) * 18;
-				const y = (random(`y${i}`) * 2100 - t * sp) % 2100;
-				const yy = y < -60 ? y + 2100 : y;
-				const sz = 2 + random(`z${i}`) * 5;
-				const tw = 0.35 + 0.65 * Math.abs(Math.sin(t * (0.8 + random(`w${i}`) * 2) + i));
-				return <div key={i} style={{position: 'absolute', left: x, top: yy, width: sz, height: sz, borderRadius: '50%', background: C.goldSoft,
-					opacity: tw * opacity, boxShadow: `0 0 ${sz * 3}px ${C.gold}`}} />;
+		<div style={{display: 'flex', flexWrap: 'wrap', justifyContent: align === 'center' ? 'center' : 'flex-start', gap: `0 ${size * 0.18}px`, ...style}}>
+			{items.map(([w, a, kind], i) => {
+				const p = antic(t, a);
+				const serif = kind === 'serif' || kind === 'gold';
+				return (
+					<span key={i} style={{display: 'inline-block', overflow: 'hidden', paddingTop: size * 0.06, paddingBottom: size * 0.04}}>
+						<span style={{display: 'inline-block', transform: `translateY(${(1 - p) * 110}%) skewY(${(1 - clamp01(p)) * 6}deg)`,
+							fontFamily: serif ? 'Serif' : 'Display', fontStyle: serif ? 'italic' : 'normal', fontWeight: serif ? 500 : 400,
+							fontSize: serif ? size * 1.08 : size, lineHeight: 1, textTransform: serif ? 'none' : 'uppercase', letterSpacing: serif ? 0 : size * 0.01,
+							color: kind === 'gold' ? C.gold : kind === 'coral' ? C.coral : C.ivory,
+							textShadow: kind === 'gold' ? `0 0 ${30 * clamp01(p)}px rgba(242,184,75,.55), 0 6px 28px rgba(0,0,0,.6)` : '0 6px 28px rgba(0,0,0,.6)',
+							filter: p < 0.98 ? `blur(${(1 - clamp01(p)) * 6}px)` : undefined}}>{w}</span>
+					</span>
+				);
 			})}
-		</AbsoluteFill>
+		</div>
 	);
 };
 
-/** Soft gold light leak that blooms across a cut. */
-export const Leak: React.FC<{at: number; dur?: number; x?: number; y?: number}> = ({at, dur = 1.0, x = 50, y = 40}) => {
+/** Handwritten note (Kalam) that writes itself on with a wipe. */
+export const Hand: React.FC<{at: number; children: React.ReactNode; size?: number; color?: string; rot?: number; style?: React.CSSProperties; dur?: number; out?: number}> = ({
+	at, children, size = 58, color = C.marker, rot = -4, style, dur = 0.6, out,
+}) => {
 	const t = useT();
-	if (t < at - 0.2 || t > at + dur) return null;
-	const p = Math.sin(Math.PI * clamp01((t - at + 0.2) / (dur + 0.2)));
-	return <AbsoluteFill style={{background: `radial-gradient(ellipse at ${x}% ${y}%, rgba(245,212,138,${0.55 * p}) 0%, rgba(233,180,76,${0.25 * p}) 30%, rgba(0,0,0,0) 65%)`, mixBlendMode: 'screen'}} />;
-};
-
-export const Ring: React.FC<{cx: number; cy: number; at: number; dur?: number; max?: number; color?: string; width?: number}> = ({cx, cy, at, dur = 1.6, max = 420, color = C.gold, width = 3}) => {
-	const t = useT();
-	if (t < at || t > at + dur) return null;
-	const p = ease(t, at, dur, Easing.out(Easing.quad));
-	return <div style={{position: 'absolute', left: cx - max * p, top: cy - max * p, width: max * 2 * p, height: max * 2 * p, borderRadius: '50%',
-		border: `${width}px solid ${color}`, opacity: (1 - p) * 0.9}} />;
-};
-
-/** Gold line-art eye that opens (the witness). */
-export const Eye: React.FC<{at: number; cx: number; cy: number; w?: number}> = ({at, cx, cy, w = 520}) => {
-	const t = useT();
-	const draw = ease(t, at, 0.9, Easing.inOut(Easing.cubic));
-	const open = ease(t, at + 0.5, 0.6);
-	const h = w * 0.42;
+	const p = ease(t, at, dur, Easing.inOut(Easing.quad));
+	const o = out !== undefined ? 1 - ease(t, out, 0.3) : 1;
 	return (
-		<svg width={w} height={h * 2} viewBox={`0 0 ${w} ${h * 2}`} style={{position: 'absolute', left: cx - w / 2, top: cy - h, overflow: 'visible',
-			filter: `drop-shadow(0 0 ${18 * open}px rgba(233,180,76,.8))`}}>
-			<path d={`M10 ${h} Q ${w / 2} ${h - h * 0.95 * (0.15 + 0.85 * open)} ${w - 10} ${h} Q ${w / 2} ${h + h * 0.95 * (0.15 + 0.85 * open)} 10 ${h} Z`}
-				fill="none" stroke={C.gold} strokeWidth={5} pathLength={1} strokeDasharray="1 1" strokeDashoffset={1 - draw} />
-			<circle cx={w / 2} cy={h} r={h * 0.42 * open} fill="none" stroke={C.gold} strokeWidth={5} />
-			<circle cx={w / 2} cy={h} r={h * 0.17 * open} fill={C.gold} />
-			<circle cx={w / 2 + h * 0.08} cy={h - h * 0.08} r={h * 0.05 * open} fill={C.ivory} />
+		<div style={{position: 'absolute', fontFamily: 'Hand', fontWeight: 700, fontSize: size, color, transform: `rotate(${rot}deg)`, whiteSpace: 'nowrap',
+			clipPath: `inset(-20% ${100 - p * 100}% -20% -5%)`, opacity: o, textShadow: '0 3px 12px rgba(0,0,0,.6)', ...style}}>{children}</div>
+	);
+};
+
+/** Marker stroke drawn on, slightly rough like a real pen. */
+export const Mark: React.FC<{d: string; at: number; dur?: number; color?: string; width?: number; w?: number; h?: number; style?: React.CSSProperties; out?: number}> = ({
+	d, at, dur = 0.45, color = C.marker, width = 9, w = 1080, h = 1920, style, out,
+}) => {
+	const t = useT();
+	const p = ease(t, at, dur, Easing.inOut(Easing.quad));
+	const o = out !== undefined ? 1 - ease(t, out, 0.3) : 1;
+	if (t < at) return null;
+	return (
+		<svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{position: 'absolute', left: 0, top: 0, overflow: 'visible', opacity: o, ...style}}>
+			<path d={d} pathLength={1} fill="none" stroke={color} strokeWidth={width} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="1 1" strokeDashoffset={1 - p}
+				style={{filter: 'url(#rough) drop-shadow(0 3px 6px rgba(0,0,0,.5))'}} />
 		</svg>
 	);
 };
 
-/** Thought pill (overthinking chatter). */
-export const Thought: React.FC<{text: string; x: number; y: number; o: number; scale?: number; color?: string}> = ({text, x, y, o, scale = 1, color = C.coral}) => (
-	<div style={{position: 'absolute', left: x, top: y, transform: `translate(-50%,-50%) scale(${scale})`, opacity: o, whiteSpace: 'nowrap',
-		fontFamily: 'Sans', fontWeight: 700, fontSize: 36, color: C.ivory, padding: '12px 26px', borderRadius: 40,
-		background: 'rgba(13,17,48,.55)', border: `2px solid ${color}`, boxShadow: `0 0 24px ${color}55`, backdropFilter: 'blur(4px)'}}>{text}</div>
-);
+/** Printed archival photo: paper border, tape strips, slight curl shadow; drops in with a settle. */
+export const Print: React.FC<{src: string; at: number; x: number; y: number; w: number; h: number; rot?: number; caption?: string; out?: number; filter?: string}> = ({
+	src, at, x, y, w, h, rot = -4, caption, out, filter = 'grayscale(1) sepia(.35) contrast(1.15)',
+}) => {
+	const t = useT();
+	const p = spr(t, at, 120, 13);
+	const o = out !== undefined ? 1 - ease(t, out, 0.35) : 1;
+	if (t < at - 0.05) return null;
+	const tape = (l: number, r: number) => (
+		<div style={{position: 'absolute', left: l, top: -26, width: 150, height: 52, transform: `rotate(${r}deg)`, background: 'rgba(240,226,190,.78)',
+			boxShadow: '0 2px 6px rgba(0,0,0,.25)', clipPath: 'polygon(3% 0,97% 4%,100% 50%,96% 100%,2% 96%,0 50%)'}} />
+	);
+	return (
+		<div style={{position: 'absolute', left: x, top: y, width: w, transform: `translateY(${(1 - p) * 160}px) rotate(${rot + (1 - p) * 9}deg) scale(${lerp(1.15, 1, clamp01(p))})`,
+			opacity: clamp01(p * 2) * o, filter: 'drop-shadow(14px 26px 24px rgba(0,0,0,.55))'}}>
+			<div style={{padding: '22px 22px 90px', backgroundImage: `url(${staticFile('paper.png')})`, backgroundSize: 'cover'}}>
+				<Img src={staticFile(src)} style={{width: '100%', height: h, objectFit: 'cover', objectPosition: '50% 20%', filter, display: 'block'}} />
+			</div>
+			{tape(w * 0.12, -8)}{tape(w * 0.62, 6)}
+			{caption && <div style={{position: 'absolute', left: 30, bottom: 18, fontFamily: 'Hand', fontWeight: 700, fontSize: 44, color: '#2b2b2b',
+				clipPath: `inset(0 ${100 - ease(t, at + 0.5, 0.7) * 100}% 0 0)`}}>{caption}</div>}
+		</div>
+	);
+};
+
+/** Broadcast-style lower third. */
+export const LowerThird: React.FC<{at: number; out: number; name: string; sub: string; y?: number}> = ({at, out, name, sub, y = 1250}) => {
+	const t = useT();
+	const bar = ease(t, at, 0.45, Easing.out(Easing.exp));
+	const txt = ease(t, at + 0.2, 0.5);
+	const o = 1 - ease(t, out, 0.35);
+	if (t < at) return null;
+	return (
+		<div style={{position: 'absolute', left: 70, top: y, opacity: o}}>
+			<div style={{width: 10, height: 150 * bar, background: C.gold, position: 'absolute', left: 0, top: 0}} />
+			<div style={{marginLeft: 34, overflow: 'hidden'}}>
+				<div style={{fontFamily: 'Display', fontSize: 92, color: C.ivory, letterSpacing: 2, transform: `translateX(${(1 - txt) * -60}px)`, opacity: txt, lineHeight: 1.05}}>{name}</div>
+				<div style={{fontFamily: 'Sans', fontWeight: 700, fontSize: 30, color: C.gold, letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: 6,
+					transform: `translateX(${(1 - ease(t, at + 0.35, 0.5)) * -60}px)`, opacity: ease(t, at + 0.35, 0.5)}}>{sub}</div>
+			</div>
+		</div>
+	);
+};
+
+/** Film-burn light leak across a cut. */
+export const Burn: React.FC<{at: number; dur?: number; x?: number}> = ({at, dur = 0.7, x = 70}) => {
+	const t = useT();
+	if (t < at - 0.25 || t > at + dur) return null;
+	const p = Math.sin(Math.PI * clamp01((t - at + 0.25) / (dur + 0.25)));
+	return <AbsoluteFill style={{mixBlendMode: 'screen', background: `radial-gradient(ellipse at ${x + Math.sin(t * 9) * 10}% 30%, rgba(255,214,140,${0.85 * p}) 0%, rgba(255,120,40,${0.55 * p}) 28%, rgba(120,20,0,${0.25 * p}) 50%, rgba(0,0,0,0) 72%)`}} />;
+};
+
+/** RGB split for a glitchy, anxious beat. */
+export const rgbSplit = (amt: number) => (amt > 0.2 ? `drop-shadow(${amt}px 0 0 rgba(255,0,60,.7)) drop-shadow(${-amt}px 0 0 rgba(0,220,255,.7))` : undefined);
+
+export const scribble = (seed: string, cx: number, cy: number, rx: number, ry: number) => {
+	// hand-drawn ellipse: slightly over-rotated with wobble so it never looks machine-perfect
+	const pts: string[] = [];
+	const n = 40;
+	for (let i = 0; i <= n * 1.12; i++) {
+		const a = (i / n) * Math.PI * 2 - 0.6;
+		const j = 1 + (random(`${seed}${i}`) - 0.5) * 0.06;
+		pts.push(`${(cx + Math.cos(a) * rx * j).toFixed(1)} ${(cy + Math.sin(a) * ry * j).toFixed(1)}`);
+	}
+	return `M ${pts.join(' L ')}`;
+};

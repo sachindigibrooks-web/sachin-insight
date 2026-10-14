@@ -47,3 +47,29 @@ python3 scripts/mix.py && sh scripts/master.sh
 npx remotion render src/index.ts Aurobindo out/silent.mp4 --codec=h264 --crf=20 --muted
 ffmpeg -i out/silent.mp4 -i out/mix_master.wav -map 0:v -map 1:a -c:v copy -c:a aac -b:a 256k -shortest out/final.mp4
 ```
+
+
+## v2: documentary / editorial redesign (human touch)
+After feedback that v1 looked AI-generated, the video was rebuilt around real footage and hand-made touches.
+
+- **Footage:** 21 real stock clips (Mixkit, free licence), cropped to 9:16 and graded warm/cool per scene, with slow push-ins and punch-in zooms on cuts.
+- **Chroma key:** the "Mind" scene uses a green-screen actor, keyed (ffmpeg chromakey + despill) to an alpha WebM and composited over a blurred rainy night street.
+- **Typography:**
+  - Anton (condensed editorial) paired with Cormorant italic accent words, using a masked slide-up reveal. The easing has anticipation and overshoot, following the 12 principles of animation.
+  - Hand-written notes in Kalam ("yahin atke hain!", "aap yahan ho", "Alipore, 1908") and rough marker strokes: circles, arrows, strike-throughs, tally marks.
+- **Archive:** the 1908 photograph is a printed photo with paper border and tape that drops onto the frame, plus a broadcast lower third for the name.
+- **Infographic:** a ladder of consciousness drawn on screen, then a mini-ladder HUD that fills level by level, and a Matter → Supermind progress line.
+- **Overthinking montage:**
+  - Four hard cuts in 1.5 s with RGB split, shake and scribbled worries.
+  - A freeze-frame and desaturation on "Ab socho".
+- **Film finish:** grain, gate weave, light flicker, vignette, a soft teal/amber grade, and film-burn light leaks on key cuts.
+- **Captions:** a yellow highlighter box on the active word.
+- **Audio:**
+  - Real recorded SFX (Mixkit, free licence): crowd chatter, city traffic, racing clocks, heartbeats, whoosh-impacts, a riser, a big impact, a vintage camera shutter, paper slides, pencil, typewriter, papers blown in wind, rain, morning birds, bell chimes and magic shimmer.
+  - Music is "Vastness" (Mixkit), offset by 15.84 s so its build lands exactly on SUPERMIND. It is filtered during the 1908 story, muted on "Shaant", and returns with the practice section.
+  - The tanpura stays as a quiet Indian bed.
+  - Voice-to-everything margin: median 13.5 dB. Master: -14.3 LUFS / -1.4 dBFS.
+
+### v2 credits
+- Video clips, music ("Vastness") and SFX: Mixkit (mixkit.co), Mixkit Free License. Free for social media and commercial use; no attribution required.
+- The Ether Vox credit above applies only to v1.

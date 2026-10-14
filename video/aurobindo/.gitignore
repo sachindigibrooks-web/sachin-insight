@@ -6,3 +6,7 @@ audio/voice_proc.wav
 audio/music/*
 !audio/music/Ether_Vox.mp3
 public/photo/jail.jpg
+public/clips/
+audio/mixkit/music/*
+!audio/mixkit/music/m184.mp3
+out/silent_v2.mp4
