@@ -1,0 +1,8 @@
+node_modules
+out/*
+!out/Sri_Aurobindo_Consciousness.mp4
+scripts/voice16k.raw
+audio/voice_proc.wav
+audio/music/*
+!audio/music/Ether_Vox.mp3
+public/photo/jail.jpg
