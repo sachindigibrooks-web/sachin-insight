@@ -1,0 +1,8 @@
+node_modules
+tts/
+public/clips/
+out/*
+!out/Mudras_BodyReset_Ad.mp4
+audio/vo_proc.wav
+audio/music/*
+!audio/music/m623.mp3
