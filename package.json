@@ -1,0 +1,24 @@
+{
+  "name": "sachin-insight",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sachindigibrooks-web/sachin-insight.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sachindigibrooks-web/sachin-insight/issues"
+  },
+  "homepage": "https://github.com/sachindigibrooks-web/sachin-insight#readme",
+  "dependencies": {
+    "p5": "^2.3.4",
+    "p5.brush": "^2.2.3"
+  }
+}
