@@ -1,0 +1,8 @@
+node_modules
+out/*
+!out/WhiteHatSEO_YouTube_16x9.mp4
+!out/WhiteHatSEO_Shorts_9x16.mp4
+audio/voice_raw.wav
+audio/voice_proc.wav
+dl/
+ref/
