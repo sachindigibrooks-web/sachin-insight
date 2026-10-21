@@ -1,0 +1,18 @@
+[
+ {"id":"L01","gap":0.1,"tts":"अगर तुम रोज़ दस घंटे काम करते हो...","cap":"Agar tum roz 10 ghante kaam karte ho..."},
+ {"id":"L02","gap":0.1,"tts":"और बीस तारीख तक salary ख़त्म हो जाती है...","cap":"aur 20 tareekh tak salary khatam ho jaati hai..."},
+ {"id":"L03","gap":0.3,"tts":"तो ये video, तुम्हारे बारे में है।","cap":"to ye video TUMHARE baare mein hai."},
+ {"id":"L04","gap":0.1,"tts":"कहा गया, पढ़ाई करो। तुमने की।","cap":"Kaha gaya — padhai karo. Tumne ki."},
+ {"id":"L05","gap":0.1,"tts":"Degree लो। तुमने ली।","cap":"Degree lo. Tumne li."},
+ {"id":"L06","gap":0.25,"tts":"Job पकड़ो, life set है। तुमने पकड़ी।","cap":"Job pakdo, life set hai. Tumne pakdi."},
+ {"id":"L07","gap":0.1,"tts":"सबसे पहले आते हो, सबसे last जाते हो।","cap":"Sabse pehle aate ho, sabse last jaate ho."},
+ {"id":"L08","gap":0.5,"tts":"और appraisal में मिलता है... चार percent।","cap":"Aur appraisal mein milta hai... 4%."},
+ {"id":"L09","gap":0.25,"tts":"Seth Godin ने सही कहा था।","cap":"Seth Godin ne sahi kaha tha —"},
+ {"id":"Q1","gap":0.2,"voice":"en-IN-PrabhatNeural","rate":"-2%","tts":"The educated, hard-working masses are still doing what they are told...","cap":"\"The educated, hard-working masses are still doing what they are told...\""},
+ {"id":"Q2","gap":0.5,"voice":"en-IN-PrabhatNeural","rate":"-6%","tts":"but they're no longer getting what they deserve.","cap":"\"...but they're no longer getting what they DESERVE.\""},
+ {"id":"L10","gap":0.1,"tts":"गलती तुम्हारी मेहनत में नहीं है।","cap":"Galti tumhari MEHNAT mein nahi hai."},
+ {"id":"L11","gap":0.3,"tts":"गलती उस rulebook में है, जो factory के ज़माने की है। जो बोला जाए, वो करो।","cap":"Galti us RULEBOOK mein hai, jo FACTORY ke zamane ki hai. \"Jo bola jaaye, wo karo.\""},
+ {"id":"L14","gap":0.35,"tts":"आज जीतते वही हैं, जो अपनी skill, अपना नाम, ख़ुद own करते हैं।","cap":"Aaj jeette wahi hain, jo apni SKILL, apna NAAM, khud OWN karte hain."},
+ {"id":"L16","gap":0.5,"tts":"तो ख़ुद से पूछो, जो मैं कर रहा हूँ, वो मैंने चुना है... या मुझे बोला गया है?","cap":"To khud se poocho — jo main kar raha hoon, wo maine CHUNA hai... ya mujhe BOLA gaya hai?"},
+ {"id":"L18","gap":0.6,"tts":"अगर ये चुभा, तो उस दोस्त को भेजो, जो कहता है, बस एक promotion और।","cap":"Agar ye chubha, to us DOST ko bhejo jo kehta hai — \"bas ek promotion aur.\""}
+]
