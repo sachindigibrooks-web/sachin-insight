@@ -1,0 +1,18 @@
+[
+ {"id":"L01","gap":0.05,"tts":"देखो... अगर तुम रोज़ दस-दस घंटे काम करते हो,","cap":"Dekho... agar tum roz 10-10 ghante kaam karte ho,"},
+ {"id":"L02","gap":0.1,"tts":"और महीने की बीस तारीख आते-आते, सैलरी ख़त्म हो जाती है...","cap":"aur mahine ki 20 tareekh aate-aate salary khatam ho jaati hai..."},
+ {"id":"L03","gap":0.3,"tts":"तो यार, ये वीडियो तुम्हारे लिए ही है।","cap":"to yaar, ye video TUMHARE liye hi hai."},
+ {"id":"L04","gap":0.1,"tts":"बचपन से बोला गया, पढ़ाई करो। तुमने की।","cap":"Bachpan se bola gaya — padhai karo. Tumne ki."},
+ {"id":"L05","gap":0.1,"tts":"फिर बोला, डिग्री लो। तुमने ली।","cap":"Phir bola — degree lo. Tumne li."},
+ {"id":"L06","gap":0.25,"tts":"फिर बोला, अच्छी जॉब पकड़ लो, लाइफ़ सेट है। तुमने वो भी पकड़ी।","cap":"Phir bola — achhi job pakad lo, life set hai. Tumne wo bhi pakdi."},
+ {"id":"L07","gap":0.1,"tts":"सुबह सबसे पहले ऑफिस पहुँचते हो, और रात को सबसे लास्ट निकलते हो।","cap":"Subah sabse pehle office pahunchte ho, aur raat ko sabse last nikalte ho."},
+ {"id":"L08","gap":0.45,"tts":"और अप्रेज़ल में क्या मिलता है? ... चार परसेंट।","cap":"Aur appraisal mein kya milta hai? ... 4%."},
+ {"id":"L09","gap":0.25,"tts":"सेथ गोडिन ने इस पर एक बात कही थी, जो सीधा दिल पे लगती है।","cap":"Seth Godin ne is par ek baat kahi thi, jo seedha dil pe lagti hai —"},
+ {"id":"Q1","gap":0.15,"lang":"en","tts":"The educated, hard-working masses are still doing what they are told,","cap":"\"The educated, hard-working masses are still doing what they are told...\""},
+ {"id":"Q2","gap":0.45,"lang":"en","tts":"but they're no longer getting what they deserve.","cap":"\"...but they're no longer getting what they DESERVE.\""},
+ {"id":"L10","gap":0.1,"tts":"मतलब समझे? गलती तुम्हारी मेहनत में नहीं है।","cap":"Matlab samjhe? Galti tumhari MEHNAT mein nahi hai."},
+ {"id":"L11","gap":0.3,"tts":"गलती उस रूलबुक में है, जो फैक्ट्री वाले ज़माने की है। जो बोला जाए, बस वो करो।","cap":"Galti us RULEBOOK mein hai, jo FACTORY waale zamane ki hai. \"Jo bola jaaye, bas wo karo.\""},
+ {"id":"L14","gap":0.3,"tts":"और आज आगे वही बढ़ रहे हैं, जो अपनी स्किल, अपना नाम, ख़ुद ओन करते हैं।","cap":"Aur aaj aage wahi badh rahe hain, jo apni SKILL, apna NAAM, khud OWN karte hain."},
+ {"id":"L16","gap":0.45,"tts":"तो एक बार, ईमानदारी से ख़ुद से पूछना... जो मैं कर रहा हूँ, वो मैंने चुना है? या बस, मुझे बोला गया था?","cap":"To ek baar imaandaari se khud se poochna... jo main kar raha hoon, wo maine CHUNA hai? Ya bas mujhe BOLA gaya tha?"},
+ {"id":"L18","gap":0.6,"tts":"और अगर ये बात थोड़ी भी चुभी, तो उस दोस्त को भेजो, जो हर साल बोलता है, बस एक प्रमोशन और।","cap":"Aur agar ye baat thodi bhi chubhi, to us DOST ko bhejo, jo har saal bolta hai — \"bas ek promotion aur.\""}
+]

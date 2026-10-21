@@ -2,7 +2,7 @@ import json, subprocess, os
 S = os.path.dirname(os.path.abspath(__file__))
 d = json.load(open(f"{S}/out/sfx.json"))
 total = d["total"]
-inputs = ["-i", f"{S}/vo/vo.wav", "-stream_loop", "-1", "-i", f"{S}/sfx/m614.mp3"]
+inputs = ["-i", f"{S}/vo2/vo.wav", "-stream_loop", "-1", "-i", f"{S}/sfx/m614.mp3"]
 filt = [
     # voice: light warmth + presence, compression
     "[0]highpass=f=70,equalizer=f=180:t=q:w=1:g=2,equalizer=f=3500:t=q:w=1.2:g=2.5,acompressor=threshold=-20dB:ratio=3:attack=5:release=120,volume=1.6,asplit=2[vo][vosc]",

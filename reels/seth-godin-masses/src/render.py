@@ -5,7 +5,8 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 S = os.path.dirname(os.path.abspath(__file__))
 W, H, FPS = 1080, 1920, 30
 PW, PH = 1188, 2112  # decode size (zoom headroom)
-TL = json.load(open(f"{S}/vo/timeline.json"))
+VO = "vo2" if os.path.exists(f"{S}/vo2/timeline.json") else "vo"
+TL = json.load(open(f"{S}/{VO}/timeline.json"))
 TOTAL = TL["total"] + 0.4
 NF = int(TOTAL * FPS)
 LINES = {l["id"]: l for l in TL["lines"]}
@@ -244,7 +245,7 @@ def add(t0, t1, kind, payload, pos, anim="pop"):
 def big(t0, t1, txt, size=170, color=WHITE, y=560, stroke=0):
     add(t0, t1, "img", lambda: text_img(txt, F_ANTON, size, color, stroke=stroke), (W // 2, y))
 
-big(Wd("L01", "10"), T("L02"), "10 GHANTE\nROZ.", 190, WHITE, 520)
+big(Wd("L01", "10-10"), T("L02"), "10 GHANTE\nROZ.", 190, WHITE, 520)
 add(Wd("L02", "20"), T("L03"), "img", lambda: stamp_img("20 TAREEKH", 150), (W // 2, 470))
 big(Wd("L02", "salary"), T("L03"), "SALARY = KHATAM", 110, YEL, 700)
 big(Wd("L03", "TUMHARE"), T("L04"), "YE TUM HO.", 230, WHITE, 640)

@@ -2,7 +2,7 @@
 
 > "The educated, hard-working masses are still doing what they are told, but they're no longer getting what they deserve." — Seth Godin
 
-**Length:** ~65s · **Format:** 1080×1920, 30fps · **Language:** Hinglish voiceover with English quote
+**Length:** ~73s · **Format:** 1080×1920, 30fps · **Language:** Hinglish voiceover with English quote
 
 ## Psychology used
 | Trick | Where |
@@ -62,5 +62,8 @@ Us dost ko bhejo jo kehta hai "bas ek promotion aur" 📩
 - Fonts: Anton, Special Elite, Playfair Display (Google Fonts, OFL)
 
 ## Voice
-- **Current render:** Microsoft neural TTS (hi-IN-Madhur for Hindi, en-IN-Prabhat for the quote). This is a temporary voice, used because the ElevenLabs account had only 105 credits left and one take needs about 1,029.
-- **For the final ElevenLabs version:** voice **"Aditya"** (`KgnO7XaC644NBfmLZmwn`), a deep, warm psychology-documentary Hinglish narrator, on model `eleven_v4`. The same script with audio tags is already on the ElevenLabs flow "Seth Godin Reel - Voiceover". Top up the credits and regenerate there.
+- **Engine:** Svara-TTS v1 (Apache-2.0, open source), trained on 2000+ hours of real Indian speakers. Speaker "Hindi (Male)", run locally on CPU from the Q6_K GGUF.
+- The script was rewritten in spoken Hinglish ("dekho", "yaar", "matlab samjhe?", "aate-aate"), and English words were written in Devanagari so the voice says them with an Indian accent.
+- Each line was generated separately, checked with Whisper speech recognition, and regenerated if it came out garbled (84–100% match).
+- Exact spoken lines are in `src/vo2/lines.json`. The final voiceover track is `voiceover.mp3`.
+- To use ElevenLabs instead, top up the credits and use voice "Aditya" (`KgnO7XaC644NBfmLZmwn`) on the flow "Seth Godin Reel - Voiceover".
