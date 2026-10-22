@@ -1,12 +1,12 @@
 # Mudras social designs: posts #1–#2 (23 Oct 2026)
 
-| # | Platform | Files | Photo (Unsplash License) |
-|---|----------|-------|--------------------------|
-| 1 | Instagram carousel (4 slides) + Story | `post-01-instagram/` | https://unsplash.com/photos/bwOAixLG0uc |
-| 2 | Facebook feed 1080×1350 + link image 1200×630 | `post-02-facebook/` | https://unsplash.com/photos/VxAwTeiqDao |
+| # | Platform | Files | Photos (Unsplash License, free for commercial use) |
+|---|----------|-------|---------------------------------------------------|
+| 1 | Instagram carousel (4 slides) + Story | `post-01-instagram/` | Slides 1 + Story: https://unsplash.com/photos/Z-GDQeDaSB4 (cropped to legs, bib years cut). Slide 4: https://unsplash.com/photos/gavoj4Q_C_Q (top cropped so no face shows). |
+| 2 | Facebook feed 1080×1350 + link image 1200×630 | `post-02-facebook/` | https://unsplash.com/photos/yBLLzNcA6GU |
 
 The updated calendar is `Mudras_Social_Calendar_23Oct-5Nov_2026Posts_56.csv`. For rows 1–2, the status is now
-"Design ready - pending client approval", and *Direct download* holds the image file URLs.
+"Design ready - pending client approval". The sheet's original photos (a calendar, and a towel-and-bottle still life) did not match the copy, so they were replaced. *Image description*, *Image source link* and *Direct download* now describe the new photos.
 
 ## Brand sources (from mudras.com)
 - Logo: the header logo from mudras.com (`source/site/orig_Group_1487669750.png`, 344×101, the largest size the site serves).
