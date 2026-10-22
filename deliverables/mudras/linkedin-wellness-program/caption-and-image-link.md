@@ -1,4 +1,4 @@
-# LinkedIn: "What about the body?" (single image, 1200×627)
+# LinkedIn: "What about the body?" (single image, 1080×1350, 4:5 portrait)
 
 ## Overlay text
 Your wellness program supports the mind.
@@ -14,6 +14,6 @@ Pain is a lagging indicator. Tension builds for weeks before people notice it.
 If you lead a team, it's worth asking: what does your wellness program do for the body, not just the mind?
 
 ## Image used
-A therapist's hands working on a client's neck and shoulders. The client is face-down, so no face shows. The image is converted to black and white.
-- Source: Mudras' own website, used on https://www.mudras.com/neck-shoulder-back-pain-massage-in-nyc
-- Image link: https://images.squarespace-cdn.com/content/v1/68c4a7c58fe04131b7cf10fa/ae068be2-ed1d-462e-9b57-ada3587def22/Myofascial+Release+in+NYC.jpg
+A professional at an office desk, seen from behind while working at two monitors. The image shows their neck and shoulders but no face, and is converted to black and white.
+- Unsplash License (free for commercial use): https://unsplash.com/photos/Qk03EHD1j18
+- Direct download: https://images.unsplash.com/photo-1637424000126-4cfe9be2179c?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb
