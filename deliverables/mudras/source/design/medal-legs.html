@@ -1,0 +1,42 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS; layout follows the brand's own IG post
+   "Stretching explores range." (copy centred at the top between gold rules, logo bottom-left) */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#000;color:var(--white)}
+.p45{width:1080px;height:1350px}
+.photo{position:absolute;inset:0;background-repeat:no-repeat;filter:grayscale(1) contrast(1.08)}
+/* only the top is shaded, behind the copy */
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.92) 0%,rgba(0,0,0,.86) 32%,rgba(0,0,0,0) 58%)}
+.copy{position:absolute;left:150px;right:150px;top:150px;text-align:center}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.1}
+.rule{height:3px;background:var(--gold);margin:34px 0}
+.sub{font-family:var(--sans);font-weight:500;letter-spacing:.06em;color:var(--gold)}
+.logo img{width:100%;display:block}
+</style></head><body>
+
+<div class="ab p45" id="fb_medal">
+  <div class="photo" style="top:auto;height:1130px;background-image:url(../img/medal_leg_session.jpg);background-size:auto 1130px;background-position:0px 100%;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 30%);mask-image:linear-gradient(180deg,transparent 0%,#000 30%)"></div>
+  <div class="shade"></div>
+  <div class="shade" style="background:radial-gradient(ellipse 700px 420px at 0% 100%,rgba(0,0,0,.7),rgba(0,0,0,0))"></div>
+  <div class="copy">
+    <div class="serif t" style="font-size:92px">Medal On?<br>Legs Gone?</div>
+    <div class="rule"></div>
+    <div class="serif t" style="font-size:92px">We&rsquo;ve got you.</div>
+    <div class="rule"></div>
+    <div class="sub t" style="font-size:28px">Post-race sessions this week<br>Mudras, Chelsea NYC</div>
+  </div>
+  <div class="logo t" style="position:absolute;left:108px;bottom:135px;width:300px"><img src="../site/orig_Group_1487669750.png"></div>
+</div>
+
+</body></html>
