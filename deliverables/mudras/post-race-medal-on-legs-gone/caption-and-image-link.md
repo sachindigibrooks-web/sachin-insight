@@ -17,11 +17,17 @@ Post-race sessions this week · Mudras, Chelsea NYC
 ## Image used
 | Image | Source | Link |
 |---|---|---|
-| A therapist's hands supporting a runner's heel and calf on the table (no face) | Mudras website, sports massage page | https://images.squarespace-cdn.com/content/v1/68c4a7c58fe04131b7cf10fa/50db79ba-54ca-428f-92dc-e11f4156a0b9/Sports+Massage+session+by+Mudras+in+NYC.jpg |
+| A runner sitting on the grass after a race, with a medal on and legs stretched out | Unsplash (free under the Unsplash License, commercial use allowed) | https://unsplash.com/photos/SSiXQyqFSB4 |
 
-The photo appears on https://www.mudras.com/sports-massage-nyc.
+Direct download: https://images.unsplash.com/photo-1779658232626-0a8975698573
 
-I passed on the Unsplash medal photos because they all show other races' names and sponsor logos (Rotterdam, Lagos, Kyiv and others).
+Edits to the photo:
+- cropped below the chin, so no face shows
+- the people and the event tent in the background are cropped out
+- flipped horizontally, so the logo sits on clear grass
+- converted to black and white
+
+A small FILA mark is still visible on one shoe.
 
 ## Caption
 Ran yesterday? Cheered for 6 hours? Either way, your legs earned a reset. 😅🏅
