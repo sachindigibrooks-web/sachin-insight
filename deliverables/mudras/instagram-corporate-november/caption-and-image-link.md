@@ -6,7 +6,6 @@ Brand palette: black, gold and white, with a black-and-white photo. The layout f
 - gold logo top-left
 - large white serif headline below the logo
 - letter-spaced caps subline
-- www.mudras.com bottom-left
 - the photo fills the lower part and fades into black at the top
 
 ## Image text
@@ -16,11 +15,11 @@ Corporate Bodywork · NYC
 ## Image used
 | Image | Source | Link |
 |---|---|---|
-| A team fist-bumping over an office desk (hands only, no faces) | Unsplash (free under the Unsplash License, commercial use allowed) | https://unsplash.com/photos/CHVTt0aGbx0 |
+| The Mudras team at an onsite corporate wellness event, with a massage table and Mudras banners | Mudras website (the client's own photo, chosen by the client) | https://images.squarespace-cdn.com/content/v1/68c4a7c58fe04131b7cf10fa/6b29e04f-6abb-4219-ace3-ab479d00ee7a/DSC_5810.jpg |
 
-Direct download: https://images.unsplash.com/photo-1583321500900-82807e458f3c
+The photo is used at full resolution (2500×1668), converted to black and white, and faded into black at the top behind the copy. Everyone in the group stays fully in frame.
 
-The photo is cropped to the fists, mug and phone. That leaves out the notebook and mug that carry a printed brand name. It is converted to black and white.
+I dropped "www.mudras.com" from the bottom-left because it would sit over the people. The Mudras banners in the photo already carry the brand.
 
 ## Caption
 HR and office managers: November dates are filling up fast. 📅
