@@ -1,0 +1,49 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with black-and-white photos, as in the
+   brand's own posts. Corporate follows the "New York Film Festival" post (logo + headline top-left, caps subline,
+   url bottom-left); prenatal follows the "The season starts before kickoff" post (gold inset frame, centred lockup). */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', 'Noto Color Emoji', serif;   /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;                      /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#0d0d0d;color:var(--white)}
+.p45{width:1080px;height:1350px}
+.photo{position:absolute;left:0;right:0;bottom:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.08)}
+.shade{position:absolute;inset:0}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.08}
+.caps{font-family:var(--sans);font-weight:500;text-transform:uppercase;letter-spacing:.24em}
+.logo img{width:100%;display:block}
+</style></head><body>
+
+<!-- Instagram · corporate wellness day -->
+<div class="ab p45" id="ig_corp_team">
+  <div class="photo" style="height:900px;background-image:url(../img/corp_fists_c.jpg);background-position:50% 50%;filter:grayscale(1) contrast(1.12) brightness(.82);-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 34%);mask-image:linear-gradient(180deg,transparent 0%,#000 34%)"></div>
+  <div class="shade" style="background:radial-gradient(ellipse 520px 220px at 18% 92%,rgba(0,0,0,.78),rgba(0,0,0,0))"></div>
+  <div class="logo t" style="position:absolute;left:108px;top:135px;width:270px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:108px;right:108px;top:290px">
+    <div class="serif t" style="font-size:96px">Book your team<br>wellness day now</div>
+    <div class="caps t" style="font-size:26px;margin-top:34px">Corporate Bodywork &middot; NYC</div>
+  </div>
+  <div class="caps t" style="position:absolute;left:108px;bottom:135px;font-size:20px;letter-spacing:.2em;text-transform:none">www.mudras.com</div>
+</div>
+
+<!-- Instagram + Facebook · prenatal -->
+<div class="ab p45" id="fb_prenatal">
+  <div class="photo" style="height:860px;background-image:url(../img/prenatal_belly_c.jpg);background-position:30% 55%;filter:grayscale(1) contrast(1.05) brightness(.9);-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 30%);mask-image:linear-gradient(180deg,transparent 0%,#000 30%)"></div>
+  <div style="position:absolute;inset:44px;border:1.5px solid var(--gold)"></div>
+  <div class="logo t" style="position:absolute;left:50%;transform:translateX(-50%);top:135px;width:270px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:108px;right:108px;top:300px;text-align:center">
+    <div class="serif t" style="font-size:80px">Can You Get a Massage<br>While Pregnant?</div>
+    <div class="serif t" style="font-size:56px;margin-top:22px">Here&rsquo;s what to know 👇</div>
+  </div>
+</div>
+
+</body></html>

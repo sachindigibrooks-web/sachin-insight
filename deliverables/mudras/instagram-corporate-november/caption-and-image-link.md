@@ -2,10 +2,12 @@
 
 File: `instagram/instagram-feed-1080x1350.png`
 
-This uses a new split layout:
-- the photo sits in the top part
-- below it is a solid brand dark-green panel (#1F2C1B, the site's darkAccent), with a gold line along its top edge
-- the panel holds a gold Raleway kicker, the white serif headline, and the gold MUDRAS logo bottom-right
+Brand palette: black, gold and white, with a black-and-white photo. The layout follows the brand's "New York Film Festival" post:
+- gold logo top-left
+- large white serif headline below the logo
+- letter-spaced caps subline
+- www.mudras.com bottom-left
+- the photo fills the lower part and fades into black at the top
 
 ## Image text
 Book your team wellness day now
@@ -14,11 +16,11 @@ Corporate Bodywork · NYC
 ## Image used
 | Image | Source | Link |
 |---|---|---|
-| A monthly planner open on "November" with "goals this month" and a cup of coffee (no people) | Unsplash (free under the Unsplash License, commercial use allowed) | https://unsplash.com/photos/aQfhbxailCs |
+| A team fist-bumping over an office desk (hands only, no faces) | Unsplash (free under the Unsplash License, commercial use allowed) | https://unsplash.com/photos/CHVTt0aGbx0 |
 
-Direct download: https://images.unsplash.com/photo-1506784983877-45594efa4cbe
+Direct download: https://images.unsplash.com/photo-1583321500900-82807e458f3c
 
-The photo is cropped to the planner and coffee, and its colour is softened so the orange "NOVEMBER" sits with the brand gold.
+The photo is cropped to the fists, mug and phone. That leaves out the notebook and mug that carry a printed brand name. It is converted to black and white.
 
 ## Caption
 HR and office managers: November dates are filling up fast. 📅
