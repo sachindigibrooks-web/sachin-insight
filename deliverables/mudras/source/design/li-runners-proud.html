@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS; layout follows the brand's own post
+   "Prepare The Body. Quiet The Mind." (logo top-left, thin gold rule, centred serif copy at the bottom) */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#000;color:var(--white)}
+.p45{width:1080px;height:1350px}
+.photo{position:absolute;inset:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.1)}
+.shade{position:absolute;inset:0}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.12}
+.rule{height:2px;background:var(--gold)}
+.logo img{width:100%;display:block}
+</style></head><body>
+
+<div class="ab p45" id="li_runners_proud">
+  <div class="photo" style="background-image:url(../img/li_nyc_legs.jpg);background-position:50% 0%"></div>
+  <div class="shade" style="background:linear-gradient(180deg,rgba(0,0,0,.6) 0%,rgba(0,0,0,0) 26%,rgba(0,0,0,0) 46%,rgba(0,0,0,.7) 66%,rgba(0,0,0,.88) 100%)"></div>
+  <div class="shade" style="background:radial-gradient(ellipse 560px 340px at 18% 13%,rgba(0,0,0,.72),rgba(0,0,0,0))"></div>
+  <div class="logo t" style="position:absolute;left:108px;top:135px;width:280px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:108px;right:108px;bottom:150px;text-align:center">
+    <div class="rule" style="margin-bottom:44px"></div>
+    <div class="serif t" style="font-size:80px">Yesterday, Our Runners<br>Made New York Proud.</div>
+  </div>
+</div>
+
+</body></html>
