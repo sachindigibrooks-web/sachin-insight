@@ -1,0 +1,52 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS */
+:root{
+  --gold:#F0CC75;        /* accent      hsl(42.44 80.39% 70%) */
+  --black:#212121;       /* black       hsl(0 0% 12.94%) */
+  --ink:#121212;         /* overlay base, near the site's hero black */
+  --white:#FFFCF2;       /* white       hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#555;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:var(--ink);color:var(--white)}
+.p45{width:1080px;height:1350px}
+.photo{position:absolute;left:0;right:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.05) brightness(.75);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 22%,#000 72%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 22%,#000 72%,transparent 100%)}
+.logo img{width:100%;display:block}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.1}
+.rule{height:1px;background:var(--gold)}
+.cta{position:absolute;display:flex;align-items:center;background:var(--gold);color:var(--black);font-family:var(--sans);font-weight:600;text-transform:uppercase;letter-spacing:.14em;border-radius:6px;white-space:nowrap}
+</style></head><body>
+
+<!-- FACEBOOK · neck, shoulder & back · 1080x1350 -->
+<div class="ab p45" id="fb_neck">
+  <div class="photo" style="top:180px;height:760px;background-image:url(../img/fb_neck_reach.jpg);background-position:50% 55%"></div>
+  <div class="logo t" style="position:absolute;top:140px;left:50%;transform:translateX(-50%);width:280px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;right:120px;top:830px">
+    <div class="rule" style="width:120px;margin-bottom:30px"></div>
+    <div class="serif t" style="font-size:66px">Stiff Neck. Tight Shoulders.<br>Achy Back.</div>
+    <div class="serif t" style="font-size:66px;color:var(--gold);margin-top:14px">Let&rsquo;s reset it.</div>
+  </div>
+  <div class="cta t" style="right:120px;bottom:140px;height:80px;padding:0 44px;font-size:24px">Book now</div>
+</div>
+
+<!-- FACEBOOK · NYC Marathon race day · 1080x1350 -->
+<div class="ab p45" id="fb_raceday">
+  <div class="photo" style="top:250px;height:700px;background-image:url(../img/fb_marathon_legs.jpg);background-position:50% 45%"></div>
+  <div class="logo t" style="position:absolute;top:140px;left:50%;transform:translateX(-50%);width:280px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;right:120px;top:830px">
+    <div class="rule" style="width:120px;margin-bottom:30px"></div>
+    <div class="serif t" style="font-size:92px;letter-spacing:.02em">GO GET IT, NYC!</div>
+    <div class="serif t" style="font-size:58px;margin-top:18px">Run Today</div>
+    <div class="serif t" style="font-size:58px;color:var(--gold)">Recover Tomorrow</div>
+  </div>
+  <div class="cta t" style="right:120px;bottom:140px;height:80px;padding:0 44px;font-size:24px">Learn more</div>
+</div>
+
+</body></html>
