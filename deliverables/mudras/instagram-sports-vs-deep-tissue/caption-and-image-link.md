@@ -1,11 +1,10 @@
 # Instagram: Runners, Sports or Deep Tissue? (1080×1350, 4:5)
 
-## Files
-These are two layout options; pick one.
-- `instagram-feed-1080x1350-option-a.png`: the photo fills the frame, with the text on a solid cream card.
-- `instagram-feed-1080x1350-option-b.png`: a clean photo on top, with a cream text panel below.
-
-Neither layout puts a dark overlay or fade on the photo, so it stays fully visible. The text sits on the brand's cream (#FFFCF2), with dark green (#1F2C1B) and gold accents from mudras.com.
+## Design
+The layout follows the brand's own Instagram posts, such as "Recovery is not reserved for athletes.":
+- The photo fills the frame and stays fully visible, with only the bottom shaded behind the copy.
+- The gold MUDRAS logo sits bottom-left above a full-width gold rule.
+- Large white serif copy sits under the rule.
 
 ## Overlay text
 Runners: Sports or Deep Tissue?

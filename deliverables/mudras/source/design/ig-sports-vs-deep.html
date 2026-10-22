@@ -1,0 +1,36 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS; layout follows the brand's own IG posts */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', 'Noto Color Emoji', serif;   /* stand-in for orpheus-pro (Adobe Fonts) */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;padding:40px}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#000;color:var(--white)}
+.p45{width:1080px;height:1350px}
+/* full-bleed photo, only the bottom is shaded where the copy sits */
+.photo{position:absolute;inset:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.06) brightness(1.02)}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0) 48%,rgba(0,0,0,.6) 66%,rgba(0,0,0,.82) 100%)}
+.logo img{width:100%;display:block}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.12}
+.rule{height:2px;background:var(--gold)}
+</style></head><body>
+
+<!-- INSTAGRAM single image · 1080x1350 (4:5) -->
+<div class="ab p45" id="ig_sports_vs_deep">
+  <div class="photo" style="background-image:url(../img/runner_calf_mudras.jpg);background-position:44% 50%"></div>
+  <div class="shade"></div>
+  <div class="logo t" style="position:absolute;left:112px;top:800px;width:320px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div class="rule" style="position:absolute;left:112px;right:112px;top:920px"></div>
+  <div style="position:absolute;left:112px;right:112px;top:944px">
+    <div class="serif t" style="font-size:86px;line-height:1.08">Runners: Sports or<br>Deep Tissue?</div>
+    <div class="serif t" style="font-size:54px;color:var(--gold);margin-top:14px">Here&rsquo;s how to choose 👇</div>
+  </div>
+</div>
+
+</body></html>
