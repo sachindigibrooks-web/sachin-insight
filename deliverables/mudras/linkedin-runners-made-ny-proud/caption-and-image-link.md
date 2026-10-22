@@ -3,7 +3,7 @@
 File: `linkedin/linkedin-single-image-1080x1350.png`
 
 The layout follows the brand's own post "Prepare The Body. Quiet The Mind.":
-- gold MUDRAS logo top-left
+- gold MUDRAS logo centred just above the gold rule, on the empty road (the calmest part of the photo)
 - runners' legs in black and white, fully visible
 - shading only at the bottom
 - thin full-width gold rule
