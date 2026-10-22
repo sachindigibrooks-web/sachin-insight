@@ -2,11 +2,9 @@
 
 File: `instagram/instagram-feed-1080x1350.png`
 
-Brand palette: black, gold and white, with a black-and-white photo. The layout follows the brand's "New York Film Festival" post:
-- gold logo top-left
-- large white serif headline below the logo
-- letter-spaced caps subline
-- the photo fills the lower part and fades into black at the top
+Brand palette: black, gold and white, with a black-and-white photo.
+- The gold logo, the serif headline and the caps subline are centred at the top, over black.
+- The photo fills the lower part and fades into black behind the copy.
 
 ## Image text
 Book your team wellness day now
