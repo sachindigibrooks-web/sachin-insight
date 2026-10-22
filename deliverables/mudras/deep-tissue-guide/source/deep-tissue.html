@@ -1,0 +1,179 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS */
+:root{
+  --gold:#F0CC75;        /* accent      hsl(42.44 80.39% 70%) */
+  --black:#212121;       /* black       hsl(0 0% 12.94%) */
+  --ink:#121212;         /* overlay base, near the site's hero black */
+  --white:#FFFCF2;       /* white       hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#555;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:var(--ink);color:var(--white)}
+.p45{width:1080px;height:1350px}
+.story{width:1080px;height:1920px}
+.li{width:1200px;height:627px}
+.pin{width:1000px;height:1500px}
+.photo{position:absolute;inset:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.05) brightness(.8)}
+.fade-v{-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 25%,#000 75%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 25%,#000 75%,transparent 100%)}
+.fade-top{-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 30%);mask-image:linear-gradient(180deg,transparent 0%,#000 30%)}
+.fade-left{-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 40%);mask-image:linear-gradient(90deg,transparent 0%,#000 40%)}
+.shade{position:absolute;inset:0}
+.logo img{width:100%;display:block}
+.logo.c{position:absolute;left:50%;transform:translateX(-50%)}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.12}
+.kicker{font-family:var(--sans);font-weight:500;text-transform:uppercase;letter-spacing:.2em;color:var(--gold)}
+.rule{height:1px;background:var(--gold)}
+.frame{position:absolute;border:1.5px solid var(--gold)}
+.cta{position:absolute;display:flex;align-items:center;background:var(--gold);color:var(--black);font-family:var(--sans);font-weight:600;text-transform:uppercase;letter-spacing:.14em;border-radius:6px;white-space:nowrap}
+.num{font-family:var(--sans);font-weight:500;color:var(--gold);letter-spacing:.15em}
+.list li{list-style:none;display:flex;gap:26px;align-items:baseline;padding:26px 0;border-top:1px solid rgba(240,204,117,.5)}
+.list li:last-child{border-bottom:1px solid rgba(240,204,117,.5)}
+.list .x{font-family:var(--serif);max-width:640px}
+.pinlist li{padding:18px 0}
+.dots{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);display:flex;gap:12px}
+.dots i{width:10px;height:10px;border-radius:50%;background:rgba(255,252,242,.4)}
+.dots i.on{background:var(--gold)}
+</style></head><body>
+
+<!-- INSTAGRAM carousel · slide 1 (cover) -->
+<div class="ab p45" id="ig_s1">
+  <div class="photo fade-v" style="top:220px;height:760px;bottom:auto;background-image:url(../../source/img/dt_w7.jpg);background-position:50% 45%"></div>
+  <div class="logo c t" style="top:140px;width:300px"><img src="../../source/site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;right:120px;top:860px">
+    <div class="kicker t" style="font-size:26px">Deep tissue massage</div>
+    <div class="rule" style="width:120px;margin:28px 0 34px"></div>
+    <div class="serif t" style="font-size:88px">What it feels like<br>&amp; how to prepare</div>
+  </div>
+  <div class="dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+</div>
+
+<!-- slide 2 · what it feels like -->
+<div class="ab p45" id="ig_s2" style="background:var(--black)">
+  <div class="logo c t" style="top:140px;width:260px"><img src="../../source/site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;right:120px;top:350px">
+    <div class="num t" style="font-size:26px">01 &middot; What it feels like</div>
+    <div class="rule" style="width:120px;margin:30px 0 40px"></div>
+    <div class="serif t" style="font-size:80px;color:var(--gold)">Slow, firm pressure.</div>
+    <div class="serif t" style="font-size:54px;line-height:1.24;margin-top:40px;max-width:700px">It reaches the deeper layers of muscle a lighter massage can&rsquo;t. Tight areas can feel intense, but intense isn&rsquo;t the same as painful.</div>
+  </div>
+  <div class="dots"><i></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+</div>
+
+<!-- slide 3 · more pressure isn't always better -->
+<div class="ab p45" id="ig_s3">
+  <div class="photo fade-top" style="top:700px;background-image:url(../../source/img/dt_w10.jpg);background-position:50% 55%"></div>
+  <div class="logo c t" style="top:140px;width:260px"><img src="../../source/site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;right:120px;top:330px">
+    <div class="num t" style="font-size:26px">02 &middot; Pressure</div>
+    <div class="rule" style="width:120px;margin:30px 0 40px"></div>
+    <div class="serif t" style="font-size:80px">More pressure isn&rsquo;t<br><span style="color:var(--gold)">always better.</span></div>
+    <div class="serif t" style="font-size:48px;line-height:1.24;margin-top:34px;max-width:620px">Holding your breath or tensing up? That&rsquo;s too much.</div>
+  </div>
+  <div class="dots"><i></i><i></i><i class="on"></i><i></i><i></i><i></i></div>
+</div>
+
+<!-- slide 4 · communicate -->
+<div class="ab p45" id="ig_s4" style="background:var(--black)">
+  <div class="logo c t" style="top:140px;width:260px"><img src="../../source/site/orig_Group_1487669750.png"></div>
+  <div class="frame" style="left:120px;right:120px;top:320px;bottom:230px"></div>
+  <div style="position:absolute;left:190px;right:190px;top:400px">
+    <div class="num t" style="font-size:26px">03 &middot; Communicate</div>
+    <div class="rule" style="width:120px;margin:30px 0 40px"></div>
+    <div class="serif t" style="font-size:76px;color:var(--gold)">Talk to your<br>therapist.</div>
+    <div class="serif t" style="font-size:50px;line-height:1.24;margin-top:36px;max-width:620px">Share what your body needs before you start. Too much? Say so in the moment instead of pushing through.</div>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i class="on"></i><i></i><i></i></div>
+</div>
+
+<!-- slide 5 · soreness -->
+<div class="ab p45" id="ig_s5" style="background:var(--black)">
+  <div class="logo c t" style="top:140px;width:260px"><img src="../../source/site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;right:120px;top:330px">
+    <div class="num t" style="font-size:26px">04 &middot; Afterward</div>
+    <div class="rule" style="width:120px;margin:30px 0 40px"></div>
+    <div class="serif t" style="font-size:76px">Mild soreness<br><span style="color:var(--gold)">is normal.</span></div>
+    <div class="serif t" style="font-size:48px;line-height:1.24;margin-top:34px;max-width:600px">For a day or two,<br>like after a hard workout.</div>
+    <ul class="list" style="margin-top:44px">
+      <li><span class="num t" style="font-size:24px">&mdash;</span><span class="x t" style="font-size:44px">Water, gentle movement and a warm shower can help</span></li>
+      <li><span class="num t" style="font-size:24px">&mdash;</span><span class="x t" style="font-size:44px">Lasts more than a few days?<br>Tell your specialist</span></li>
+    </ul>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i></i><i class="on"></i><i></i></div>
+</div>
+
+<!-- slide 6 · how to prepare + CTA -->
+<div class="ab p45" id="ig_s6">
+  <div class="photo fade-top" style="top:860px;background-image:url(../../source/img/dt_w8.jpg);background-position:60% 40%;filter:grayscale(1) contrast(1.05) brightness(.6)"></div>
+  <div class="logo c t" style="top:140px;width:260px"><img src="../../source/site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;right:120px;top:320px">
+    <div class="num t" style="font-size:26px">05 &middot; How to prepare</div>
+    <div class="rule" style="width:120px;margin:30px 0 26px"></div>
+    <ul class="list">
+      <li><span class="num t" style="font-size:24px">01</span><span class="x t" style="font-size:46px">Complete your intake before you arrive</span></li>
+      <li><span class="num t" style="font-size:24px">02</span><span class="x t" style="font-size:46px">Arrive 5 minutes early</span></li>
+      <li><span class="num t" style="font-size:24px">03</span><span class="x t" style="font-size:46px">Mention tight spots and injuries</span></li>
+    </ul>
+  </div>
+  <div class="cta t" style="right:120px;bottom:160px;height:92px;padding:0 50px;font-size:27px">Book &middot; link in bio</div>
+  <div class="dots"><i></i><i></i><i></i><i></i><i></i><i class="on"></i></div>
+</div>
+
+<!-- INSTAGRAM Story / TikTok photo · 1080x1920 -->
+<div class="ab story" id="ig_story">
+  <div class="photo fade-v" style="top:380px;height:900px;bottom:auto;background-image:url(../../source/img/dt_w7.jpg);background-position:50% 50%"></div>
+  <div class="logo c t" style="top:270px;width:300px"><img src="../../source/site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;right:120px;top:1150px">
+    <div class="kicker t" style="font-size:28px">First deep tissue massage?</div>
+    <div class="rule" style="width:120px;margin:28px 0 34px"></div>
+    <div class="serif t" style="font-size:80px">Intense isn&rsquo;t<br>the same as painful.</div>
+  </div>
+  <div class="cta t" style="right:120px;bottom:340px;height:84px;padding:0 48px;font-size:26px">Book now</div>
+</div>
+
+<!-- FACEBOOK · 1080x1350 -->
+<div class="ab p45" id="fb">
+  <div class="photo fade-v" style="top:180px;height:860px;bottom:auto;background-image:url(../../source/img/dt_w1.jpg);background-position:40% 50%"></div>
+  <div class="logo c t" style="top:140px;width:280px"><img src="../../source/site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;right:120px;top:930px">
+    <div class="rule" style="width:120px;margin-bottom:30px"></div>
+    <div class="serif t" style="font-size:68px">Booking your first<br>deep tissue massage?</div>
+  </div>
+  <div class="cta t" style="right:120px;bottom:140px;height:84px;padding:0 44px;font-size:24px">Read the guide</div>
+</div>
+
+<!-- LINKEDIN · 1200x627 -->
+<div class="ab li" id="li" style="background:var(--black)">
+  <div class="photo fade-left" style="left:420px;background-image:url(../../source/img/dt_w6.jpg);background-position:50% 45%"></div>
+  <div class="logo t" style="position:absolute;left:120px;top:80px;width:200px"><img src="../../source/site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;top:220px;width:520px">
+    <div class="kicker t" style="font-size:18px">Deep tissue massage</div>
+    <div class="rule" style="width:90px;margin:20px 0 22px"></div>
+    <div class="serif t" style="font-size:50px">What it feels like<br>&amp; how to prepare</div>
+  </div>
+  <div class="cta t" style="right:120px;bottom:80px;height:62px;padding:0 32px;font-size:18px">Read the guide</div>
+</div>
+
+<!-- PINTEREST · 1000x1500 -->
+<div class="ab pin" id="pin">
+  <div class="photo fade-v" style="top:170px;height:640px;bottom:auto;background-image:url(../../source/img/dt_w10.jpg);background-position:50% 45%"></div>
+  <div class="logo c t" style="top:150px;width:260px"><img src="../../source/site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:100px;right:100px;top:640px">
+    <div class="serif t" style="font-size:72px">Deep Tissue Massage</div>
+    <div class="serif t" style="font-size:46px;color:var(--gold);margin-top:10px">What It Feels Like<br>&amp; How to Prepare</div>
+    <ul class="list pinlist" style="margin-top:28px">
+      <li><span class="num t" style="font-size:22px">01</span><span class="x t" style="font-size:38px">Slow, firm pressure</span></li>
+      <li><span class="num t" style="font-size:22px">02</span><span class="x t" style="font-size:38px">More pressure isn&rsquo;t always better</span></li>
+      <li><span class="num t" style="font-size:22px">03</span><span class="x t" style="font-size:38px">Speak up in the moment</span></li>
+      <li><span class="num t" style="font-size:22px">04</span><span class="x t" style="font-size:38px">Mild soreness after is normal</span></li>
+    </ul>
+  </div>
+  <div class="cta t" style="right:100px;bottom:150px;height:70px;padding:0 38px;font-size:21px">Read the guide</div>
+</div>
+
+</body></html>
