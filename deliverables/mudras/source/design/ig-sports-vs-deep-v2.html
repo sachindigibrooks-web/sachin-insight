@@ -1,0 +1,52 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS */
+:root{
+  --gold:#F0CC75;        /* accent       hsl(42.44 80.39% 70%) */
+  --black:#212121;       /* black        hsl(0 0% 12.94%) */
+  --green:#1F2C1B;       /* darkAccent   hsl(105.88 23.94% 13.92%) */
+  --cream:#FFFCF2;       /* white        hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', 'Noto Color Emoji', serif;   /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;                      /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:var(--cream);color:var(--black)}
+.p45{width:1080px;height:1350px}
+/* natural photo: no dark overlay, no fade */
+.photo{position:absolute;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.04)}
+.logo img{width:100%;display:block}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.1}
+.kicker{font-family:var(--sans);font-weight:600;text-transform:uppercase;letter-spacing:.22em}
+.rule{height:2px;background:var(--gold)}
+</style></head><body>
+
+<!-- OPTION A · full-bleed photo + solid cream card -->
+<div class="ab p45" id="ig_sd_optionA">
+  <div class="photo" style="inset:0;background-image:url(../img/runner_calf_mudras.jpg);background-position:30% 50%"></div>
+  <div style="position:absolute;left:80px;right:80px;bottom:100px;background:var(--cream);padding:44px 60px 46px;border-radius:4px;display:flex;justify-content:space-between;align-items:flex-end">
+    <div>
+      <div class="kicker t" style="font-size:24px;color:var(--green)">Runners:</div>
+      <div class="serif t" style="font-size:74px;margin-top:12px">Sports or<br>Deep Tissue?</div>
+      <div class="rule" style="width:90px;margin:24px 0 20px"></div>
+      <div class="serif t" style="font-size:44px;color:var(--green)">Here&rsquo;s how to choose 👇</div>
+    </div>
+    <div class="logo t" style="width:170px;margin-bottom:6px;flex:none"><img src="../site/orig_Group_1487669750.png"></div>
+  </div>
+</div>
+
+<!-- OPTION B · clean photo on top, cream panel below -->
+<div class="ab p45" id="ig_sd_optionB">
+  <div class="photo" style="left:0;right:0;top:0;height:820px;background-image:url(../img/runner_calf_mudras.jpg);background-position:42% 55%"></div>
+    <div class="rule" style="position:absolute;left:0;right:0;top:820px;height:6px"></div>
+  <div style="position:absolute;left:120px;right:120px;top:900px">
+    <div class="serif t" style="font-size:80px">Runners: Sports<br>or Deep Tissue?</div>
+    <div class="serif t" style="font-size:50px;color:var(--green);margin-top:22px">Here&rsquo;s how to choose 👇</div>
+  </div>
+  <div class="logo t" style="position:absolute;right:120px;bottom:140px;width:200px"><img src="../site/orig_Group_1487669750.png"></div>
+</div>
+
+</body></html>
