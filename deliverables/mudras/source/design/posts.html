@@ -1,0 +1,127 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS */
+:root{
+  --gold:#F0CC75;        /* accent      hsl(42.44 80.39% 70%) */
+  --black:#212121;       /* black       hsl(0 0% 12.94%) */
+  --ink:#121212;         /* overlay base, near the site's hero black */
+  --white:#FFFCF2;       /* white       hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#555;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:var(--ink);color:var(--white)}
+.p45{width:1080px;height:1350px}
+.story{width:1080px;height:1920px}
+.fbl{width:1200px;height:630px}
+.photo{position:absolute;inset:0;background-repeat:no-repeat;filter:grayscale(1) contrast(1.05) brightness(.72)}
+.shade{position:absolute;inset:0}
+.logo img{width:100%;display:block}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.12}
+.kicker{font-family:var(--sans);font-weight:500;text-transform:uppercase;letter-spacing:.2em;color:var(--gold)}
+.rule{height:1px;background:var(--gold)}
+.frame{position:absolute;border:1.5px solid var(--gold)}
+.cta{position:absolute;display:flex;align-items:center;background:var(--gold);color:var(--black);font-family:var(--sans);font-weight:600;text-transform:uppercase;letter-spacing:.14em;border-radius:6px;white-space:nowrap}
+.list li{list-style:none;display:flex;gap:28px;align-items:baseline;padding:34px 0;border-top:1px solid rgba(240,204,117,.5)}
+.list li:last-child{border-bottom:1px solid rgba(240,204,117,.5)}
+.list .n{font-family:var(--sans);font-weight:500;color:var(--gold);font-size:26px;letter-spacing:.15em;min-width:56px}
+.list .x{font-family:var(--serif);font-size:52px;line-height:1.15}
+.dots{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);display:flex;gap:12px}
+.dots i{width:10px;height:10px;border-radius:50%;background:rgba(255,252,242,.4)}
+.dots i.on{background:var(--gold)}
+</style></head><body>
+
+<!-- POST #1 · Instagram carousel · slide 1 (hook) -->
+<div class="ab p45" id="p1_s1">
+  <div class="photo" style="top:240px;bottom:auto;height:640px;background-image:url(../img/p1_calendar.jpg);background-size:cover;background-position:65% 20%;filter:grayscale(1) contrast(1.05) brightness(.72) blur(1px);-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 22%,#000 72%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 22%,#000 72%,transparent 100%)"></div>
+  <div class="shade" style="background:linear-gradient(180deg,rgba(18,18,18,0) 30%,rgba(18,18,18,.15) 50%,rgba(18,18,18,0) 66%)"></div>
+  <div class="logo t" style="position:absolute;top:140px;left:50%;transform:translateX(-50%);width:300px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;right:120px;top:880px">
+    <div class="kicker t" style="font-size:26px">NYC Marathon &middot; 1 Nov</div>
+    <div class="rule" style="width:120px;margin:30px 0 36px"></div>
+    <div class="serif t" style="font-size:104px">9 days until the<br>NYC Marathon.</div>
+  </div>
+  <div class="dots"><i class="on"></i><i></i><i></i><i></i></div>
+</div>
+
+<!-- slide 2 -->
+<div class="ab p45" id="p1_s2" style="background:var(--black)">
+  <div class="logo t" style="position:absolute;top:140px;left:50%;transform:translateX(-50%);width:260px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div class="frame" style="left:120px;right:120px;top:330px;bottom:250px"></div>
+  <div style="position:absolute;left:190px;right:190px;top:420px">
+    <div class="serif t" style="font-size:92px;color:var(--gold)">Your training<br>is done.</div>
+    <div class="rule" style="width:120px;margin:52px 0 48px"></div>
+    <div class="serif t" style="font-size:60px;line-height:1.22">Now the smart move is planning what happens after the finish line.</div>
+  </div>
+  <div class="dots"><i></i><i class="on"></i><i></i><i></i></div>
+</div>
+
+<!-- slide 3 -->
+<div class="ab p45" id="p1_s3" style="background:var(--black)">
+  <div class="logo t" style="position:absolute;top:140px;left:50%;transform:translateX(-50%);width:260px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;right:120px;top:360px">
+    <div class="kicker t" style="font-size:26px;margin-bottom:26px">Post-race recovery</div>
+    <div class="serif t" style="font-size:86px;margin-bottom:60px">Slots open<br><span style="color:var(--gold)">Mon 2 &ndash; Wed 4 Nov</span></div>
+    <ul class="list">
+      <li><span class="n t">01</span><span class="x t">Sessions adapted to how your body feels after 26.2</span></li>
+      <li><span class="n t">02</span><span class="x t">60, 90 or 120 minutes</span></li>
+    </ul>
+  </div>
+  <div class="dots"><i></i><i></i><i class="on"></i><i></i></div>
+</div>
+
+<!-- slide 4 (CTA) -->
+<div class="ab p45" id="p1_s4">
+  <div class="photo" style="background-image:url(../img/p1_calendar.jpg);background-size:210%;background-position:30% 98%;filter:grayscale(1) brightness(.75) blur(3px)"></div>
+  <div class="shade" style="background:linear-gradient(180deg,var(--ink) 0%,rgba(18,18,18,.94) 62%,rgba(18,18,18,.6) 100%)"></div>
+  <div class="logo t" style="position:absolute;top:140px;left:50%;transform:translateX(-50%);width:260px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;right:120px;top:420px">
+    <div class="rule" style="width:120px;margin-bottom:52px"></div>
+    <div class="serif t" style="font-size:70px;line-height:1.18">Book now so you&rsquo;re not refreshing the calendar with sore legs next week.</div>
+  </div>
+  <div class="cta t" style="right:120px;bottom:150px;height:96px;padding:0 52px;font-size:28px">Book now &middot; link in bio</div>
+  <div class="dots"><i></i><i></i><i></i><i class="on"></i></div>
+</div>
+
+<!-- POST #1 · Instagram Story · y 460–980 left clear for the native countdown sticker -->
+<div class="ab story" id="p1_story">
+  <div class="photo" style="top:400px;bottom:auto;height:640px;background-image:url(../img/p1_calendar.jpg);background-size:cover;background-position:62% 20%;filter:grayscale(1) contrast(1.05) brightness(.72) blur(1px);-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 22%,#000 72%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 22%,#000 72%,transparent 100%)"></div>
+  <div class="shade" style="background:rgba(18,18,18,.15)"></div>
+  <div class="logo t" style="position:absolute;top:270px;left:50%;transform:translateX(-50%);width:300px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;right:120px;top:1030px">
+    <div class="kicker t" style="font-size:28px">NYC Marathon &middot; 1 Nov</div>
+    <div class="rule" style="width:120px;margin:30px 0 38px"></div>
+    <div class="serif t" style="font-size:92px">9 days until the<br>NYC Marathon.</div>
+    <div class="serif t" style="font-size:44px;margin-top:28px;color:var(--gold)">Post-race recovery slots open<br>Mon 2 &ndash; Wed 4 Nov</div>
+  </div>
+  <div class="cta t" style="right:120px;bottom:340px;height:84px;padding:0 48px;font-size:26px">Book now</div>
+</div>
+
+<!-- POST #2 · Facebook 1080x1350 -->
+<div class="ab p45" id="p2_fb">
+  <div class="photo" style="bottom:auto;height:74%;background-image:url(../img/p2_table.jpg);background-size:cover;background-position:58% 50%;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 22%,#000 72%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 22%,#000 72%,transparent 100%)"></div>
+  <div class="shade" style="background:linear-gradient(180deg,var(--ink) 0%,rgba(18,18,18,.92) 14%,rgba(18,18,18,.25) 28%,rgba(18,18,18,0) 74%)"></div>
+  <div class="logo t" style="position:absolute;top:140px;left:50%;transform:translateX(-50%);width:280px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;right:120px;top:960px">
+    <div class="rule" style="width:120px;margin-bottom:32px"></div>
+    <div class="serif t" style="font-size:72px">Running the NYC Marathon<br>on 1 Nov?</div>
+  </div>
+  <div class="cta t" style="right:120px;bottom:140px;height:84px;padding:0 44px;font-size:24px">Pre-book now</div>
+</div>
+
+<!-- POST #2 · Facebook link image 1200x630 -->
+<div class="ab fbl" id="p2_fb_link" style="background:var(--black)">
+  <div class="photo" style="background-image:url(../img/p2_table.jpg);left:380px;background-size:cover;background-position:60% 60%;-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 40%);mask-image:linear-gradient(90deg,transparent 0%,#000 40%)"></div>
+  <div class="logo t" style="position:absolute;left:120px;top:90px;width:210px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:120px;top:250px;width:480px">
+    <div class="rule" style="width:90px;margin-bottom:24px"></div>
+    <div class="serif t" style="font-size:52px">Running the NYC Marathon on 1 Nov?</div>
+  </div>
+  <div class="cta t" style="right:120px;bottom:90px;height:64px;padding:0 34px;font-size:19px">Pre-book now</div>
+</div>
+
+</body></html>
