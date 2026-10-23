@@ -1,0 +1,36 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with a black-and-white photo.
+   Layout follows the brand's "New York Film Festival" post: logo and headline top-left over a darkened sky,
+   the photo (an NYC Marathon water station, the support crew behind the runners) fully visible below. */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#000;color:var(--white)}
+.p45{width:1080px;height:1350px}
+.photo{position:absolute;inset:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.06)}
+.shade{position:absolute;inset:0}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.08}
+.rule{height:2px;background:var(--gold)}
+.logo img{width:100%;display:block}
+</style></head><body>
+
+<div class="ab p45" id="li_great_manager">
+  <div class="photo" style="background-image:url(../img/li_water_station_c.jpg);background-position:50% 100%"></div>
+  <div class="shade" style="background:linear-gradient(180deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.8) 34%,rgba(0,0,0,.25) 48%,rgba(0,0,0,0) 56%)"></div>
+  <div class="logo t" style="position:absolute;left:108px;top:135px;width:260px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:108px;right:108px;top:268px">
+    <div class="rule" style="width:120px;margin-bottom:34px"></div>
+    <div class="serif t" style="font-size:86px">Behind Every Marathoner<br>Is a Great Manager</div>
+  </div>
+</div>
+
+</body></html>
