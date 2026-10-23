@@ -1,0 +1,36 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white. The photo is toned as a black-to-gold
+   duotone (brand gold #F0CC75 highlights): a small team walking out together after work. Centred logo at the top
+   over the dark ceiling, centred serif copy between two short gold rules at the bottom. */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#000;color:var(--white)}
+.p45{width:1080px;height:1350px}
+.photo{position:absolute;inset:0;background:url(../img/grp_walk_duo.jpg) 50% 0%/cover no-repeat}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.75) 0%,rgba(0,0,0,.55) 15%,rgba(0,0,0,0) 24%,rgba(0,0,0,0) 56%,rgba(0,0,0,.75) 72%,rgba(0,0,0,.92) 100%)}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.06}
+.logo img{width:100%;display:block}
+.rule{width:90px;height:2px;background:var(--gold);margin:0 auto}
+</style></head><body>
+
+<div class="ab p45" id="fb_group_bodywork">
+  <div class="photo"></div>
+  <div class="shade"></div>
+  <div class="logo t" style="position:absolute;left:50%;transform:translateX(-50%);top:135px;width:240px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:108px;right:108px;bottom:150px;text-align:center">
+    <div class="rule" style="margin-bottom:34px"></div>
+    <div class="serif t" style="font-size:84px;white-space:nowrap">Group bodywork sessions<br><span style="color:var(--gold)">in Chelsea</span></div>
+    <div class="rule" style="margin-top:36px"></div>
+  </div>
+</div>
+
+</body></html>
