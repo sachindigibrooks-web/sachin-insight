@@ -30,3 +30,14 @@ Each image was checked for:
 All 7 images pass. There are no faces in any image.
 
 The Story leaves y 460–980 clear for Instagram's native countdown sticker (to 1 Nov).
+
+## Client guidelines for all posts (keep following these)
+- Use the exact logo from mudras.com, and only the website's fonts and palette: black, gold `#F0CC75` and white, with black-and-white photos. Do not use new panel colours (for example green or cream).
+- Follow the layouts of the brand's own posts (the reference images from @mudrasmassage), and vary them so posts don't all look the same.
+- **No faces** in stock photos. Faces are fine in photos from the client's own website.
+- **No equipment in images:** no massage guns, scraping tools or other devices. Show hands-on work only.
+- Every image must match its post text. Don't reuse a photo that has already been posted.
+- Use only royalty-free (Unsplash) or client-website images, and record every image link in the post's md file.
+- Name files with the platform and dimensions, for example `instagram-feed-1080x1350.png`.
+- Check every image for size, safe zone, at most 2 fonts, at most 7 words per line, contrast of at least 4.5:1, and text under 20% of a Facebook image.
+- No emoji or step numbering on images unless the client asks for them.
