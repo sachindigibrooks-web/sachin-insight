@@ -1,0 +1,40 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with the client's own black-and-white
+   studio photos. Three different sessions side by side (trigger point, assisted stretch, tool work), split by
+   thin gold lines: "no two sessions look the same". Logo and copy top-left as in the brand's NYFF post. */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#000;color:var(--white)}
+.p45{width:1080px;height:1350px}
+.panels{position:absolute;left:0;right:0;bottom:0;height:850px;display:flex;gap:3px;background:var(--gold)}
+.panels div{flex:1;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.05) brightness(1.12)}
+.fade{position:absolute;left:0;right:0;bottom:640px;height:210px;background:linear-gradient(180deg,#000 0%,rgba(0,0,0,0) 100%)}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.08}
+.logo img{width:100%;display:block}
+</style></head><body>
+
+<div class="ab p45" id="li_founder_bespoke">
+  <div class="panels">
+    <div style="background-image:url(../img/fd_trigger.jpg);background-position:28% 45%"></div>
+    <div style="background-image:url(../img/fd_stretch.jpg);background-position:62% 60%"></div>
+    <div style="background-image:url(../img/fd_tool.jpg);background-position:74% 50%"></div>
+  </div>
+  <div class="fade"></div>
+  <div class="logo t" style="position:absolute;left:108px;top:135px;width:250px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:108px;right:108px;top:262px">
+    <div class="serif t" style="font-size:78px">No Two Bodies Show Up<br>the Same Way.</div>
+    <div class="serif t" style="font-size:46px;color:var(--gold);margin-top:18px">So no two sessions<br>should look the same</div>
+  </div>
+</div>
+
+</body></html>
