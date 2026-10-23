@@ -2,10 +2,11 @@
 
 Brand palette: black, gold and white, with the client's own black-and-white studio photos (no faces).
 
-Creative idea:
-- One continuous gold thread runs across all five slides and lines up when swiped.
-- Each step has a marker dot on the thread, and a large outlined gold numeral (1, 2, 3) stands on it.
-- The thread ends in a filled gold dot above the closing line.
+Layout follows the brand's post "Stretching explores range.":
+- the copy is centred at the top between two gold rules, over the dark part of the photo
+- the photo is fully visible below
+- the gold logo sits bottom-left on the first and last slides
+- there are no step numerals
 
 | Slide | Text | Image | Link |
 |---|---|---|---|

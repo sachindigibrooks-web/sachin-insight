@@ -1,0 +1,85 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with the client's own black-and-white
+   studio photos. Layout follows the brand's post "Stretching explores range.": copy centred at the top between
+   two gold rules over the dark part of the photo, the photo fully visible below, gold logo bottom-left. */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#000;color:var(--white)}
+.p45{width:1080px;height:1350px}
+.photo{position:absolute;inset:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.04) brightness(1.18)}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.82) 0%,rgba(0,0,0,.66) 34%,rgba(0,0,0,.15) 50%,rgba(0,0,0,0) 58%,rgba(0,0,0,0) 78%,rgba(0,0,0,.62) 100%)}
+.copy{position:absolute;left:150px;right:150px;top:150px;text-align:center}
+.rule{height:2px;background:var(--gold);margin:32px 0}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.1}
+.caps{font-family:var(--sans);font-weight:600;text-transform:uppercase;letter-spacing:.28em;color:var(--gold)}
+.logo{position:absolute;left:108px;bottom:135px;width:250px}
+.logo img{width:100%;display:block}
+</style></head><body>
+
+<div class="ab p45" id="br2_s1">
+  <div class="photo" style="background-image:url(../img/br_s1_hands.jpg);background-position:50% 70%"></div>
+  <div class="shade"></div>
+  <div class="copy">
+    <div class="serif t" style="font-size:96px">What Is a BodyReset?</div>
+    <div class="rule"></div>
+    <div class="serif t" style="font-size:50px;color:var(--gold)">Our signature bespoke massage &rarr;</div>
+    <div class="rule"></div>
+  </div>
+  <div class="logo t"><img src="../site/orig_Group_1487669750.png"></div>
+</div>
+<div class="ab p45" id="br2_s2">
+  <div class="photo" style="background-image:url(../img/br_s2_assess.jpg);background-position:50% 80%"></div>
+  <div class="shade"></div>
+  <div class="copy">
+    <div class="caps t" style="font-size:22px;margin-bottom:26px">Step 1</div><div class="serif t" style="font-size:88px">Understand</div>
+    <div class="rule"></div>
+    <div class="serif t" style="font-size:48px;line-height:1.2">We start with your goals,<br>your body and your day</div>
+    <div class="rule"></div>
+  </div>
+  
+</div>
+<div class="ab p45" id="br2_s3">
+  <div class="photo" style="background-image:url(../img/br_s3_tool.jpg);background-position:50% 70%"></div>
+  <div class="shade"></div>
+  <div class="copy">
+    <div class="caps t" style="font-size:22px;margin-bottom:26px">Step 2</div><div class="serif t" style="font-size:88px">Work With Intention</div>
+    <div class="rule"></div>
+    <div class="serif t" style="font-size:48px;line-height:1.2">Techniques chosen for you,<br>not from a script</div>
+    <div class="rule"></div>
+  </div>
+  
+</div>
+<div class="ab p45" id="br2_s4">
+  <div class="photo" style="background-image:url(../img/br_s4_back.jpg);background-position:50% 75%"></div>
+  <div class="shade"></div>
+  <div class="copy">
+    <div class="caps t" style="font-size:22px;margin-bottom:26px">Step 3</div><div class="serif t" style="font-size:88px">Adapt Throughout</div>
+    <div class="rule"></div>
+    <div class="serif t" style="font-size:48px;line-height:1.2">Your feedback guides<br>every minute</div>
+    <div class="rule"></div>
+  </div>
+  
+</div>
+<div class="ab p45" id="br2_s5">
+  <div class="photo" style="background-image:url(../img/br_s5_calm.jpg);background-position:50% 80%"></div>
+  <div class="shade"></div>
+  <div class="copy" style="left:108px;right:108px">
+    <div class="serif t" style="font-size:66px;white-space:nowrap">No two bodies are the same.</div>
+    <div class="rule"></div>
+    <div class="serif t" style="font-size:66px;color:var(--gold);white-space:nowrap">No two BodyResets are either.</div>
+    <div class="rule"></div>
+    <div class="caps t" style="font-size:22px;color:var(--white)">Mudras NYC</div>
+  </div>
+  <div class="logo t"><img src="../site/orig_Group_1487669750.png"></div>
+</div>
+</body></html>
