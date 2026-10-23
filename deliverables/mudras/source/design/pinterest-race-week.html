@@ -1,0 +1,51 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with a black-and-white photo,
+   centred lockup as in the brand's "The season starts before kickoff" post. The checklist runs down to
+   a "running man" road marking and the runner's shoes, like standing on the start line. */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', 'Noto Color Emoji', serif;   /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;                      /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#0b0b0b;color:var(--white)}
+.pin{width:1000px;height:1500px}
+.photo{position:absolute;left:0;right:0;bottom:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.12) brightness(.95)}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.08}
+.caps{font-family:var(--sans);font-weight:600;font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1;text-transform:uppercase;letter-spacing:.26em}
+.logo img{width:100%;display:block}
+.badge{display:inline-block;border:1.5px solid var(--gold);color:var(--gold);border-radius:999px;padding:12px 30px 11px 36px}
+.list{list-style:none;width:640px;margin:0 auto}
+.list li{display:flex;align-items:center;gap:26px;padding:17px 0;border-top:1px solid rgba(240,204,117,.35)}
+.list li:last-child{border-bottom:1px solid rgba(240,204,117,.35)}
+.box{flex:0 0 40px;height:40px;border:1.5px solid var(--gold);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.box svg{width:28px;height:28px}
+.list .x{font-family:var(--serif);font-size:40px;line-height:1.1}
+</style></head><body>
+
+<div class="ab pin" id="pin_race_week">
+  <div class="photo" style="height:762px;background-image:url(../img/pin_walk_shoes_c.jpg);background-size:100% auto;background-position:50% 100%;-webkit-mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.3) 16%,#000 34%);mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.3) 16%,#000 34%)"></div>
+
+  <div class="logo t" style="position:absolute;left:50%;transform:translateX(-50%);top:150px;width:240px"><img src="../site/orig_Group_1487669750.png"></div>
+
+  <div style="position:absolute;left:100px;right:100px;top:262px;text-align:center">
+    <div class="caps badge t" style="font-size:22px">9 days to go</div>
+    <div class="serif t" style="font-size:68px;margin-top:30px">NYC Marathon<br>Race Week Checklist ✅</div>
+  </div>
+
+  <ul class="list" style="position:absolute;left:180px;top:548px">
+    <li><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#F0CC75" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="x t">Taper your miles</span></li>
+    <li><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#F0CC75" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="x t">Protect your sleep</span></li>
+    <li><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#F0CC75" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="x t">Familiar food &amp; tested gear</span></li>
+    <li><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#F0CC75" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="x t">Plan your route to the start</span></li>
+    <li><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#F0CC75" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="x t">Book recovery before race day</span></li>
+  </ul>
+</div>
+
+</body></html>
