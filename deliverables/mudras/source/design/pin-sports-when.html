@@ -1,0 +1,39 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with the client's own black-and-white
+   sports massage photo (specialist in a Mudras shirt working a runner's calf). Layout follows the brand's post
+   "Recovery is not reserved for athletes.": full photo, shading only at the bottom, gold logo, full-width gold
+   rule, white serif copy below. */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#000;color:var(--white)}
+.pin{width:1000px;height:1500px}
+.photo{position:absolute;inset:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.06) brightness(1.08)}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25) 0%,rgba(0,0,0,0) 14%,rgba(0,0,0,0) 46%,rgba(0,0,0,.66) 62%,rgba(0,0,0,.88) 100%)}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.06}
+.caps{font-family:var(--sans);font-weight:600;text-transform:uppercase;letter-spacing:.26em;color:var(--gold)}
+.rule{height:2px;background:var(--gold);margin:28px 0 32px}
+.logo img{width:100%;display:block}
+</style></head><body>
+
+<div class="ab pin" id="pin_sports_when">
+  <div class="photo" style="background-image:url(../img/medal_leg_session.jpg);background-position:44% 50%"></div>
+  <div class="shade"></div>
+  <div style="position:absolute;left:100px;right:100px;bottom:150px">
+    <div class="logo t" style="width:250px"><img src="../site/orig_Group_1487669750.png"></div>
+    <div class="rule"></div>
+    <div class="serif t" style="font-size:88px">When Should You Get<br>a Sports Massage?</div>
+    <div class="caps t" style="font-size:22px;margin-top:30px">Mudras &middot; Chelsea, NYC</div>
+  </div>
+</div>
+
+</body></html>
