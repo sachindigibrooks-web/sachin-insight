@@ -1,0 +1,42 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with a black-and-white photo.
+   Creative: a thin gold posture overlay on the photo: a dashed upright "ideal" line and a solid line showing
+   the head pulled forward over the phone, joined by a small arc. No equipment in frame. */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#000;color:var(--white)}
+.p45{width:1080px;height:1350px}
+.photo{position:absolute;inset:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.15) brightness(.82)}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 55%,rgba(0,0,0,.7) 70%,rgba(0,0,0,.88) 100%)}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.06}
+.logo img{width:100%;display:block}
+svg.post{position:absolute;inset:0}
+</style></head><body>
+
+<div class="ab p45" id="fb_tech_neck">
+  <div class="photo" style="top:400px;background-image:url(../img/technek_bun_c.jpg);background-size:1080px auto;background-position:50% 4%;-webkit-mask-image:linear-gradient(180deg,transparent 0%,transparent 6%,#000 30%);mask-image:linear-gradient(180deg,transparent 0%,transparent 6%,#000 30%)"></div>
+  <div style="position:absolute;left:470px;top:975px;width:52px;height:52px;border-radius:50%;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)"></div>
+  <svg class="post" width="1080" height="1350" viewBox="0 0 1080 1350">
+    <line x1="300" y1="1130" x2="300" y2="720" stroke="#F0CC75" stroke-width="2" stroke-dasharray="6 10"/>
+    <line x1="300" y1="1130" x2="440" y2="790" stroke="#F0CC75" stroke-width="2.5"/>
+    <path d="M300 980 A150 150 0 0 1 354 970" fill="none" stroke="#F0CC75" stroke-width="2"/>
+    <circle cx="300" cy="1130" r="8" fill="#F0CC75"/><circle cx="440" cy="790" r="8" fill="#F0CC75"/>
+  </svg>
+  <div class="logo t" style="position:absolute;left:108px;top:135px;width:220px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:108px;right:108px;top:262px">
+    <div class="serif t" style="font-size:96px">Tech Neck Is Real.</div>
+    <div class="serif t" style="font-size:48px;line-height:1.2;color:var(--gold);margin-top:20px">Phones down, chin up,<br>and book a reset.</div>
+  </div>
+</div>
+
+</body></html>
