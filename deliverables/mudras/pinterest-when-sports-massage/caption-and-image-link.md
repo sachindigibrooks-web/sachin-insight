@@ -3,7 +3,7 @@
 File: `pinterest/pinterest-pin-1000x1500.png`
 
 Brand palette: black, gold and white, with a black-and-white photo. The layout follows the brand's post "Recovery is not reserved for athletes.":
-- the photo fills the frame, with shading only at the bottom
+- the photo fills the top and fades into black at the bottom
 - gold logo
 - full-width gold rule
 - white serif headline
@@ -16,9 +16,11 @@ Mudras · Chelsea, NYC
 ## Image used
 | Image | Source | Link |
 |---|---|---|
-| A Mudras specialist in a branded Mudras shirt supporting and working a runner's calf (no faces) | Mudras website (the client's own photo, sports massage page) | https://images.squarespace-cdn.com/content/v1/68c4a7c58fe04131b7cf10fa/50db79ba-54ca-428f-92dc-e11f4156a0b9/Sports+Massage+session+by+Mudras+in+NYC.jpg |
+| A specialist's hand using a percussion massage device on an athlete's heel and Achilles (no faces) | Unsplash (free under the Unsplash License, commercial use allowed) | https://unsplash.com/photos/QBzckSn4fpo |
 
-Used at full resolution (2500×1649) in black and white. The photo appears on https://www.mudras.com/sports-massage-nyc.
+Direct download: https://images.unsplash.com/photo-1768508236664-3f294aaf7d41
+
+Converted to black and white. This replaces the earlier calf photo, which had already been used.
 
 ## Pin
 **Title:** Sports Massage NYC for Recovery in Chelsea | Mudras
