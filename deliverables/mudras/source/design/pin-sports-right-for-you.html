@@ -1,0 +1,44 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with black-and-white photos.
+   Pinterest collage: five sports from the caption (basketball, MMA, running, football, dance) as tiles split by
+   thin gold gutters, around a centred title band. */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:var(--gold);color:var(--white)}
+.pin{width:1000px;height:1500px}
+.tile{position:absolute;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.08)}
+.band{position:absolute;left:0;right:0;top:473px;height:554px;background:#0b0b0b}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.06}
+.caps{font-family:var(--sans);font-weight:600;text-transform:uppercase;letter-spacing:.24em;color:var(--white);font-size:18px}
+.logo img{width:100%;display:block}
+.tag{position:absolute;bottom:16px;left:0;right:0;text-align:center}
+</style></head><body>
+
+<div class="ab pin" id="pin_sports_right">
+  <!-- top row -->
+  <div class="tile" style="left:0;top:0;width:498px;height:470px;background-image:url(../img/sp_basket.jpg);background-position:50% 55%"></div>
+  <div class="tile" style="left:502px;top:0;width:498px;height:470px;background-image:url(../img/sp_mma.jpg);background-size:auto 640px;background-position:72% 100%"></div>
+  <!-- title band -->
+  <div class="band"></div>
+  <div class="logo t" style="position:absolute;left:50%;transform:translateX(-50%);top:540px;width:210px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:100px;right:100px;top:680px;text-align:center">
+    <div class="serif t" style="font-size:84px">Is Sports Massage<br>Right for You?</div>
+    <div class="serif t" style="font-size:48px;color:var(--gold);margin-top:26px">If you train, it might be.</div>
+  </div>
+  <!-- bottom row -->
+  <div class="tile" style="left:0;top:1030px;width:331px;height:470px;background-image:url(../img/sp_run.jpg);background-position:74% 60%"></div>
+  <div class="tile" style="left:334px;top:1030px;width:332px;height:470px;background-image:url(../img/sp_soccer.jpg);background-position:50% 70%"></div>
+  <div class="tile" style="left:669px;top:1030px;width:331px;height:470px;background-image:url(../img/sp_dance.jpg);background-position:50% 85%"></div>
+</div>
+
+</body></html>
