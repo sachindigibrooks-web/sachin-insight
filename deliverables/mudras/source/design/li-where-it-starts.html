@@ -3,8 +3,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
 <style>
 /* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with a black-and-white photo
-   (hands-on shoulder work, no equipment). Three gold markers joined by a dotted gold line trace how tension
-   links shoulder, upper back and lower back: "where it hurts isn't always where it starts". */
+   (someone holding a stiff neck, seen from behind; no equipment). Three gold markers joined by a dotted gold
+   line trace how tension links neck, shoulder blade and mid-back: "where it hurts isn't always where it starts". */
 :root{
   --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
   --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
@@ -16,8 +16,8 @@ body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;al
 body.notext .t{visibility:hidden}
 .ab{position:relative;overflow:hidden;background:#000;color:var(--white)}
 .p45{width:1080px;height:1350px}
-.photo{position:absolute;inset:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.08) brightness(.92)}
-.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.8) 34%,rgba(0,0,0,.2) 46%,rgba(0,0,0,0) 54%,rgba(0,0,0,0) 85%,rgba(0,0,0,.35) 100%)}
+.photo{position:absolute;inset:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.12) brightness(.62)}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.72) 0%,rgba(0,0,0,.6) 32%,rgba(0,0,0,.15) 44%,rgba(0,0,0,0) 52%,rgba(0,0,0,0) 85%,rgba(0,0,0,.35) 100%)}
 .serif{font-family:var(--serif);font-weight:400;line-height:1.08}
 .caps{font-family:var(--sans);font-weight:600;text-transform:uppercase;letter-spacing:.2em;color:var(--gold)}
 .logo img{width:100%;display:block}
@@ -25,21 +25,21 @@ svg.chain{position:absolute;inset:0}
 </style></head><body>
 
 <div class="ab p45" id="li_where_it_starts">
-  <div class="photo" style="background-image:url(../img/li_shoulder_hands_c.jpg);background-position:50% 0%"></div>
+  <div class="photo" style="background-image:url(../img/li_neck_back2_c.jpg);background-position:50% 0%"></div>
   <div class="shade"></div>
   <svg class="chain" width="1080" height="1350" viewBox="0 0 1080 1350">
     <defs><filter id="glow"><feGaussianBlur stdDeviation="6"/></filter></defs>
-    <path d="M420 1185 C 640 1215, 820 1040, 765 880 S 640 650, 565 600" fill="none" stroke="#F0CC75" stroke-width="2.5" stroke-dasharray="2 12" stroke-linecap="round"/>
+    <path d="M468 772 C 600 800, 690 880, 655 965 S 520 1080, 470 1175" fill="none" stroke="#F0CC75" stroke-width="2.5" stroke-dasharray="2 12" stroke-linecap="round"/>
     <g fill="none" stroke="#F0CC75">
-      <circle cx="420" cy="1185" r="22" stroke-width="2" opacity=".9"/><circle cx="420" cy="1185" r="7" fill="#F0CC75"/>
-      <circle cx="765" cy="880" r="22" stroke-width="2" opacity=".9"/><circle cx="765" cy="880" r="7" fill="#F0CC75"/>
-      <circle cx="565" cy="600" r="22" stroke-width="2" opacity=".9"/><circle cx="565" cy="600" r="7" fill="#F0CC75"/>
+      <circle cx="468" cy="772" r="22" stroke-width="2" opacity=".95"/><circle cx="468" cy="772" r="7" fill="#F0CC75"/>
+      <circle cx="655" cy="965" r="22" stroke-width="2" opacity=".95"/><circle cx="655" cy="965" r="7" fill="#F0CC75"/>
+      <circle cx="470" cy="1175" r="22" stroke-width="2" opacity=".95"/><circle cx="470" cy="1175" r="7" fill="#F0CC75"/>
     </g>
   </svg>
-  <div class="logo t" style="position:absolute;left:108px;top:135px;width:240px"><img src="../site/orig_Group_1487669750.png"></div>
-  <div style="position:absolute;left:108px;right:108px;top:260px">
-    <div class="serif t" style="font-size:74px">Where It Hurts Isn&rsquo;t<br>Always Where It Starts.</div>
-    <div class="serif t" style="font-size:42px;line-height:1.2;color:var(--gold);margin-top:24px">Neck, shoulder &amp; back care<br>for NYC professionals</div>
+  <div class="logo t" style="position:absolute;left:108px;top:135px;width:220px"><img src="../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:108px;right:108px;top:235px">
+    <div class="serif t" style="font-size:68px">Where It Hurts Isn&rsquo;t<br>Always Where It Starts.</div>
+    <div class="serif t" style="font-size:40px;line-height:1.2;color:var(--gold);margin-top:18px">Neck, shoulder &amp; back care<br>for NYC professionals</div>
   </div>
 </div>
 

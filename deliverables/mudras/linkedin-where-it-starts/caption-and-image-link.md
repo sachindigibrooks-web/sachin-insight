@@ -4,7 +4,12 @@ File: `linkedin/linkedin-single-image-1080x1350.png`
 
 Brand palette: black, gold and white, with a black-and-white photo. Logo and copy are top-left, as in the brand's "New York Film Festival" post.
 
-Creative idea: three gold markers on the body are joined by a dotted gold line. They trace how tension links the shoulder, mid-back and upper back, which is the post's point that where it hurts isn't always where it starts. There is no equipment in the frame; the photo shows hands-on work only.
+Creative idea: three gold markers are joined by a dotted gold line down the back:
+- the neck, where she is holding it
+- the shoulder blade
+- the mid-back
+
+This maps the post's point that where it hurts isn't always where it starts. There is no equipment in the frame.
 
 ## Image text
 Where It Hurts Isn't Always Where It Starts.
@@ -13,11 +18,11 @@ Neck, shoulder & back care for NYC professionals
 ## Image used
 | Image | Source | Link |
 |---|---|---|
-| A specialist's hand working on a client's shoulder and back on the massage table | Unsplash (free under the Unsplash License, commercial use allowed) | https://unsplash.com/photos/i0-A2noIOcs |
+| A woman seen from behind, head bowed, holding her stiff neck (no face) | Unsplash (free under the Unsplash License, commercial use allowed) | https://unsplash.com/photos/ooHoj0n6Tw0 |
 
-Direct download: https://images.unsplash.com/photo-1790244078248-9f3b38421058
+Direct download: https://images.unsplash.com/photo-1615997393458-98aad1851521
 
-The photo is cropped above the client's head, so no face shows, and converted to black and white.
+The photo is cropped to 4:5 and converted to black and white, darkened so the white copy and gold markers stand out. It replaces the earlier massage-table photo.
 
 ## Caption
 A stiff neck after a long week rarely starts and ends at the neck.
