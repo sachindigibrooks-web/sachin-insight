@@ -1,0 +1,36 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with black-and-white photos.
+   Creative: a diagonal split joined by a thin gold line. Left: the workday (a Midtown office window with the
+   Chrysler Building). Right: the reset (a Mudras specialist releasing a client's neck). Copy sits on black below. */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#000;color:var(--white)}
+.p45{width:1080px;height:1350px}
+.panel{position:absolute;left:0;top:0;width:1080px;height:1010px;background-repeat:no-repeat;filter:grayscale(1) contrast(1.06)}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.06}
+.logo img{width:100%;display:block}
+</style></head><body>
+
+<div class="ab p45" id="ig_corp_nyc">
+  <div class="panel" style="clip-path:polygon(0 0,640px 0,470px 1010px,0 1010px);background-image:url(../img/corp_nyc_window_c.jpg);background-size:auto 1010px;background-position:right 0 top 0;background-position:-40px 0"></div>
+  <div class="panel" style="clip-path:polygon(646px 0,1080px 0,1080px 1010px,476px 1010px);background-image:url(../img/corp_neck_release.jpg);background-size:auto 1010px;background-position:-60px 0;filter:grayscale(1) contrast(1.06) brightness(1.1)"></div>
+  <svg style="position:absolute;inset:0" width="1080" height="1350"><line x1="643" y1="0" x2="473" y2="1010" stroke="#F0CC75" stroke-width="3"/></svg>
+  <div style="position:absolute;left:0;right:0;top:760px;height:260px;background:linear-gradient(180deg,rgba(0,0,0,0),#000)"></div>
+  <div style="position:absolute;left:108px;right:108px;bottom:140px">
+    <div class="logo t" style="width:200px;margin-bottom:30px"><img src="../site/orig_Group_1487669750.png"></div>
+    <div class="serif t" style="font-size:80px;white-space:nowrap">Corporate Massage in NYC</div>
+    <div class="serif t" style="font-size:44px;color:var(--gold);margin-top:16px">Team wellness, built around the workday</div>
+  </div>
+</div>
+
+</body></html>
