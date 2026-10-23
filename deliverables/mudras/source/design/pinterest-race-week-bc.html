@@ -1,0 +1,81 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with black-and-white photos.
+   B: dusk runner at the Central Park Reservoir; the copy sits in the photo's own dark foreground.
+   C: Central Park path in autumn; the checklist is drawn as a dotted course line with mile-marker dots,
+      next to a large countdown numeral. */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#000;color:var(--white)}
+.pin{width:1000px;height:1500px}
+.photo{position:absolute;inset:0;background-repeat:no-repeat;background-size:cover}
+.shade{position:absolute;inset:0}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.08}
+.caps{font-family:var(--sans);font-weight:600;text-transform:uppercase;letter-spacing:.24em;font-feature-settings:"lnum" 1;color:var(--gold)}
+.logo img{width:100%;display:block}
+
+/* B: numbered list */
+.nlist{list-style:none}
+.nlist li{display:flex;align-items:baseline;gap:22px;padding:9px 0}
+.nlist .n{font-family:var(--sans);font-weight:600;font-size:22px;letter-spacing:.12em;color:var(--gold);min-width:40px;font-feature-settings:"lnum" 1}
+.nlist .x{font-family:var(--serif);font-size:38px;line-height:1.1}
+
+/* C: course line */
+.route{list-style:none;position:relative}
+.route:before{content:"";position:absolute;left:11px;top:22px;bottom:22px;border-left:2px dotted var(--gold)}
+.route li{position:relative;display:flex;align-items:center;gap:26px;padding:13px 0}
+.route .dot{flex:0 0 24px;height:24px;border-radius:50%;border:2px solid var(--gold);background:#000;position:relative;z-index:1}
+.route li:last-child .dot{background:var(--gold)}
+.route .x{font-family:var(--serif);font-size:34px;line-height:1.1}
+</style></head><body>
+
+<!-- B · reservoir silhouette -->
+<div class="ab pin" id="pin_race_week_b">
+  <div class="photo" style="background-image:url(../img/pin_reservoir.jpg);background-position:42% 0%;filter:grayscale(1) contrast(1.05)"></div>
+  <div class="shade" style="background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0) 50%,rgba(0,0,0,.72) 60%,rgba(0,0,0,.9) 100%)"></div>
+  <div style="position:absolute;left:100px;right:100px;top:850px">
+    <div class="caps t" style="font-size:22px">9 days to go</div>
+    <div class="serif t" style="font-size:64px;margin-top:18px">NYC Marathon<br>Race Week Checklist</div>
+    <ul class="nlist" style="margin-top:22px">
+      <li><span class="n t">01</span><span class="x t">Taper your miles</span></li>
+      <li><span class="n t">02</span><span class="x t">Protect your sleep</span></li>
+      <li><span class="n t">03</span><span class="x t">Familiar food &amp; tested gear</span></li>
+      <li><span class="n t">04</span><span class="x t">Plan your route to the start</span></li>
+      <li><span class="n t">05</span><span class="x t">Book recovery before race day</span></li>
+    </ul>
+  </div>
+  <div class="logo t" style="position:absolute;right:100px;bottom:150px;width:190px"><img src="../site/orig_Group_1487669750.png"></div>
+</div>
+
+<!-- C · Central Park path in autumn -->
+<div class="ab pin" id="pin_race_week_c">
+  <div class="photo" style="background-image:url(../img/pin_park_path.jpg);background-position:50% 100%;filter:grayscale(1) contrast(1.06) brightness(.98)"></div>
+  <div class="shade" style="background:linear-gradient(180deg,rgba(0,0,0,.86) 0%,rgba(0,0,0,.8) 40%,rgba(0,0,0,.35) 56%,rgba(0,0,0,0) 66%,rgba(0,0,0,0) 84%,rgba(0,0,0,.5) 100%)"></div>
+  <div style="position:absolute;left:100px;top:170px;width:230px;text-align:center">
+    <div class="serif t" style="font-size:300px;line-height:.8;color:var(--gold)">9</div>
+    <div class="caps t" style="font-size:22px;margin-top:22px;color:var(--white)">days<br>to go</div>
+  </div>
+  <div style="position:absolute;left:360px;right:100px;top:150px">
+    <div class="caps t" style="font-size:20px">NYC Marathon</div>
+    <div class="serif t" style="font-size:54px;margin-top:10px">Race Week Checklist</div>
+    <ul class="route" style="margin-top:22px">
+      <li><span class="dot"></span><span class="x t">Taper your miles</span></li>
+      <li><span class="dot"></span><span class="x t">Protect your sleep</span></li>
+      <li><span class="dot"></span><span class="x t">Familiar food &amp; tested gear</span></li>
+      <li><span class="dot"></span><span class="x t">Plan your route to the start</span></li>
+      <li><span class="dot"></span><span class="x t">Book recovery before race day</span></li>
+    </ul>
+  </div>
+  <div class="logo t" style="position:absolute;left:50%;transform:translateX(-50%);bottom:150px;width:220px"><img src="../site/orig_Group_1487669750.png"></div>
+</div>
+
+</body></html>
