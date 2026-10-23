@@ -5,8 +5,8 @@ File: `linkedin/linkedin-single-image-1080x1350.png`
 Brand palette: black, gold and white, with a black-and-white photo. The layout follows the brand's "New York Film Festival" post:
 - gold logo top-left
 - short gold rule
-- white serif headline over the darkened sky
-- the photo fully visible below
+- white serif headline over black
+- the photo below fades in from black
 
 ## Image text
 Behind Every Marathoner Is a Great Manager
@@ -14,14 +14,15 @@ Behind Every Marathoner Is a Great Manager
 ## Image used
 | Image | Source | Link |
 |---|---|---|
-| An NYC Marathon water station: a long table of cups with the volunteer crew behind it (the support behind every runner) | Unsplash (free under the Unsplash License, commercial use allowed) | https://unsplash.com/photos/5rfKulWHCrQ |
+| A supporter's hand holding up a hand-painted "DO IT" sign for runners at the NYC Marathon (no faces) | Unsplash (free under the Unsplash License, commercial use allowed) | https://unsplash.com/photos/i6jUOmKETS0 |
 
-Direct download: https://images.unsplash.com/photo-1636736626599-6993a1989285
+Direct download: https://images.unsplash.com/photo-1667781758836-5a7e71e617d9
 
-Notes on the photo:
-- Volunteers are seen from behind or wearing masks, so no face is identifiable.
-- The crop leaves out a bottled-water brand's boxes.
-- The official NYC Marathon (TCS) volunteer jackets are still visible, small, on the crew.
+Edits to the photo:
+- cropped to the "DO IT" sign and hand, which leaves out a second sign and a spectator's head
+- turned black and white except for the gold tones, so the gold-painted "DO IT" and the autumn leaves echo the brand gold
+
+This photo replaces the earlier water-station image, which looked like catering.
 
 ## Caption
 Someone on your team is probably running the NYC Marathon next Sunday.
