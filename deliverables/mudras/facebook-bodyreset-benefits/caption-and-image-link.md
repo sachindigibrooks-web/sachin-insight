@@ -5,9 +5,11 @@ File: `facebook/facebook-feed-1080x1350.png`
 Brand palette: black, gold and white, with a black-and-white photo. The layout:
 - gold logo centred at the top, over the dark studio wall
 - the photo of a relaxed client in the middle
+- the heading "How Will You Feel After a BodyReset?", with the second line in gold
 - the four benefits in a 2×2 grid divided by a thin gold cross
 
 ## Image text
+How Will You Feel After a BodyReset?
 Less tension · Easier movement · Deeper breathing · Better sleep
 
 ## Image used
