@@ -8,13 +8,13 @@ CAR5 = [f"instagram-carousel-slide-{k}-1080x1350.png" for k in range(1, 6)]
 
 IG = {
  4: dict(files=files("ig-fb/r04-countdown", CAR5),
-  caption="""NYC, it's go time. 🗽 8 days left!
+  caption="""NYC, it's go time. 🗽 6 days left!
 Runners, sound off in the comments 👇
 Bib number. Goal time. Marathon number #.
 We'll be your loudest cheer squad all week. 📣💛
 Legs feeling the miles? Book a targeted pre-race session with our specialists before the big day. Link in bio 🔗
 #MudrasFam #NYCMarathon #RunNYC #MarathonCountdown #RaceWeek #ChelseaNYC""",
-  notes="Slide 1 now says 8 days (for posting on Oct 24; update the number if the post date moves). All 5 carousel slides are linked in order, so the dots match. Removed \"quick\" from the caption."),
+  notes="Slide 1 now says 6 days (for posting on Oct 26; marathon is Sunday, Nov 1). All 5 carousel slides are linked in order, so the dots match. Removed \"quick\" from the caption."),
  5: dict(files="",
   caption="""Deep Tissue Massage: What It Feels Like & How to Prepare
 
