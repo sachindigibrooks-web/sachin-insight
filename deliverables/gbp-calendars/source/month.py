@@ -144,7 +144,7 @@ Book a free fence repair estimate with Preferred Fence Solutions. We will check 
 
 Tap View offer to schedule your free repair estimate."""),
 dict(date="2026-11-30", base="PF-20", title="SimTek Fences: The Look of Stone",
-     tpl="diagonal", tag="SimTek Fencing", head="The Look of *Stone*,|Without the Upkeep", sub="SimTek fences for Edmond, OKC, Mustang and Yukon", chip="Is SimTek Right for You?", photos=["194_unsplash_0WxjDT_3Tsw.jpg"], focus="50% 50%"),
+     tpl="diagonal", tag="SimTek Fencing", head="The Look of *Stone*,|Without the Upkeep", sub="SimTek fences for Edmond, OKC, Mustang and Yukon", chip="Is SimTek Right for You?", photos=["196_ai_ideogram_xFZhaXmcWVantneRPPXhuQ.jpg"], focus="50% 50%"),
 dict(date="2026-12-01", base="PF-16", title="Thank You, Oklahoma City",
      tpl="spotlight", tag="Thank You, OKC", head="Award-Winning|*Fence Crew*", sub="Every fence and gate backed by a 1-year warranty", chip="See Our Awards", photos=["36_IMG_5887.jpg","38_IMG_5911.jpg","90_o-2.jpg"], focus="50% 50%",
      copy="""Thank you, Oklahoma City, for another great year.

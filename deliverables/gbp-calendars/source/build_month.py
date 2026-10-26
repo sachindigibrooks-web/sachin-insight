@@ -20,7 +20,7 @@ LINK = Font(name="Arial", size=10, color="0000FF")
 
 GUIDE = [g for g in GUIDE if not g[0].startswith("Photos must")] + [
     ("Photos must follow the photo policy: real, relevant to the business, not misleading.",
-     "Every banner uses a real photo from the business's own website (one HG post uses a licensed Unsplash photo). Overlay text is short (headline plus one line), with no phone numbers, emails, prices or claims that are not on the website.",
+     "Banners use the business's own website photos where one fits the topic. Where none fits, a free Unsplash photo is used, and one Preferred Fence banner (SimTek) uses an AI-generated illustration, marked on the Image Rights Check tab. Overlay text is short (headline plus one line), with no phone numbers, emails, prices or claims that are not on the website.",
      "https://support.google.com/business/answer/7213077"),
     ("Recommended post image: JPG or PNG, 10 KB to 5 MB, at least 400 x 300 px, 4:3 ratio displays best.",
      "Banners are 1200 x 900 px PNG (4:3). Key text sits inside the centre safe area so the GBP crop does not cut it.",
@@ -85,6 +85,8 @@ def photo_urls(s):
     urls = open(os.path.join(BAN, s["dl"])).read().split()
     by_name = {u.rsplit("/", 1)[-1]: u for u in urls}
     def src(f):
+        if "_ai_ideogram_" in f:
+            return "AI-generated with Ideogram (illustrative): https://ideogram.ai/g/D6aNN7JVRvKA3FneilN_8A/0"
         m = re.match(r"\d+_unsplash_(.+)\.jpg$", f)
         if m and f not in SPECIAL_SRC:
             return f"https://unsplash.com/photos/{m.group(1)} (Unsplash licence)"
@@ -98,10 +100,12 @@ def photo_urls(s):
 
 OWN = "Business's own photo from its website (client to confirm ownership)."
 UNSPLASH = "Unsplash License: free for commercial use, no permission or credit needed."
+AI = "AI-generated image (Ideogram). Illustrative only, not the client's own project. Confirm commercial use under the Ideogram account plan terms."
 
 
 def rights(photos):
-    return "\n".join(UNSPLASH if "unsplash" in f else OWN for f in photos) if len({("unsplash" in f) for f in photos}) > 1 else (UNSPLASH if "unsplash" in photos[0] else OWN)
+    one = lambda f: AI if "_ai_" in f else UNSPLASH if "unsplash" in f else OWN
+    return "\n".join(dict.fromkeys(one(f) for f in photos))
 
 
 def rows_for(s):
@@ -231,7 +235,10 @@ def build(key, repo_dir):
         for f in r["photos"]:
             path = os.path.join(BAN, s["ph"], f)
             ev = []
-            if "unsplash" in f:
+            if "_ai_" in f:
+                origin, verdict = "AI-generated", "OK: AI image, client to approve"
+                ev.append("Generated with Ideogram for this banner; shows a stone-look fence style, not a real job by the client")
+            elif "unsplash" in f:
                 origin, verdict = "Unsplash", "OK: royalty-free (Unsplash License)"
                 ev.append("Downloaded through the official Unsplash API; free photo, not Unsplash+")
             else:
@@ -260,7 +267,7 @@ def build(key, repo_dir):
         wr.cell(row=rend + 4, column=1, value="Photos removed during the check").font = FB
         table(wr, rend + 5, ["#", "Photo removed", "Reason", "Replaced with"], [(i + 1,) + n for i, n in enumerate(notes)], [0, 0, 0, 0], center_cols=(1,))
     wr.cell(row=rend + 6 + len(notes) + (1 if notes else 0), column=1,
-            value="Note: photos on the business's own website are treated as owned by the business. Ask the client to confirm they took these photos or hold the rights. Unsplash photos can be used commercially without credit, but do not show people or brands in a way that suggests endorsement.").font = FS
+            value="Note: photos on the business's own website are treated as owned by the business. Ask the client to confirm they took these photos or hold the rights. Unsplash photos can be used commercially without credit, but do not show people or brands in a way that suggests endorsement. AI-generated images are illustrations only: never present them as the client's own finished work, and get client approval before posting.").font = FS
     wr.freeze_panes = "A5"
 
     # ---------------- Website offers check ----------------
