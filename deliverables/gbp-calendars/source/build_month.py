@@ -67,6 +67,9 @@ def photo_urls(s):
     urls = open(os.path.join(BAN, s["dl"])).read().split()
     by_name = {u.rsplit("/", 1)[-1]: u for u in urls}
     def src(f):
+        m = re.match(r"\d+_unsplash_(.+)\.jpg$", f)
+        if m and f not in SPECIAL_SRC:
+            return f"https://unsplash.com/photos/{m.group(1)} (Unsplash licence)"
         if f in SPECIAL_SRC:
             if SPECIAL_SRC[f]:
                 return SPECIAL_SRC[f]

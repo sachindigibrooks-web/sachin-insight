@@ -28,7 +28,9 @@ BASE_CSS = """
 body{background:#777;display:flex;flex-wrap:wrap;gap:30px;padding:30px}
 .ab{position:relative;width:1200px;height:900px;overflow:hidden;background:var(--d);font-family:var(--bf);color:var(--w)}
 .ph{position:absolute;background-size:cover;background-repeat:no-repeat}
-.h{font-family:var(--hf);font-weight:var(--hw);letter-spacing:var(--ls);line-height:1.04}
+.h{font-family:var(--hf);font-weight:var(--hw);letter-spacing:var(--ls);line-height:1.08;text-wrap:balance}
+.nw{white-space:nowrap}
+.vbox{position:absolute;display:flex;flex-direction:column;justify-content:center;z-index:10}
 .h em{font-style:normal;color:var(--a)}
 .tag{display:inline-flex;align-items:center;gap:10px;font:700 21px/1 var(--bf);letter-spacing:3px;text-transform:uppercase;color:var(--a)}
 .tag:before{content:"";width:34px;height:3px;background:var(--a)}
@@ -47,6 +49,7 @@ body{background:#777;display:flex;flex-wrap:wrap;gap:30px;padding:30px}
 def head_html(s):
     s = html.escape(s)
     s = re.sub(r"\*(.+?)\*", r"<em>\1</em>", s)
+    s = re.sub(r"(\w+(?:-\w+)+)", r'<span class="nw">\1</span>', s)
     return s.replace("|", "<br>")
 
 def ph(src, focus, style):
@@ -87,20 +90,23 @@ def text_block(p, hsize, width, sub=True, chip=True, tag=True):
         out += f'<div style="margin-top:34px"><span class="chip">{html.escape(p["chip"])}</span></div>'
     return out + "</div>"
 
+def vbox(left, top, bottom, width, inner):
+    return f'<div class="vbox" style="left:{left}px;top:{top}px;bottom:{bottom}px;width:{width}px">{inner}</div>'
+
 def T_split(p, b):
     return (ph(p["photos"][0], p["focus"], "left:0;top:0;width:640px;height:900px")
             + f'<div style="position:absolute;left:640px;top:0;width:560px;height:900px;background:var(--p)"></div>'
             + (motif(b, "band", "left:780px;top:0") if b["motif"]=="glass" else motif(b, "corner", "left:840px;bottom:0"))
             + logo(b, 700, 60, 96)
-            + f'<div style="position:absolute;left:700px;top:270px;z-index:10">{text_block(p,58,450)}</div>')
+            + vbox(700, 220, 60, 450, text_block(p, 58, 450)))
 
 def T_offer(p, b):
     return (ph(p["photos"][0], p["focus"], "inset:0")
             + '<div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.82),rgba(0,0,0,.35))"></div>'
             + logo(b, 60, 56, 92)
-            + f'<div style="position:absolute;left:60px;top:250px;width:640px;padding:46px 46px 50px;background:var(--a);color:var(--onA);border-radius:28px;box-shadow:0 30px 60px rgba(0,0,0,.35);z-index:10">'
+            + f'<div style="position:absolute;left:60px;top:230px;width:660px;padding:44px 46px 48px;background:var(--a);color:var(--onA);border-radius:28px;box-shadow:0 30px 60px rgba(0,0,0,.35);z-index:10">'
             + f'<div style="font:800 21px/1 var(--bf);letter-spacing:3px;text-transform:uppercase;margin-bottom:22px;opacity:.85">{html.escape(p["tag"])}</div>'
-            + f'<div class="h" style="font-size:72px;color:var(--onA)">{head_html(p["head"]).replace("<em>","<em style=\"color:var(--w);background:var(--p);padding:0 14px;border-radius:8px\">")}</div>'
+            + f'<div class="h" style="font-size:68px;line-height:1.22;color:var(--onA)">{head_html(p["head"]).replace("<em>","<em style=\"display:inline-block;line-height:1.08;color:var(--w);background:var(--p);padding:2px 16px 8px;margin:4px 0;border-radius:10px\">")}</div>'
             + f'<div style="font:500 27px/1.3 var(--bf);margin-top:22px">{html.escape(p["sub"])}</div>'
             + f'<div style="margin-top:30px"><span class="chip" style="background:var(--p);color:var(--w)">{html.escape(p["chip"])}</span></div></div>'
             + motif(b, "corner", "right:40px;bottom:30px" if b["motif"]=="glass" else "right:0;bottom:0"))
@@ -110,11 +116,11 @@ def T_faq(p, b):
             + f'<div style="position:absolute;left:30px;top:-150px;font:900 820px/1 var(--hf);color:var(--a);opacity:.09">?</div>'
             + ph(p["photos"][0], p["focus"], "right:56px;top:56px;width:470px;height:788px;border-radius:26px;box-shadow:0 20px 50px rgba(0,0,0,.35)")
             + logo(b, 64, 60, 84)
-            + f'<div style="position:absolute;left:64px;top:250px;width:560px;z-index:10">'
-            + f'<div class="tag" style="margin-bottom:26px">{html.escape(p["tag"])}</div>'
-            + f'<div class="h" style="font-size:62px">{head_html(p["head"])}</div>'
-            + f'<div style="margin-top:28px;padding-left:22px;border-left:4px solid var(--a)" class="sub">{html.escape(p["sub"])}</div>'
-            + f'<div style="margin-top:36px"><span class="chip">{html.escape(p["chip"])}</span></div></div>')
+            + vbox(64, 210, 60, 560,
+                   f'<div><div class="tag" style="margin-bottom:26px">{html.escape(p["tag"])}</div>'
+                   + f'<div class="h" style="font-size:62px">{head_html(p["head"])}</div>'
+                   + f'<div style="margin-top:28px;padding-left:22px;border-left:4px solid var(--a)" class="sub">{html.escape(p["sub"])}</div>'
+                   + f'<div style="margin-top:36px"><span class="chip">{html.escape(p["chip"])}</span></div></div>'))
 
 PIN = '<svg width="22" height="28" viewBox="0 0 24 30"><path d="M12 0C5.4 0 0 5.3 0 11.9 0 20.8 12 30 12 30s12-9.2 12-18.1C24 5.3 18.6 0 12 0zm0 16.5a4.6 4.6 0 1 1 0-9.2 4.6 4.6 0 0 1 0 9.2z" fill="currentColor"/></svg>'
 
@@ -131,17 +137,17 @@ def T_glass(p, b):
             + logo(b, 56, 52, 88)
             + f'<div style="position:absolute;left:56px;bottom:56px;width:640px;padding:44px;border-radius:28px;background:rgba(10,20,28,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1.5px solid rgba(255,255,255,.28);z-index:10">'
             + text_block(p, 60, 552) + "</div>"
-            + motif(b, "corner", "right:40px;top:40px;opacity:.9" if b["motif"]=="glass" else "right:0;bottom:0;opacity:.95"))
+            + motif(b, "corner", "right:30px;bottom:30px;opacity:.55" if b["motif"]=="glass" else "right:0;bottom:0;opacity:.95"))
 
 def T_trio(p, b):
     out = (f'<div style="position:absolute;inset:0;background:var(--p)"></div>'
            + logo(b, 56, 44, 80)
-           + f'<div style="position:absolute;left:56px;top:170px;z-index:10">{text_block(p,58,1088,sub=False,chip=False)}</div>')
+           + f'<div style="position:absolute;left:56px;top:205px;z-index:10">{text_block(p,58,760,sub=False,chip=False)}</div>')
     for i, (src, lab) in enumerate(zip(p["photos"], p["labels"])):
         x = 56 + i * 370
-        out += ph(src, p["focus"], f"left:{x}px;top:420px;width:348px;height:420px;border-radius:20px")
-        out += f'<div class="lbl" style="left:{x+18}px;top:{420+420-62}px">{html.escape(lab)}</div>'
-    out += f'<div style="position:absolute;right:56px;top:66px;z-index:10"><span class="chip">{html.escape(p["chip"])}</span></div>'
+        out += ph(src, p["focus"], f"left:{x}px;top:450px;width:348px;height:400px;border-radius:20px")
+        out += f'<div class="lbl" style="left:{x+18}px;top:{450+400-62}px">{html.escape(lab)}</div>'
+    out += f'<div style="position:absolute;right:56px;top:330px;z-index:10"><span class="chip">{html.escape(p["chip"])}</span></div>'
     return out
 
 def T_diagonal(p, b):
@@ -149,7 +155,7 @@ def T_diagonal(p, b):
             + f'<div style="position:absolute;inset:0;background:var(--p);clip-path:polygon(0 0,62% 0,46% 100%,0 100%);opacity:.96"></div>'
             + f'<div style="position:absolute;inset:0;background:var(--a);clip-path:polygon(62% 0,64.5% 0,48.5% 100%,46% 100%)"></div>'
             + logo(b, 60, 56, 90)
-            + f'<div style="position:absolute;left:60px;top:250px;z-index:10">{text_block(p,64,480)}</div>')
+            + vbox(60, 210, 60, 480, text_block(p, 64, 480)))
 
 def T_frame(p, b):
     return (f'<div style="position:absolute;inset:0;background:var(--p)"></div>'
@@ -167,7 +173,7 @@ def T_thanks(p, b):
             + (motif(b, "wide", "left:0;bottom:-10px;opacity:.25") if b["motif"]=="picket" else "")
             + ph(p["photos"][0], p["focus"], "left:620px;top:120px;width:500px;height:660px;border-radius:250px 250px 26px 26px;box-shadow:0 20px 50px rgba(0,0,0,.35);border:6px solid var(--a)")
             + logo(b, 80, 80, 90)
-            + f'<div style="position:absolute;left:80px;top:280px;z-index:10">{text_block(p,78,500,chip=False)}</div>')
+            + vbox(80, 220, 120, 500, text_block(p, 74, 500, chip=False)))
 
 def T_beforeafter(p, b):
     labels = p.get("labels", ["Before", "After"])
@@ -191,10 +197,22 @@ def T_spotlight(p, b):
             + ph(c, p["focus"], "left:560px;top:560px;width:290px;height:300px;border-radius:22px")
             + ph(d, p["focus"], "left:870px;top:560px;width:290px;height:300px;border-radius:22px")
             + logo(b, 60, 60, 88)
-            + f'<div style="position:absolute;left:60px;top:270px;z-index:10">{text_block(p,72,450)}</div>')
+            + vbox(60, 210, 60, 460, text_block(p, 68, 460)))
 
 TPL = dict(split=T_split, offer=T_offer, faq=T_faq, local=T_local, glass=T_glass, trio=T_trio,
            diagonal=T_diagonal, frame=T_frame, thanks=T_thanks, beforeafter=T_beforeafter, spotlight=T_spotlight)
+
+FIT = """<script>
+document.fonts.ready.then(()=>{
+  document.querySelectorAll('.h').forEach(h=>{
+    let fs=parseFloat(getComputedStyle(h).fontSize);
+    const box=h.closest('.vbox');
+    const bad=()=>h.scrollWidth>h.clientWidth+1||(box&&box.scrollHeight>box.clientHeight+1);
+    while(bad()&&fs>30){fs-=2;h.style.fontSize=fs+'px';}
+  });
+  document.body.dataset.fit='1';
+});
+</script>"""
 
 def build(site, posts):
     global SITE
@@ -204,7 +222,7 @@ def build(site, posts):
     for i, p in enumerate(posts, 1):
         arts.append(f'<div class="ab" id="{site}_{i:02d}">{TPL[p["tpl"]](p, b)}</div>')
     doc = (f'<!doctype html><html><head><meta charset="utf-8"><link href="{b["fonts"]}" rel="stylesheet">'
-           f'<style>{b["css"]}{BASE_CSS}</style></head><body>{"".join(arts)}</body></html>')
+           f'<style>{b["css"]}{BASE_CSS}</style></head><body>{"".join(arts)}{FIT}</body></html>')
     open(os.path.join(os.path.dirname(__file__), f"banners_{site}.html"), "w").write(doc)
 
 if __name__ == "__main__":

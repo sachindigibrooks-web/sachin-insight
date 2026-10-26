@@ -9,7 +9,7 @@ dict(date="2026-11-03", base="HG-02", title="Buy 3 Windows, Get the 4th Window F
      offer="Offer dates: Nov 3 to Nov 30, 2026 (confirm). Terms: confirm eligible window types, minimum order and whether it combines with financing.",
      tpl="offer", tag="Limited-Time Offer", head="Buy 3 Windows|Get the *4th FREE*", sub="Energy-efficient window replacement", chip="Book a Free Inspection", photos=["53_image00005.jpg"], focus="50% 40%"),
 dict(date="2026-11-04", base="HG-03", title="FAQ: Why Is My Double-Pane Window Foggy?",
-     tpl="faq", tag="Glass FAQ", head="Why Is My Window|*Foggy* Inside the Glass?", sub="A failed seal is usually the cause, and it can often be fixed without a new frame.", chip="Ask Our Team", photos=["23_IMG_20200117_133159154-scaled.jpg"], focus="50% 50%"),
+     tpl="faq", tag="Glass FAQ", head="Why Is My Window|*Foggy* Inside the Glass?", sub="A failed seal is usually the cause, and it can often be fixed without a new frame.", chip="Ask Our Team", photos=["93_unsplash_9EyiD1RRYRs.jpg"], focus="60% 50%"),
 dict(date="2026-11-05", base="HG-04", title="Family-Owned in Harlingen Since 1978",
      tpl="local", tag="Harlingen, TX", head="Family-Owned|Since *1978*", sub="45+ years of glass work across the Rio Grande Valley", chip="Meet the Team", photos=["38_McAllen-District-Office-12-04-08-001.jpg"], focus="50% 40%"),
 dict(date="2026-11-06", base="HG-05", title="Custom Frameless Shower Enclosures",
@@ -17,13 +17,13 @@ dict(date="2026-11-06", base="HG-05", title="Custom Frameless Shower Enclosures"
 dict(date="2026-11-09", base="HG-06", title="FAQ: Frameless vs Semi-Frameless vs Framed Shower Doors",
      tpl="trio", tag="Glass FAQ", head="Which Shower Door|Is *Right* for You?", sub="", chip="Compare Styles", photos=["45_ShowerDoor-scaled.jpg","52_image00004.jpg","31_IMG_20231208_134144.jpg"], labels=["Frameless","Sliding","Semi-Frameless"], focus="50% 45%"),
 dict(date="2026-11-10", base="HG-09", title="3M Security Window Film for Texas Schools",
-     tpl="diagonal", tag="3M Security Window Film", head="Stronger Glass.|*Safer* Campuses.", sub="TEA-focused installs by a 3M authorized team", chip="Book a Campus Walkthrough", photos=["42_Rio-Hondo-Middle-School-3.jpg"], focus="80% 70%"),
+     tpl="split", tag="3M Security Window Film", head="Stronger Glass.|*Safer* Campuses.", sub="TEA-focused installs by a 3M authorized team", chip="Book a Campus Walkthrough", photos=["42_Rio-Hondo-Middle-School-3.jpg"], focus="38% 50%"),
 dict(date="2026-11-11", base="HG-21", title="Cold Front Season: Check Your Window Seals",
      tpl="frame", tag="Rio Grande Valley", head="Feel a *Draft*?|Check Your Seals.", sub="Cold front season is the time to catch leaky windows", chip="Free Assessment", photos=["51_image00003.jpg"], focus="50% 50%"),
 dict(date="2026-11-12", base="HG-10", title="FAQ: Does Any Security Film Meet School Requirements?",
      tpl="faq", tag="Security Film FAQ", head="Is All Security Film|*Compliant*?", sub="Not always. The film, how it's attached and who installs it all matter.", chip="Free Film Assessment", photos=["16_Harlingen-Middle-School-Screw-Locations-Ext-Doors-011.jpg"], focus="50% 45%"),
 dict(date="2026-11-13", base="HG-11", title="Commercial Storefront Glass Repair and Replacement",
-     tpl="split", tag="Commercial Glazing", head="Your Storefront Is|Your *First Impression*", sub="Storefronts, entry doors and multi-story glazing", chip="Request an Assessment", photos=["19_IMG_0499-scaled.jpg"], focus="50% 50%"),
+     tpl="split", tag="Commercial Glazing", head="First Impressions|Start at *Your Storefront*", sub="Storefronts, entry doors and multi-story glazing", chip="Request an Assessment", photos=["19_IMG_0499-scaled.jpg"], focus="50% 50%"),
 dict(date="2026-11-16", base="HG-07", title="Financing Available for Glass Upgrades",
      tpl="glass", tag="Financing Available", head="Upgrade Now,|*Pay Over Time*", sub="Financing options through Synchrony Bank", chip="Ask About Financing", photos=["29_IMG_20231208_134139.jpg"], focus="50% 45%"),
 dict(date="2026-11-17", base="HG-13", title="Custom Mirrors for Homes, Gyms and Studios",
@@ -38,7 +38,7 @@ Take a quick walk around: check for chipped tabletops, cracked mirrors, sliding 
 
 Harlingen Glass & Mirror has helped Harlingen families get their homes ready for the holidays for more than 45 years. Tap Learn more to book a repair."""),
 dict(date="2026-11-20", base="HG-17", title="Energy-Efficient Low-E Window Replacement",
-     tpl="diagonal", tag="Energy-Efficient Windows", head="Lower Bills.|*Cooler* Rooms.", sub="Low-E glass that cuts heat without blocking light", chip="Free Window Inspection", photos=["25_IMG_20200123_141554436-scaled.jpg"], focus="50% 45%",
+     tpl="split", tag="Energy-Efficient Windows", head="Lower Bills.|*Cooler* Rooms.", sub="Low-E glass that cuts heat without blocking light", chip="Free Window Inspection", photos=["25_IMG_20200123_141554436-scaled.jpg"], focus="50% 45%",
      copy="""Old or poorly sealed windows let cool air out in summer and warm air out in winter, which makes your AC and heater work harder all year in the Valley.
 
 Harlingen Glass & Mirror installs energy-efficient replacement windows, including Low-E glass that helps reduce heat and UV coming into your home without blocking natural light.
@@ -81,10 +81,10 @@ Planning a commercial project in the Valley? Tap Learn more to see our work.""",
 
 PF = [
 dict(date="2026-11-02", base="PF-01", title="Fence Repair After Wind and Storm Damage",
-     tpl="diagonal", tag="Fence Repair", head="Storm-Damaged Fence?|We *Rebuild* It.", sub="Repairs and rebuilds across the OKC metro", chip="Free Repair Estimate", photos=["40_IMG_5914.jpg"], focus="50% 50%"),
+     tpl="split", tag="Fence Repair", head="Storm-Damaged Fence?|We *Rebuild* It.", sub="Repairs and rebuilds across the OKC metro", chip="Free Repair Estimate", photos=["192_unsplash_km_VQEFOV20.jpg"], focus="70% 30%"),
 dict(date="2026-11-03", base="PF-04", title="Free On-Site Fence Estimate",
      offer="Offer dates: Nov 3 to Nov 30, 2026. Terms: free estimate within the service area; no obligation.",
-     tpl="offer", tag="Free Estimate", head="Your New Fence|Starts *Here*", sub="On-site measure, clear written quote", chip="Book Your Free Estimate", photos=["37_IMG_5904.jpg"], focus="50% 45%"),
+     tpl="offer", tag="Free Estimate", head="Your New Fence|Starts *Here*", sub="On-site measure, clear written quote", chip="Book Your Free Estimate", photos=["118_IMG_5913.jpg"], focus="70% 55%"),
 dict(date="2026-11-04", base="PF-02", title="FAQ: How Tall Can My Fence Be in OKC?",
      tpl="faq", tag="Fence FAQ", head="How Tall Can|My Fence *Be*?", sub="Up to 8 ft in most OKC yards. 6 ft is the most popular. Always check your HOA.", chip="More Fence FAQs", photos=["84_Stained-Western-Red-Cedar-with-Cap-and-Trim-with-a-1x6-Kickboard.jpg"], focus="50% 50%"),
 dict(date="2026-11-05", base="PF-03", title="Fence Installation in Edmond, OK",
@@ -92,7 +92,7 @@ dict(date="2026-11-05", base="PF-03", title="Fence Installation in Edmond, OK",
 dict(date="2026-11-06", base="PF-05", title="Western Red Cedar Stockade Fences Built in Our Shop",
      tpl="split", tag="Cedar Stockade Fences", head="Real Cedar.|*Steel* Posts.", sub="Panels built by hand in our shop", chip="See Fence Styles", photos=["99_6-tall-Cap-and-Trim-Total-Privacy-Board-on-Board.-.jpeg"], focus="50% 50%"),
 dict(date="2026-11-09", base="PF-06", title="FAQ: Should I Repair or Replace My Fence?",
-     tpl="faq", tag="Fence FAQ", head="Repair or|*Replace*?", sub="Limited damage: repair. Several leaning posts or failing rails: replace.", chip="Read the Guide", photos=["125_new-vs-old.jpeg"], focus="50% 50%"),
+     tpl="faq", tag="Fence FAQ", head="Repair or|*Replace*?", sub="Limited damage: repair. Several leaning posts or failing rails: replace.", chip="Read the Guide", photos=["125_new-vs-old.jpeg"], focus="8% 50%"),
 dict(date="2026-11-10", base="PF-07", title="Ameristar Ornamental Iron Fences and Gates",
      tpl="frame", tag="Ornamental Iron", head="Security With|*Curb Appeal*", sub="Ameristar iron fences and custom gates", chip="See Recent Projects", photos=["116_Arched-ornamental-iron-double-gate-custom-Letter-2.jpg"], focus="50% 50%"),
 dict(date="2026-11-11", base="PF-13", title="The Best Fence for Oklahoma Wind",
@@ -127,14 +127,14 @@ dict(date="2026-11-26", base="PF-08", title="Happy Thanksgiving from Preferred F
      tpl="thanks", tag="Happy Thanksgiving", head="Thankful for|*Our Neighbors*", sub="From our crew to your family", chip="", photos=["93_o-8.jpg"], focus="50% 50%"),
 dict(date="2026-11-27", base="PF-21", title="Free Fence Repair Estimate",
      offer="Offer dates: Nov 27 to Dec 31, 2026. Terms: free estimate within the service area; no obligation.",
-     tpl="offer", tag="Free Repair Estimate", head="Leaning or|*Damaged* Fence?", sub="Honest repair-or-replace advice", chip="Book a Free Estimate", photos=["134_IMG_0730001.jpg"], focus="50% 50%",
+     tpl="offer", tag="Free Repair Estimate", head="Leaning or|*Damaged* Fence?", sub="Honest repair-or-replace advice", chip="Book a Free Estimate", photos=["195_unsplash_LbkIbkMPKjg.jpg"], focus="50% 50%",
      copy="""Did fall storms or strong wind leave your fence leaning or damaged?
 
 Book a free fence repair estimate with Preferred Fence Solutions. We will check posts, panels and gates, tell you honestly whether repair or replacement makes more sense, and give you a clear quote. No job is too small.
 
 Tap View offer to schedule your free repair estimate."""),
 dict(date="2026-11-30", base="PF-20", title="SimTek Fences: The Look of Stone",
-     tpl="diagonal", tag="SimTek Fencing", head="The Look of *Stone*,|Without the Upkeep", sub="SimTek fences for Edmond, OKC, Mustang and Yukon", chip="Is SimTek Right for You?", photos=["32_IMG_5862.jpg"], focus="50% 50%"),
+     tpl="diagonal", tag="SimTek Fencing", head="The Look of *Stone*,|Without the Upkeep", sub="SimTek fences for Edmond, OKC, Mustang and Yukon", chip="Is SimTek Right for You?", photos=["194_unsplash_0WxjDT_3Tsw.jpg"], focus="50% 50%"),
 dict(date="2026-12-01", base="PF-16", title="Thank You, Oklahoma City",
      tpl="spotlight", tag="Thank You, OKC", head="Award-Winning|*Fence Crew*", sub="Every fence and gate backed by a 1-year warranty", chip="See Our Awards", photos=["36_IMG_5887.jpg","38_IMG_5911.jpg","90_o-2.jpg"], focus="50% 50%",
      copy="""Thank you, Oklahoma City, for another great year.
