@@ -12,6 +12,8 @@ import configs, posts_hg, posts_pf, month
 from build import title, table, GUIDE, F, FB, FS, BOX, WRAP, WRAPC
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+import json
+DRIVE = json.load(open(os.path.join(HERE, "drive_ids.json"))) if os.path.exists(os.path.join(HERE, "drive_ids.json")) else {}
 BAN = os.path.join(HERE, "ban")
 NAVY = "1F4E78"
 HF = Font(name="Arial", size=10, bold=True, color="FFFFFF")
@@ -171,6 +173,12 @@ def build(key, repo_dir):
             c.font = F; c.border = BOX
             c.alignment = WRAPC if j in (2, 3, 4, 5, 8, 17) else WRAP
         ws.cell(row=rr, column=3).number_format = "mmm d, yyyy"
+        fid = DRIVE.get(f"{key}{r['n']:02d}")
+        if fid:
+            c = ws.cell(row=rr, column=13)
+            c.hyperlink = f"https://drive.google.com/file/d/{fid}/view"
+            c.value = r["fname"] + "\n(open in Google Drive)"
+            c.font = LINK
         for j in (9, 10):
             ws.cell(row=rr, column=j).font = LINK
         ws.row_dimensions[rr].height = 200
