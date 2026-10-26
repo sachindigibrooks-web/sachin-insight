@@ -29,6 +29,16 @@ GUIDE = [g for g in GUIDE if not g[0].startswith("Photos must")] + [
 
 SITES = {
     "hg": dict(cfg=configs.HG, posts=posts_hg.POSTS, plan=month.HG, new=month.HG_NEW, dl="hg_dl.txt", ph="ph_hg", out="out_hg",
+               offers=[
+                   ("Buy 3 windows, get the 4th free", "Buy 3 Windows, Get the 4th Window FREE", "https://harlingenglass.com/service/residential-window-replacement/", "2 (Offer post)", "Live on the website. No dates or terms are shown, so confirm the end date, eligible window types and whether it combines with financing."),
+                   ("Free window inspection", "Get Your Free Window Inspection", "https://harlingenglass.com/service/residential-window-replacement/", "2, 15", "Used as the button text and in the post copy."),
+                   ("Free bathroom glass consultation", "Get A Free Consultation! No cost, no pressure, just expert advice and a clear quote!", "https://harlingenglass.com/service/bathroom-enclosures/", "5, 20 (Offer post)", "Live on the website. The page also says 'Appointments Filling Fast'; the calendar does not repeat that urgency claim."),
+                   ("Financing through Synchrony Bank", "Harlingen Glass is proud to announce that we have partnered with Synchrony bank to bring financing options", "https://harlingenglass.com/", "5, 11, 20", "Bathroom page also shows 'Financing Available'. Rates and terms are not on the website, so posts do not quote any."),
+                   ("Free 3M security film assessment (schools)", "Get Your Free Security Film Assessment", "https://harlingenglass.com/service/3m-security-film/", "9, 16 (Offer post)", "Live on the website. Installation is quoted separately."),
+                   ("Free estimate / free quote", "GET A FREE ESTIMATE! / Get A Free Quote Today", "https://harlingenglass.com/ and /service/interior/", "1, 12, 21", "General offer; used as button text."),
+                   ("Warranty", "Manufacturer warranty of up to 3 years as well as an installation warranty of 1 year for specific products", "https://harlingenglass.com/", "13", "Post repeats the 'specific products' limit."),
+                   ("Emergency and after-hours service", "We also offer emergency and after-hours services", "https://harlingenglass.com/blog/preparing-your-home-for-summer-with-smart-glass-upgrades/", "Not used", "Only stated in a blog post. Confirm with the client before promoting it."),
+               ],
                folder="harlingen-glass", file="Harlingen-Glass-GBP-Monthly-Calendar-Nov-2026.xlsx",
                logo="https://harlingenglass.com/wp-content/uploads/2024/11/LOGO-1.jpg",
                palette=[("Primary navy", "#004D71", "Logo wordmark and panes", "Background panels, offer highlight"),
@@ -43,6 +53,14 @@ SITES = {
                removed=[("IDEA-Toros-College-Prep-Front.jpg", "Credited to a press photographer (Jose Aldape) and carries a Texas Border Business watermark", "Rio-Hondo-Middle-School-3.jpg (own project photo)"),
                         ("IDEA-Toros-College-Prep.jpg", "Same press photo series of a third-party school brand; ownership unclear", "UTB-Kinesiology-Bldg.jpg (own project photo)")]),
     "pf": dict(cfg=configs.PF, posts=posts_pf.POSTS, plan=month.PF, new=month.PF_NEW, dl="pf_dl.txt", ph="ph_pf", out="out_pf",
+               offers=[
+                   ("Free estimate on all projects", "We offer free estimates on all fence & gate requests.", "https://preferredfencesolutions.com/fence-installation-repair-north-okc/", "1, 2 (Offer post), 4, 12, 13, 14, 15, 16 (Offer post), 20 (Offer post)", "Live on many pages. This is the main offer for this business."),
+                   ("Financing for larger projects", "Financing options are available for larger projects; ask us during your free estimate.", "https://preferredfencesolutions.com/why-preferred-fence-solutions-is-oklahoma-citys-trusted-fence-contractor/", "2, 16", "Added after this check. Rates and terms are not on the website, so posts do not quote any."),
+                   ("1-year warranty on fences and gates", "We warranty all of our fences, including gates, for an entire year.", "https://preferredfencesolutions.com/faq/", "14, 22", "Used as stated."),
+                   ("20-year warranty on Ameristar iron", "They also come backed by a 20-year warranty", "https://preferredfencesolutions.com/ornamental-iron-fence/", "7", "Added to the Ameristar post after this check."),
+                   ("Design and planning help", "If you know you are in need of a fence ... but you're unsure of what style, design, or material to use, we can help!", "https://preferredfencesolutions.com/fence-design-planning/", "16", "The website does not call this a free consultation. Post 16 was changed from 'Free Design Consultation' to 'Design Help With Every Free Estimate'."),
+                   ("Discounts / coupons / % off", "None found", "All 141 pages checked", "Not used", "No price discount, coupon, seasonal sale or military/senior discount is on the website."),
+               ],
                folder="preferred-fence", file="Preferred-Fence-GBP-Monthly-Calendar-Nov-2026.xlsx",
                logo="https://preferredfencesolutions.com/wp-content/uploads/2021/03/PFS-Logo-1.png",
                palette=[("Black", "#000000", "Website header, footer and text (Elementor global)", "Background panels"),
@@ -244,6 +262,13 @@ def build(key, repo_dir):
     wr.cell(row=rend + 6 + len(notes) + (1 if notes else 0), column=1,
             value="Note: photos on the business's own website are treated as owned by the business. Ask the client to confirm they took these photos or hold the rights. Unsplash photos can be used commercially without credit, but do not show people or brands in a way that suggests endorsement.").font = FS
     wr.freeze_panes = "A5"
+
+    # ---------------- Website offers check ----------------
+    wo = wb.create_sheet("Website Offers Check")
+    title(wo, "Offers on the website vs. this calendar", "Every page of " + cfg["domain"] + " was checked on Oct 26, 2026. Posts only promote offers the website states.")
+    table(wo, 4, ["#", "Offer", "Exact wording on the website", "Page", "Used in post #", "Note"],
+          [(i + 1,) + o for i, o in enumerate(s["offers"])], [5, 30, 55, 50, 18, 60], center_cols=(1, 5))
+    wo.freeze_panes = "A5"
 
     # ---------------- Guidelines ----------------
     wg = wb.create_sheet("GBP Guidelines")

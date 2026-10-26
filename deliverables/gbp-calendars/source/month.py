@@ -83,8 +83,13 @@ PF = [
 dict(date="2026-11-02", base="PF-01", title="Fence Repair After Wind and Storm Damage",
      tpl="split", tag="Fence Repair", head="Storm-Damaged Fence?|We *Rebuild* It.", sub="Repairs and rebuilds across the OKC metro", chip="Free Repair Estimate", photos=["192_unsplash_km_VQEFOV20.jpg"], focus="70% 30%"),
 dict(date="2026-11-03", base="PF-04", title="Free On-Site Fence Estimate",
-     offer="Offer dates: Nov 3 to Nov 30, 2026. Terms: free estimate within the service area; no obligation.",
-     tpl="offer", tag="Free Estimate", head="Your New Fence|Starts *Here*", sub="On-site measure, clear written quote", chip="Book Your Free Estimate", photos=["118_IMG_5913.jpg"], focus="70% 55%"),
+     offer="Offer dates: Nov 3 to Nov 30, 2026 (confirm). Terms: free estimate on all fence and gate projects (as stated on the website); no obligation. Financing available for larger projects.",
+     tpl="offer", tag="Free Estimate", head="Your New Fence|Starts *Here*", sub="On-site measure, clear written quote", chip="Book Your Free Estimate", photos=["118_IMG_5913.jpg"], focus="70% 55%",
+     copy="""Planning a new fence or a fence replacement before spring? Book a free on-site estimate with Preferred Fence Solutions.
+
+We measure your yard, talk through materials, height and gates, and give you a clear written quote. Wood, vinyl, ornamental iron, chain link and SimTek options are available across Oklahoma City, Edmond, Yukon, Mustang and Nichols Hills. Financing is available for larger projects.
+
+Tap View offer to request your free estimate."""),
 dict(date="2026-11-04", base="PF-02", title="FAQ: How Tall Can My Fence Be in OKC?",
      tpl="faq", tag="Fence FAQ", head="How Tall Can|My Fence *Be*?", sub="Up to 8 ft in most OKC yards. 6 ft is the most popular. Always check your HOA.", chip="More Fence FAQs", photos=["84_Stained-Western-Red-Cedar-with-Cap-and-Trim-with-a-1x6-Kickboard.jpg"], focus="50% 50%"),
 dict(date="2026-11-05", base="PF-03", title="Fence Installation in Edmond, OK",
@@ -94,7 +99,12 @@ dict(date="2026-11-06", base="PF-05", title="Western Red Cedar Stockade Fences B
 dict(date="2026-11-09", base="PF-06", title="FAQ: Should I Repair or Replace My Fence?",
      tpl="faq", tag="Fence FAQ", head="Repair or|*Replace*?", sub="Limited damage: repair. Several leaning posts or failing rails: replace.", chip="Read the Guide", photos=["125_new-vs-old.jpeg"], focus="8% 50%"),
 dict(date="2026-11-10", base="PF-07", title="Ameristar Ornamental Iron Fences and Gates",
-     tpl="frame", tag="Ornamental Iron", head="Security With|*Curb Appeal*", sub="Ameristar iron fences and custom gates", chip="See Recent Projects", photos=["116_Arched-ornamental-iron-double-gate-custom-Letter-2.jpg"], focus="50% 50%"),
+     tpl="frame", tag="Ornamental Iron", head="Security With|*Curb Appeal*", sub="Ameristar iron fences and custom gates", chip="See Recent Projects", photos=["116_Arched-ornamental-iron-double-gate-custom-Letter-2.jpg"], focus="50% 50%",
+     copy="""Looking for security that still looks elegant from the street?
+
+Preferred Fence Solutions installs Ameristar ornamental iron fences and gates for homes in Oklahoma City, Edmond and the surrounding metro. We have installed iron fences from 4 to 6 feet tall and can add decorative finials, scrolls and custom gates. Ameristar products come backed by a 20-year warranty.
+
+Ornamental iron is a popular choice for front yards, pools and retaining walls. Tap Learn more to see recent projects."""),
 dict(date="2026-11-11", base="PF-13", title="The Best Fence for Oklahoma Wind",
      tpl="diagonal", tag="Oklahoma Weather", head="Built for|*Oklahoma Wind*", sub="Post depth, concrete and the right material", chip="Read the Local Guide", photos=["46_IMG_8799-scaled.jpg"], focus="50% 50%"),
 dict(date="2026-11-12", base="PF-10", title="FAQ: Why Do Fence Posts Lean in Oklahoma?",
@@ -111,14 +121,14 @@ dict(date="2026-11-19", base="PF-22", title="North OKC Fence Installation and Re
      tpl="local", tag="North OKC", head="Hand-Built in Our|*North OKC* Shop", sub="100% USA fence products. 1-year warranty.", chip="Free Estimate", photos=["35_IMG_5879.jpg"], focus="50% 40%"),
 dict(date="2026-11-20", base="PF-18", title="Low-Maintenance Vinyl Fence Installation",
      tpl="glass", tag="Vinyl Fencing", head="No Staining.|*No Painting.*", sub="Vinyl privacy, picket and ranch-style fences", chip="See Vinyl Styles", photos=["21_6-tall-white-vinyl-privacy-fence-.jpg"], focus="50% 55%"),
-dict(date="2026-11-23", base="PF-17", title="Free Fence Design and Planning Consultation",
-     offer="Offer dates: Nov 23 to Dec 31, 2026 (confirm). Terms: consultation and estimate are free; no obligation.",
-     tpl="offer", tag="Free Consultation", head="Plan Your Spring|*Fence* Now", sub="Free design and planning consultation", chip="Book Your Consultation", photos=["62_desing-and-planning.jpg"], focus="50% 50%",
+dict(date="2026-11-23", base="PF-17", title="Fence Design Help With Every Free Estimate",
+     offer="Offer dates: Nov 23 to Dec 31, 2026 (confirm). Terms: free estimate on all fence and gate projects (as stated on the website); no obligation. Financing available for larger projects.",
+     tpl="offer", tag="Free Estimate", head="Plan Your Spring|*Fence* Now", sub="Design help with every free estimate", chip="Book Your Free Estimate", photos=["62_desing-and-planning.jpg"], focus="50% 50%",
      copy="""Thinking about a new fence for spring? Not sure which style, material or height is right for your property?
 
-Book a free design and planning consultation with Preferred Fence Solutions. We will walk your yard, talk through privacy, pets, gates and budget, and recommend the best option for your home before we schedule your install.
+Preferred Fence Solutions offers free estimates on all fence and gate projects, and our team helps you plan the design. We will walk your yard, talk through privacy, pets, gates and budget, and recommend the best option for your home. Financing is available for larger projects, so ask about it during your estimate.
 
-Tap View offer to book your consultation."""),
+Tap View offer to book your free estimate."""),
 dict(date="2026-11-24", base="PF-15", title="Residential Gates: Width and Placement",
      tpl="split", tag="Custom Gates", head="The Right Gate,|in the *Right Place*", sub="Plan access before the posts go in", chip="Read the Gate Guide", photos=["109_o-3.jpg"], focus="50% 50%"),
 dict(date="2026-11-25", base="PF-19", title="FAQ: Will New Cedar Boards Match My Old Fence?",
