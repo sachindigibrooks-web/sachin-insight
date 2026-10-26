@@ -46,7 +46,7 @@ Harlingen Glass & Mirror installs energy-efficient replacement windows, includin
 Book a free window inspection and we will show you where you can save. Tap Learn more to get started."""),
 dict(date="2026-11-23", base="HG-12", title="Free Security Film Assessment Before Winter Break",
      offer="Offer dates: Nov 23 to Dec 18, 2026 (confirm). Terms: assessment is free; installation quoted separately.",
-     tpl="offer", tag="For Schools", head="Free Security Film|*Assessment*", sub="Plan installs during winter break", chip="Schedule a Walkthrough", photos=["18_IDEA-Toros-College-Prep.jpg"], focus="50% 45%"),
+     tpl="offer", tag="For Schools", head="Free Security Film|*Assessment*", sub="Plan installs during winter break", chip="Schedule a Walkthrough", photos=["47_UTB-Kinesiology-Bldg.jpg"], focus="50% 50%"),
 dict(date="2026-11-24", base="HG-20", title="Fire-Rated and Bullet-Resistant Commercial Glass",
      tpl="split", tag="Commercial Safety Glass", head="Glass Built for|*Safety Standards*", sub="Fire-rated, bullet-resistant and thermal glazing", chip="Talk to Our Commercial Team", photos=["39_McAllen-District-Office-12-04-08-002.jpg"], focus="50% 40%"),
 dict(date="2026-11-25", base="HG-19", title="FAQ: Repair or Replace a Cracked Window?",
@@ -81,7 +81,7 @@ Planning a commercial project in the Valley? Tap Learn more to see our work.""",
 
 PF = [
 dict(date="2026-11-02", base="PF-01", title="Fence Repair After Wind and Storm Damage",
-     tpl="beforeafter", tag="Fence Repair", head="Storm-Damaged Fence?|We *Rebuild* It.", sub="", chip="Free Repair Estimate", photos=["147_fence-damage.jpg","40_IMG_5914.jpg"], labels=["Before","After"], focus="50% 50%"),
+     tpl="diagonal", tag="Fence Repair", head="Storm-Damaged Fence?|We *Rebuild* It.", sub="Repairs and rebuilds across the OKC metro", chip="Free Repair Estimate", photos=["40_IMG_5914.jpg"], focus="50% 50%"),
 dict(date="2026-11-03", base="PF-04", title="Free On-Site Fence Estimate",
      offer="Offer dates: Nov 3 to Nov 30, 2026. Terms: free estimate within the service area; no obligation.",
      tpl="offer", tag="Free Estimate", head="Your New Fence|Starts *Here*", sub="On-site measure, clear written quote", chip="Book Your Free Estimate", photos=["37_IMG_5904.jpg"], focus="50% 45%"),
@@ -127,7 +127,7 @@ dict(date="2026-11-26", base="PF-08", title="Happy Thanksgiving from Preferred F
      tpl="thanks", tag="Happy Thanksgiving", head="Thankful for|*Our Neighbors*", sub="From our crew to your family", chip="", photos=["93_o-8.jpg"], focus="50% 50%"),
 dict(date="2026-11-27", base="PF-21", title="Free Fence Repair Estimate",
      offer="Offer dates: Nov 27 to Dec 31, 2026. Terms: free estimate within the service area; no obligation.",
-     tpl="offer", tag="Free Repair Estimate", head="Leaning or|*Damaged* Fence?", sub="Honest repair-or-replace advice", chip="Book a Free Estimate", photos=["147_fence-damage.jpg"], focus="50% 55%",
+     tpl="offer", tag="Free Repair Estimate", head="Leaning or|*Damaged* Fence?", sub="Honest repair-or-replace advice", chip="Book a Free Estimate", photos=["134_IMG_0730001.jpg"], focus="50% 50%",
      copy="""Did fall storms or strong wind leave your fence leaning or damaged?
 
 Book a free fence repair estimate with Preferred Fence Solutions. We will check posts, panels and gates, tell you honestly whether repair or replacement makes more sense, and give you a clear quote. No job is too small.

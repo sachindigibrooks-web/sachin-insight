@@ -39,7 +39,9 @@ SITES = {
                         ("White", "#FFFFFF", "Website background", "Text on dark, logo chip")],
                fonts=[("Headings", "Metrophobic", "Same as website H1 to H3"), ("Body / labels", "Roboto", "Same as website body text")],
                motif="Slanted translucent glass panes taken from the logo mark.",
-               logo_note="Full logo on a white rounded chip, top left of every banner."),
+               logo_note="Full logo on a white rounded chip, top left of every banner.",
+               removed=[("IDEA-Toros-College-Prep-Front.jpg", "Credited to a press photographer (Jose Aldape) and carries a Texas Border Business watermark", "Rio-Hondo-Middle-School-3.jpg (own project photo)"),
+                        ("IDEA-Toros-College-Prep.jpg", "Same press photo series of a third-party school brand; ownership unclear", "UTB-Kinesiology-Bldg.jpg (own project photo)")]),
     "pf": dict(cfg=configs.PF, posts=posts_pf.POSTS, plan=month.PF, new=month.PF_NEW, dl="pf_dl.txt", ph="ph_pf", out="out_pf",
                folder="preferred-fence", file="Preferred-Fence-GBP-Monthly-Calendar-Nov-2026.xlsx",
                logo="https://preferredfencesolutions.com/wp-content/uploads/2021/03/PFS-Logo-1.png",
@@ -49,9 +51,11 @@ SITES = {
                         ("White", "#FFFFFF", "Website background", "Text on dark, logo chip")],
                fonts=[("Headings", "Rubik", "Same as website headings"), ("Body / labels", "Roboto", "Same as website body text")],
                motif="Yellow picket fence line along the bottom edge.",
-               logo_note="Logo name and tagline on a white rounded chip. The phone number line in the original logo is cropped out to follow GBP rules."),
+               logo_note="Logo name and tagline on a white rounded chip. The phone number line in the original logo is cropped out to follow GBP rules.",
+               removed=[("fence-damage.jpg (2 banners)", "No camera data, uploaded in 2026 and sized 1376 x 768, which matches AI-generated images; origin cannot be confirmed", "IMG_5914.jpg and IMG_0730001.jpg (own project photos)")]),
 }
 SPECIAL_SRC = {"90_unsplash_cracked.jpg": "https://unsplash.com/photos/_enXmoXudAk (Unsplash licence)",
+               "190_unsplash_AnaOxSVGLkQ.jpg": "https://unsplash.com/photos/AnaOxSVGLkQ (Unsplash licence)",
                "91_team_crop.jpg": None}
 
 
@@ -69,6 +73,14 @@ def photo_urls(s):
             return by_name["fbinfoo-scaled.jpg"] + " (cropped)"
         return by_name[re.sub(r"^\d+_", "", f)]
     return src
+
+
+OWN = "Business's own photo from its website (client to confirm ownership)."
+UNSPLASH = "Unsplash License: free for commercial use, no permission or credit needed."
+
+
+def rights(photos):
+    return "\n".join(UNSPLASH if "unsplash" in f else OWN for f in photos) if len({("unsplash" in f) for f in photos}) > 1 else (UNSPLASH if "unsplash" in photos[0] else OWN)
 
 
 def rows_for(s):
@@ -95,7 +107,7 @@ def rows_for(s):
         out.append(dict(n=i + 1, week=(d - dt.datetime(2026, 11, 2)).days // 7 + 1, date=d,
                         cat=cat, typ=typ, title=m["title"], copy=copy, cta=cta, land=land, utm=utm, terms=terms,
                         overlay=overlay, png=os.path.join(BAN, s["out"], f"{s['out'][4:]}_{i+1:02d}.png"), fname=fname,
-                        src="\n".join(src(f) for f in m["photos"]), tpl=m["tpl"]))
+                        src="\n".join(src(f) for f in m["photos"]), rights=rights(m["photos"]), photos=m["photos"], tpl=m["tpl"]))
     return out
 
 
@@ -117,8 +129,8 @@ def build(key, repo_dir):
     ws = wb.active; ws.title = cfg["domain"]
     ws.sheet_view.showGridLines = False
     heads = ["Week", "Planned Date", "Day", "Category", "Post Title", "GBP Post Copy", "CTA", "Landing Page", "Tracked CTA URL",
-             "Banner", "Banner Overlay Text", "Banner File", "Banner Photo Source", "Offer Dates / Terms", "Publishing Status"]
-    widths = [7, 13, 7, 12, 30, 62, 11, 38, 50, 33, 34, 30, 40, 30, 15]
+             "Banner", "Banner Overlay Text", "Banner File", "Banner Photo Source", "Image Rights", "Offer Dates / Terms", "Publishing Status"]
+    widths = [7, 13, 7, 12, 30, 62, 11, 38, 50, 33, 34, 30, 40, 30, 30, 15]
     head_row(ws, 1, heads)
     ws.row_dimensions[1].height = 30
     ws.column_dimensions["A"].width = 2
@@ -128,11 +140,11 @@ def build(key, repo_dir):
         rr = r["n"] + 1
         vals = [r["week"], r["date"], f'=TEXT(C{rr},"ddd")', r["cat"], r["title"], r["copy"], r["cta"], r["land"],
                 f"=I{rr}&\"?utm_source=\"&Settings!$C$5&\"&utm_medium=\"&Settings!$C$6&\"&utm_campaign=\"&Settings!$C$7&\"&utm_content=\"&Settings!C{12 + r['n']}",
-                None, r["overlay"], r["fname"], r["src"], r["terms"] or "", "Not Published"]
+                None, r["overlay"], r["fname"], r["src"], r["rights"], r["terms"] or "", "Not Published"]
         for j, v in enumerate(vals, 2):
             c = ws.cell(row=rr, column=j, value=v)
             c.font = F; c.border = BOX
-            c.alignment = WRAPC if j in (2, 3, 4, 5, 8, 16) else WRAP
+            c.alignment = WRAPC if j in (2, 3, 4, 5, 8, 17) else WRAP
         ws.cell(row=rr, column=3).number_format = "mmm d, yyyy"
         for j in (9, 10):
             ws.cell(row=rr, column=j).font = LINK
@@ -146,9 +158,9 @@ def build(key, repo_dir):
         ws.add_image(xi, f"K{rr}")
     last = len(rows) + 1
     dv = DataValidation(type="list", formula1='"Not Published,Scheduled,Published"', allow_blank=True)
-    ws.add_data_validation(dv); dv.add(f"P2:P{last}")
+    ws.add_data_validation(dv); dv.add(f"Q2:Q{last}")
     ws.freeze_panes = "D2"
-    ws.auto_filter.ref = f"B1:P{last}"
+    ws.auto_filter.ref = f"B1:Q{last}"
 
     # ---------------- Settings (UTM + per-post utm_content) ----------------
     wsx = wb.create_sheet("Settings")
@@ -188,6 +200,47 @@ def build(key, repo_dir):
              ("Templates used", "Split photo, offer card, FAQ question, local spotlight, glass panel, 3-up compare, diagonal, frame, before/after, project spotlight, seasonal thank-you.")]
     table(wk, pal_end + 3, ["Rule", "Detail"], rules, [0, 26, 60], col0=2)
     wk.column_dimensions["A"].width = 2
+
+    # ---------------- Image rights check ----------------
+    wr = wb.create_sheet("Image Rights Check")
+    title(wr, "Image rights cross-check", "Every banner photo is either the business's own photo from its website or a free Unsplash photo. Checked Oct 26, 2026.")
+    src = photo_urls(s)
+    rr_rows = []
+    for r in rows:
+        for f in r["photos"]:
+            path = os.path.join(BAN, s["ph"], f)
+            ev = []
+            if "unsplash" in f:
+                origin, verdict = "Unsplash", "OK: royalty-free (Unsplash License)"
+                ev.append("Downloaded through the official Unsplash API; free photo, not Unsplash+")
+            else:
+                origin, verdict = "Business website", "OK: business's own photo"
+                ev.append(f"In the {cfg['domain']} media library (wp-content/uploads)")
+                ex = Image.open(path).getexif()
+                cam = " ".join(str(ex.get(t, "")) for t in (271, 272)).strip()
+                if cam:
+                    ev.append(f"Taken on a phone camera ({cam}): original photo, not stock")
+                if f == "91_team_crop.jpg":
+                    ev.append("Cropped from the team photo on the website")
+            raw = open(path, "rb").read()
+            if re.search(rb"dc:creator|photoshop:Credit|Getty|Shutterstock|iStock|Envato|Depositphotos", raw):
+                ev.append("Third-party credit found in file: REVIEW"); verdict = "REVIEW"
+            else:
+                ev.append("No photographer credit, stock agency tag or watermark")
+            rr_rows.append((r["n"], r["date"], f.split("_", 1)[1], src(f), origin, "; ".join(ev), verdict))
+    rend = table(wr, 4, ["Post #", "Date", "Photo", "Source URL", "Origin", "Evidence checked", "Verdict"], rr_rows,
+                 [8, 13, 34, 60, 16, 70, 30], center_cols=(1, 2))
+    for k in range(5, rend + 1):
+        wr.cell(row=k, column=2).number_format = "mmm d, yyyy"
+    wr.cell(row=rend + 2, column=1, value="Photos OK").font = FB
+    wr.cell(row=rend + 2, column=2, value=f'=COUNTIF(G5:G{rend},"OK*")&" of "&COUNTA(G5:G{rend})').font = FB
+    notes = s.get("removed", [])
+    if notes:
+        wr.cell(row=rend + 4, column=1, value="Photos removed during the check").font = FB
+        table(wr, rend + 5, ["#", "Photo removed", "Reason", "Replaced with"], [(i + 1,) + n for i, n in enumerate(notes)], [0, 0, 0, 0], center_cols=(1,))
+    wr.cell(row=rend + 6 + len(notes) + (1 if notes else 0), column=1,
+            value="Note: photos on the business's own website are treated as owned by the business. Ask the client to confirm they took these photos or hold the rights. Unsplash photos can be used commercially without credit, but do not show people or brands in a way that suggests endorsement.").font = FS
+    wr.freeze_panes = "A5"
 
     # ---------------- Guidelines ----------------
     wg = wb.create_sheet("GBP Guidelines")
