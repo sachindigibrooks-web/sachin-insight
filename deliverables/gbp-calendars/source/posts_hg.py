@@ -112,7 +112,7 @@ With more than 45 years in commercial glazing, our team works to meet safety sta
 
 Book a free security film assessment with Harlingen Glass & Mirror. We will walk your campus, check windows and glass doors, and recommend the right 3M Security Window Film for each entry point.
 
-Spots for break installations are limited. Tap View offer to schedule your walkthrough.""",
+Book early to plan installs during the break. Tap View offer to schedule your walkthrough.""",
 "View offer", B+"/service/3m-security-film/", "hg12-winter-break-assessment",
 "Offer dates: Dec 10, 2026 to Jan 8, 2027 (confirm). Terms: assessment is free, installation quoted separately.",
 "Photo of security film install on classroom or office windows.", "Confirm the team has installer availability during winter break."),
