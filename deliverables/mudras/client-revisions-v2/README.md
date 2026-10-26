@@ -6,7 +6,7 @@ Each row number matches the row in that tab of the sheet. For rows with no new f
 
 ## Instagram & Facebook Creatives
 ### Row 4
-**Changes:** Slide 1 now says 8 days (for posting on Oct 24; update the number if the post date moves). All 5 carousel slides are linked in order, so the dots match. Removed "quick" from the caption.
+**Changes:** Slide 1 now says 6 days (for posting on Oct 26; marathon is Sunday, Nov 1). All 5 carousel slides are linked in order, so the dots match. Removed "quick" from the caption.
 **Updated creative:**
 - https://raw.githubusercontent.com/sachindigibrooks-web/sachin-insight/claude/happy-albattani-9glwi2/deliverables/mudras/client-revisions-v2/ig-fb/r04-countdown/instagram-carousel-slide-1-1080x1350.png
 - https://raw.githubusercontent.com/sachindigibrooks-web/sachin-insight/claude/happy-albattani-9glwi2/deliverables/mudras/client-revisions-v2/ig-fb/r04-countdown/instagram-carousel-slide-2-1080x1350.png
@@ -15,7 +15,7 @@ Each row number matches the row in that tab of the sheet. For rows with no new f
 - https://raw.githubusercontent.com/sachindigibrooks-web/sachin-insight/claude/happy-albattani-9glwi2/deliverables/mudras/client-revisions-v2/ig-fb/r04-countdown/instagram-carousel-slide-5-1080x1350.png
 **Updated caption:**
 ```
-NYC, it's go time. 🗽 8 days left!
+NYC, it's go time. 🗽 6 days left!
 Runners, sound off in the comments 👇
 Bib number. Goal time. Marathon number #.
 We'll be your loudest cheer squad all week. 📣💛
