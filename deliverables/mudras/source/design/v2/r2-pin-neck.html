@@ -1,0 +1,38 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with a black-and-white photo.
+   Pinterest layout: photo (someone holding a stiff neck) on top fading to black; headline with a gold "7";
+   the seven causes as gold-outlined tags; gold logo centred at the bottom. No equipment in frame. */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#0b0b0b;color:var(--white)}
+.pin{width:1000px;height:1500px}
+.photo{position:absolute;left:0;right:0;top:0;height:860px;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.05) brightness(1.02);
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 62%,transparent 100%);mask-image:linear-gradient(180deg,#000 0%,#000 62%,transparent 100%)}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.06}
+.tags{display:flex;flex-wrap:wrap;justify-content:center;gap:18px 16px}
+.tags span{font-family:var(--serif);font-size:48px;line-height:1;padding:16px 30px 14px;border:1.5px solid var(--gold);border-radius:999px;color:var(--white)}
+.logo img{width:100%;display:block}
+</style></head><body>
+
+<div class="ab pin" id="pin_neck_causes">
+  <div class="photo" style="background-image:url(../../img/pin_neck_back_clean.jpg);background-size:auto 920px;background-position:56% 15%"></div>
+  <div style="position:absolute;left:100px;right:100px;top:760px;text-align:center">
+    <div class="serif t" style="font-size:72px"><span style="color:var(--gold);font-size:96px">7</span> Everyday Contributors to<br>Neck &amp; Shoulder Tension</div>
+  </div>
+  <div class="tags" style="position:absolute;left:100px;right:100px;top:1000px">
+    <span class="t">Long sitting</span><span class="t">Phone use</span><span class="t">Low laptop</span><span class="t">Heavy bags</span><span class="t">Slouching</span><span class="t">Travel</span><span class="t">Gym strain</span>
+  </div>
+  <div class="logo t" style="position:absolute;left:50%;transform:translateX(-50%);bottom:150px;width:210px"><img src="../../site/orig_Group_1487669750.png"></div>
+</div>
+
+</body></html>

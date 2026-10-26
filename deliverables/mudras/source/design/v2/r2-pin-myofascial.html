@@ -1,0 +1,47 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with a black-and-white photo.
+   Pinterest creative: the photo sits in a circle wrapped by thin offset gold rings, like layers of fascia
+   wrapping a muscle; title above, three gold-ticked points below. Hands only, no equipment. */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#0b0b0b;color:var(--white)}
+.pin{width:1000px;height:1500px}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.06}
+.caps{font-family:var(--sans);font-weight:600;text-transform:uppercase;letter-spacing:.26em;color:var(--gold)}
+.circle{position:absolute;left:50%;top:370px;width:560px;height:560px;margin-left:-280px;border-radius:50%;background:url(../../img/mf_hands.jpg) 72% 74%/auto 1250px no-repeat;filter:grayscale(1) contrast(1.08)}
+.ring{position:absolute;border:1.5px solid var(--gold);border-radius:50%}
+.list{list-style:none;width:600px;margin:0 auto}
+.list li{display:flex;align-items:center;gap:24px;padding:10px 0}
+.logo img{width:100%;display:block}
+.list svg{flex:0 0 30px}
+.list .x{font-family:var(--serif);font-size:42px;line-height:1.1}
+</style></head><body>
+
+<div class="ab pin" id="pin_myofascial">
+  <div style="position:absolute;left:100px;right:100px;top:150px;text-align:center">
+    <div class="serif t" style="font-size:70px">What Is<br>Myofascial Release?</div>
+  </div>
+  <div class="ring" style="left:50%;top:350px;width:600px;height:600px;margin-left:-300px"></div>
+  <div class="ring" style="left:50%;top:336px;width:640px;height:640px;margin-left:-306px;opacity:.55"></div>
+  <div class="ring" style="left:50%;top:326px;width:672px;height:672px;margin-left:-330px;opacity:.3"></div>
+  <div class="circle"></div>
+  <ul class="list" style="position:absolute;left:200px;top:1000px">
+    <li><svg width="30" height="30" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#F0CC75" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="x t">Works on fascia, not just muscle</span></li>
+    <li><svg width="30" height="30" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#F0CC75" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="x t">Gentle, sustained pressure</span></li>
+    <li><svg width="30" height="30" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#F0CC75" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="x t">Shouldn&rsquo;t be painful</span></li>
+  </ul>
+  <div class="logo t" style="position:absolute;left:50%;transform:translateX(-50%);bottom:196px;width:170px"><img src="../../site/orig_Group_1487669750.png"></div>
+  <div class="caps t" style="position:absolute;left:100px;right:100px;bottom:150px;text-align:center;font-size:22px">Mudras &middot; Chelsea, NYC</div>
+</div>
+
+</body></html>

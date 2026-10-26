@@ -1,0 +1,40 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with the client's own black-and-white
+   studio photo. Centred logo at the top over the dark wall; the four benefits sit in a 2x2 grid divided by a
+   thin gold cross at the bottom. */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#000;color:var(--white)}
+.p45{width:1080px;height:1350px}
+.photo{position:absolute;inset:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.05) brightness(1.1)}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 16%,rgba(0,0,0,0) 50%,rgba(0,0,0,.72) 64%,rgba(0,0,0,.88) 100%)}
+.grid{position:absolute;left:108px;right:108px;top:975px;height:240px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+.grid:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1.5px solid var(--gold)}
+.grid:after{content:"";position:absolute;top:50%;left:0;right:0;border-top:1.5px solid var(--gold)}
+.grid div{display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:44px;line-height:1;white-space:nowrap}
+.logo img{width:100%;display:block}
+</style></head><body>
+
+<div class="ab p45" id="fb_benefits">
+  <div class="photo" style="top:150px;bottom:auto;height:800px;background-image:url(../../img/benefits_neck.jpg);background-size:auto 800px;background-position:58% 0%;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 14%,#000 58%,transparent 88%);mask-image:linear-gradient(180deg,transparent 0%,#000 14%,#000 58%,transparent 88%)"></div>
+  <div class="logo t" style="position:absolute;left:50%;transform:translateX(-50%);top:135px;width:260px"><img src="../../site/orig_Group_1487669750.png"></div>
+  <div class="serif t" style="position:absolute;left:108px;right:108px;top:790px;text-align:center;font-family:var(--serif);font-size:62px;line-height:1.08">What a BodyReset Session<br><span style="color:var(--gold)">Can Focus On</span></div>
+  <div class="grid">
+    <div><span class="t">Releasing tension</span></div>
+    <div><span class="t">Comfortable movement</span></div>
+    <div><span class="t">Breathing patterns</span></div>
+    <div><span class="t">Relaxation &amp; rest</span></div>
+  </div>
+</div>
+
+</body></html>

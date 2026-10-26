@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with black-and-white photos, as in the
+   brand's own posts. Corporate follows the "New York Film Festival" post (logo + headline top-left, caps subline,
+   url bottom-left); prenatal follows the "The season starts before kickoff" post (gold inset frame, centred lockup). */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', 'Noto Color Emoji', serif;   /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;                      /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#0d0d0d;color:var(--white)}
+.p45{width:1080px;height:1350px}
+.photo{position:absolute;left:0;right:0;bottom:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.08)}
+.shade{position:absolute;inset:0}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.08}
+.caps{font-family:var(--sans);font-weight:500;text-transform:uppercase;letter-spacing:.24em}
+.logo img{width:100%;display:block}
+</style></head><body>
+
+<div class="ab p45" id="ig_corp_massage_nyc">
+  <div class="photo" style="height:900px;background-image:url(../../img/corp_site_c.jpg);background-size:auto 900px;background-position:50% 100%;filter:grayscale(1) contrast(1.06);-webkit-mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.25) 14%,rgba(0,0,0,.75) 24%,#000 32%);mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.25) 14%,rgba(0,0,0,.75) 24%,#000 32%)"></div>
+  <div class="logo t" style="position:absolute;left:50%;transform:translateX(-50%);top:135px;width:280px"><img src="../../site/orig_Group_1487669750.png"></div>
+  <div style="position:absolute;left:108px;right:108px;top:268px;text-align:center">
+    <div class="serif t" style="font-size:88px">Corporate Massage<br>in NYC</div>
+    <div class="serif t" style="font-size:48px;color:var(--gold);margin-top:22px">Team wellness, built around the workday</div>
+  </div>
+</div>
+
+</body></html>

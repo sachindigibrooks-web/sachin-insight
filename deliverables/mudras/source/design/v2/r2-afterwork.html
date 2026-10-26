@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS. Black/gold/white with a black-and-white photo.
+   Layout follows the brand's post "A Long Day Changes More Than Your Schedule." (full-bleed photo,
+   gold logo bottom-left sitting directly above left-aligned serif copy, shading only at the bottom). */
+:root{
+  --gold:#F0CC75;        /* accent  hsl(42.44 80.39% 70%) */
+  --white:#FFFCF2;       /* white   hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', serif;     /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;   /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:#000;color:var(--white)}
+.p45{width:1080px;height:1350px}
+.photo{position:absolute;inset:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) brightness(1.45) contrast(1.02)}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0) 52%,rgba(0,0,0,.5) 64%,rgba(0,0,0,.8) 100%)}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.1}
+.caps{font-family:var(--sans);font-weight:500;text-transform:uppercase;letter-spacing:.22em;color:var(--gold)}
+.logo img{width:100%;display:block}
+</style></head><body>
+
+<div class="ab p45" id="fb_afterwork">
+  <div class="photo" style="background-image:url(../../img/afterwork_desk.jpg);background-size:auto 1050px;background-position:58% 0%;-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 66%,transparent 80%);mask-image:linear-gradient(180deg,#000 0%,#000 66%,transparent 80%)"></div>
+  <div class="shade"></div>
+  <div style="position:absolute;left:108px;right:108px;bottom:140px">
+    <div class="logo t" style="width:260px;margin-bottom:34px"><img src="../../site/orig_Group_1487669750.png"></div>
+    <div class="serif t" style="font-size:88px">After-Work BodyReset<br>Sessions in Chelsea.</div>
+  </div>
+</div>
+
+</body></html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Raleway:wght@500;600&display=block" rel="stylesheet">
+<style>
+/* Mudras brand tokens, taken from mudras.com theme CSS */
+:root{
+  --gold:#F0CC75;        /* accent      hsl(42.44 80.39% 70%) */
+  --black:#212121;       /* black       hsl(0 0% 12.94%) */
+  --ink:#121212;         /* overlay base, near the site's hero black */
+  --white:#FFFCF2;       /* white       hsl(46.15 100% 97.45%) */
+  --serif:'Bellefair', 'Noto Color Emoji', serif;   /* stand-in for orpheus-pro (Adobe Fonts) */
+  --sans:'Raleway', sans-serif;                      /* site body font */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#555;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+body.notext .t{visibility:hidden}
+.ab{position:relative;overflow:hidden;background:var(--ink);color:var(--white)}
+.p45{width:1080px;height:1350px}
+.photo{position:absolute;left:0;right:0;background-repeat:no-repeat;background-size:cover;filter:grayscale(1) contrast(1.08) brightness(.78);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 22%,#000 72%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 22%,#000 72%,transparent 100%)}
+.logo img{width:100%;display:block}
+.logo.c{position:absolute;left:50%;transform:translateX(-50%)}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.12}
+.kicker{font-family:var(--sans);font-weight:500;text-transform:uppercase;letter-spacing:.2em;color:var(--gold)}
+.rule{height:1px;background:var(--gold)}
+.copy{position:absolute;left:120px;right:120px;top:880px}
+.dots{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);display:flex;gap:12px}
+.dots i{width:10px;height:10px;border-radius:50%;background:rgba(255,252,242,.4)}
+.dots i.on{background:var(--gold)}
+</style></head><body>
+
+<!-- slide 1 · 9 days to go -->
+<div class="ab p45" id="cd_s1">
+  <div class="photo" style="top:200px;height:700px;background-image:url(../../img/cd_bridge_c.jpg);background-position:50% 40%"></div>
+  <div class="logo c t" style="top:140px;width:300px"><img src="../../site/orig_Group_1487669750.png"></div>
+  <div class="copy" style="top:860px">
+    <div class="kicker t" style="font-size:26px">NYC Marathon countdown</div>
+    <div class="rule" style="width:120px;margin:28px 0 30px"></div>
+    <div class="serif t" style="font-size:124px;line-height:1;white-space:nowrap"><span style="color:var(--gold)">8</span> days to go</div>
+  </div>
+  <div class="dots"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+</div>
+
+<!-- slide 2 · bib number -->
+<div class="ab p45" id="cd_s2">
+  <div class="photo" style="top:200px;height:760px;background-image:url(../../img/cd_bibs_c.jpg);background-position:30% 30%"></div>
+  <div class="logo c t" style="top:140px;width:260px"><img src="../../site/orig_Group_1487669750.png"></div>
+  <div class="copy">
+    <div class="rule" style="width:120px;margin-bottom:40px"></div>
+    <div class="serif t" style="font-size:96px">Who&rsquo;s running?</div>
+    <div class="serif t" style="font-size:70px;color:var(--gold);margin-top:18px">Comment your bib number.</div>
+  </div>
+  <div class="dots"><i></i><i class="on"></i><i></i><i></i><i></i></div>
+</div>
+
+<!-- slide 3 · first marathon or 10th -->
+<div class="ab p45" id="cd_s3">
+  <div class="photo" style="top:180px;height:660px;background-image:url(../../img/cd_shoes.jpg);background-position:50% 62%"></div>
+  <div class="logo c t" style="top:140px;width:260px"><img src="../../site/orig_Group_1487669750.png"></div>
+  <div class="copy" style="top:760px">
+    <div class="rule" style="width:120px;margin-bottom:40px"></div>
+    <div class="serif t" style="font-size:96px">First marathon<br>or your 10th?</div>
+    <div class="serif t" style="font-size:70px;color:var(--gold);margin-top:18px">Tell us.</div>
+  </div>
+  <div class="dots"><i></i><i></i><i class="on"></i><i></i><i></i></div>
+</div>
+
+<!-- slide 4 · goal time -->
+<div class="ab p45" id="cd_s4">
+  <div class="photo" style="top:220px;height:680px;background-image:url(../../img/cd_clock_c.jpg);background-position:30% 100%;filter:grayscale(1) contrast(1.6) brightness(1.15);-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 30%,#000 92%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 30%,#000 92%,transparent 100%)"></div>
+  <div class="logo c t" style="top:140px;width:260px"><img src="../../site/orig_Group_1487669750.png"></div>
+  <div class="copy" style="top:950px">
+    <div class="rule" style="width:120px;margin-bottom:34px"></div>
+    <div class="serif t" style="font-size:96px">Your goal time:</div>
+    <div class="serif t" style="font-size:70px;color:var(--gold);margin-top:18px">drop it below 👇</div>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i class="on"></i><i></i></div>
+</div>
+
+<!-- slide 5 · cheering -->
+<div class="ab p45" id="cd_s5">
+  <div class="photo" style="top:200px;height:760px;background-image:url(../../img/cd_legs.jpg);background-position:55% 50%"></div>
+  <div class="logo c t" style="top:140px;width:260px"><img src="../../site/orig_Group_1487669750.png"></div>
+  <div class="copy">
+    <div class="rule" style="width:120px;margin-bottom:40px"></div>
+    <div class="serif t" style="font-size:76px">We&rsquo;ll be cheering for every one of you on <span style="color:var(--gold)">1 Nov</span> 💛</div>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i></i><i class="on"></i></div>
+</div>
+
+</body></html>
