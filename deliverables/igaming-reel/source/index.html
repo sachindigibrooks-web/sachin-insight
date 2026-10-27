@@ -1,0 +1,239 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:"Bebas";src:url(../assets/fonts/BebasNeue.ttf)}
+@font-face{font-family:"RalewayB";font-weight:900;src:url(../assets/fonts/Ralewaywght900.ttf)}
+@font-face{font-family:"RalewayB";font-weight:700;src:url(../assets/fonts/Ralewaywght700.ttf)}
+:root{--blue:#1F6BFF;--blue2:#0A3FC2;--yel:#FFD23F;--ink:#0B0F1A;--W:1080px;--H:1920px}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:transparent;overflow:hidden}
+#stage{position:relative;width:var(--W);height:var(--H);overflow:hidden;font-family:"RalewayB",sans-serif;color:#fff}
+.abs{position:absolute}
+.ico{display:inline-block;background:#fff;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+
+/* brand bug */
+#bug{display:flex;align-items:center;gap:14px;padding:12px 26px 12px 14px;border-radius:999px;background:rgba(11,15,26,.72);border:2px solid rgba(255,255,255,.18);backdrop-filter:blur(6px)}
+#bug .dot{width:44px;height:44px;border-radius:50%;background:var(--blue);display:grid;place-items:center}
+#bug .dot i{width:28px;height:28px;--m:url(../assets/icons/mdi_headset.svg)}
+#bug b{font-weight:900;font-size:28px;letter-spacing:.5px}
+#bug b span{color:var(--yel)}
+
+/* progress */
+#prog{left:0;bottom:0;height:8px;width:100%;background:rgba(255,255,255,.15)}
+#prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--yel))}
+
+/* VS module */
+.vs{left:0;width:100%}
+.vs .hdr{position:absolute;left:50%;transform:translateX(-50%);display:flex;gap:12px;align-items:center;white-space:nowrap}
+.chip{font-weight:900;font-size:30px;letter-spacing:2px;padding:10px 22px;border-radius:12px;background:var(--yel);color:var(--ink)}
+.chip.dk{background:var(--ink);color:#fff;border:2px solid rgba(255,255,255,.25)}
+.card{position:absolute;border-radius:28px;padding:26px 28px;display:flex;flex-direction:column;justify-content:center;gap:12px;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+.card.l{background:linear-gradient(135deg,var(--blue),var(--blue2))}
+.card.r{background:linear-gradient(135deg,#FFE27A,var(--yel));color:var(--ink)}
+.card .ic{width:62px;height:62px}
+.card.r .ic{background:var(--ink)}
+.card .tx{font-weight:900;font-size:40px;line-height:1.02;text-transform:uppercase}
+.card .win{position:absolute;top:-26px;right:-18px;width:76px;height:76px;border-radius:50%;background:#19C37D;display:grid;place-items:center;border:5px solid #fff;opacity:0}
+.card .win i{width:46px;height:46px;--m:url(../assets/icons/mdi_check-bold.svg)}
+.vsb{position:absolute;width:150px;height:150px;border-radius:50%;background:var(--ink);border:6px solid #fff;display:grid;place-items:center;font-family:"Bebas";font-size:84px;line-height:1;padding-top:8px;box-shadow:0 0 0 10px rgba(31,107,255,.35)}
+
+/* captions */
+#cap{left:0;width:100%;text-align:center;font-family:"Bebas";line-height:1}
+#cap .w{display:inline-block;margin:0 .1em;position:relative;color:#fff;
+  text-shadow:0 0 2px #000,0 4px 0 rgba(0,0,0,.85),0 8px 24px rgba(0,0,0,.6);-webkit-text-stroke:2px #000;paint-order:stroke fill}
+#cap .w.k{color:var(--yel)}
+#cap .w.on{transform:scale(1.12);margin:0 .22em}
+#cap .w.on::before{content:"";position:absolute;inset:-.02em -.12em .04em;background:var(--blue);border-radius:.14em;z-index:-1;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+#cap .w.on{color:#fff;-webkit-text-stroke:0;text-shadow:0 3px 0 rgba(0,0,0,.35)}
+
+/* winner badge / callouts */
+.badge{left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:16px;padding:16px 30px 16px 18px;border-radius:999px;background:#fff;color:var(--ink);font-weight:900;white-space:nowrap;box-shadow:0 16px 40px rgba(0,0,0,.45)}
+.badge .ck{width:58px;height:58px;border-radius:50%;background:#19C37D;display:grid;place-items:center}
+.badge .ck i{width:38px;height:38px;--m:url(../assets/icons/mdi_check-bold.svg)}
+.badge small{display:block;font-weight:700;font-size:22px;letter-spacing:3px;color:#5A6172}
+.call{display:flex;align-items:center;gap:20px;padding:20px 30px 20px 20px;border-radius:26px;background:rgba(11,15,26,.82);border:3px solid var(--yel);box-shadow:0 18px 44px rgba(0,0,0,.5)}
+.call .ib{width:86px;height:86px;border-radius:20px;background:var(--yel);display:grid;place-items:center}
+.call .ib i{width:58px;height:58px;background:var(--ink)}
+.call b{font-weight:900;font-size:46px;line-height:1;text-transform:uppercase}
+.call b em{font-style:normal;color:var(--yel)}
+.bars{display:flex;align-items:flex-end;gap:8px;height:70px;margin-left:6px}
+.bars i{width:16px;background:var(--yel);border-radius:4px}
+
+/* stamp */
+#stamp{left:50%;top:50%;transform:translate(-50%,-50%) rotate(-6deg);padding:20px 40px;border:10px solid var(--yel);border-radius:22px;font-family:"Bebas";font-size:150px;line-height:.9;color:var(--yel);text-align:center;background:rgba(11,15,26,.55);text-shadow:0 6px 0 rgba(0,0,0,.5);white-space:nowrap}
+#ques{left:50%;transform:translateX(-50%);font-family:"Bebas";color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.4)}
+
+/* equation */
+.eq{display:flex;align-items:center;gap:16px;padding:12px 24px 12px 12px;border-radius:20px;font-weight:900;font-size:36px;text-transform:uppercase;white-space:nowrap;box-shadow:0 14px 34px rgba(0,0,0,.45)}
+.eq .ib{width:64px;height:64px;border-radius:16px;display:grid;place-items:center;background:rgba(255,255,255,.18)}
+.eq .ib i{width:44px;height:44px}
+.op{font-family:"Bebas";font-size:60px;line-height:.8;color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.4);text-align:center}
+
+/* flash + outro */
+#flash{inset:0;background:#fff;opacity:0}
+.streak{width:260%;height:120px;left:-80%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent);transform:rotate(-18deg);opacity:0}
+#outro{inset:0;background:radial-gradient(circle at 50% 45%,rgba(31,107,255,.55),rgba(11,15,26,.92) 70%);opacity:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;text-align:center}
+#outro .t1{font-family:"Bebas";font-size:120px;line-height:.9}
+#outro .t1 span{color:var(--yel)}
+#outro .btn{display:flex;align-items:center;gap:16px;padding:22px 46px;border-radius:999px;font-weight:900;font-size:44px}
+#outro .btn i{width:48px;height:48px}
+#outro .sub{font-weight:700;font-size:30px;letter-spacing:4px;color:#C9D3EA}
+</style></head>
+<body><div id="stage"></div>
+<script src="gsap.min.js"></script><script src="captions.js"></script>
+<script>
+const P = new URLSearchParams(location.search);
+const FMT = P.get("fmt") || "v";
+const V = FMT === "v";
+const W = V ? 1080 : 1920, H = V ? 1920 : 1080;
+document.documentElement.style.setProperty("--W", W + "px");
+document.documentElement.style.setProperty("--H", H + "px");
+const S = document.getElementById("stage");
+const ICON = n => `../assets/icons/mdi_${n}.svg`;
+const el = (html, css = "") => { const d = document.createElement("div"); d.innerHTML = html.trim(); const e = d.firstChild; if (css) e.style.cssText += css; S.appendChild(e); return e; };
+const ico = (n, cls = "") => `<i class="ico ${cls}" style="--m:url(${ICON(n)})"></i>`;
+const tl = gsap.timeline({ paused: true });
+
+/* layout numbers */
+const L = V ? {
+  seam: 960, cardW: 440, cardH: 250, cardGap: 120, hdrY: 760, capY: 1330, capSize: 118, capMax: 960,
+  badgeY: 230, callY: 250, bugX: 0, bugY: 64, eqX: 70, eqY: 200, eqStep: 128, stampSize: 150
+} : {
+  seam: 830, cardW: 600, cardH: 190, cardGap: 150, hdrY: 650, capY: 905, capSize: 104, capMax: 1500,
+  badgeY: 70, callY: 140, bugX: 60, bugY: 50, eqX: 60, eqY: 170, eqStep: 120, stampSize: 170
+};
+
+/* brand bug + progress */
+const bug = el(`<div id="bug" class="abs"><div class="dot">${ico("headset")}</div><b>iGAMING <span>REAL TALK</span></b></div>`);
+if (V) { bug.style.left = "50%"; bug.style.top = L.bugY + "px"; gsap.set(bug, { xPercent: -50 }); }
+else { bug.style.left = L.bugX + "px"; bug.style.top = L.bugY + "px"; }
+tl.from(bug, { y: -40, opacity: 0, duration: .5, ease: "back.out(2)" }, .15);
+const prog = el(`<div id="prog" class="abs"><i></i></div>`);
+tl.to(prog.firstChild, { width: "100%", ease: "none", duration: 58.57 }, 0);
+
+/* VS rounds */
+const ROUNDS = [
+  { t0: 0.05, t1: 2.80, n: 1, a: ["lightbulb-on", "Brilliant original idea"], b: ["sigma", "Great maths"], win: "a", wt: 4.84 },
+  { t0: 7.10, t1: 10.00, n: 2, a: ["rocket-launch", "Innovation"], b: ["cog", "Execution"], win: "b", wt: 10.08 },
+  { t0: 11.10, t1: 13.90, n: 3, a: ["star-four-points", "One brilliant game"], b: ["slot-machine", "20 good games"], win: null },
+  { t0: 22.10, t1: 25.35, n: 4, a: ["lightning-bolt", "Instant player understanding"], b: ["replay", "Replayability"], win: "a", wt: 25.42 },
+  { t0: 28.05, t1: 32.85, n: 5, a: ["lightning-bolt", "Instant player understanding"], b: ["cog", "Flawless execution"], win: "b", wt: 33.10, final: true },
+];
+const cardX = side => side === "l" ? (W / 2 - L.cardGap / 2 - L.cardW) : (W / 2 + L.cardGap / 2);
+ROUNDS.forEach(R => {
+  const top = L.seam - L.cardH / 2;
+  const hdr = el(`<div class="vs abs"><div class="hdr" style="top:${L.hdrY}px"><span class="chip">${R.final ? "FINAL ROUND" : "THIS OR THAT"}</span><span class="chip dk">ROUND ${R.n}/5</span></div></div>`);
+  const mk = (side, d) => el(`<div class="card ${side}" style="left:${cardX(side)}px;top:${top}px;width:${L.cardW}px;height:${L.cardH}px">
+      ${ico(d[0], "ic")}<div class="tx">${d[1]}</div><div class="win">${ico("check-bold")}</div></div>`);
+  const ca = mk("l", R.a), cb = mk("r", R.b);
+  const vs = el(`<div class="vsb" style="left:${W / 2 - 75}px;top:${L.seam - 75}px">VS</div>`);
+  gsap.set([hdr, ca, cb, vs], { opacity: 0 });
+  tl.fromTo(hdr, { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: .35, ease: "back.out(2)" }, R.t0)
+    .fromTo(ca, { opacity: 0, x: -W * .6, rotate: -8 }, { opacity: 1, x: 0, rotate: 0, duration: .5, ease: "back.out(1.4)" }, R.t0 + .05)
+    .fromTo(cb, { opacity: 0, x: W * .6, rotate: 8 }, { opacity: 1, x: 0, rotate: 0, duration: .5, ease: "back.out(1.4)" }, R.t0 + .12)
+    .fromTo(vs, { opacity: 0, scale: 3, rotate: -40 }, { opacity: 1, scale: 1, rotate: 0, duration: .4, ease: "back.out(2.5)" }, R.t0 + .35)
+    .to(vs, { scale: 1.12, duration: .25, yoyo: true, repeat: Math.max(1, Math.floor((R.t1 - R.t0 - 1) / .5)), ease: "sine.inOut" }, R.t0 + .8)
+    .to([ca, cb], { y: -10, duration: .6, yoyo: true, repeat: 3, ease: "sine.inOut" }, R.t0 + .9);
+  if (R.final) {
+    tl.to([ca, cb], { x: "+=6", duration: .05, yoyo: true, repeat: 15, ease: "none" }, R.t1 - 1.0);
+  }
+  tl.to([ca, cb, vs, hdr], { opacity: 0, scale: .85, duration: .25, ease: "power2.in" }, R.t1 - .05);
+});
+
+/* round results */
+function badge(t, txt, sub, dur) {
+  const b = el(`<div class="badge abs" style="top:${L.badgeY}px;font-size:${V ? 40 : 38}px"><div class="ck">${ico("check-bold")}</div><div><small>${sub}</small>${txt}</div></div>`);
+  gsap.set(b, { opacity: 0 });
+  tl.fromTo(b, { opacity: 0, scale: .4, y: -30 }, { opacity: 1, scale: 1, y: 0, duration: .45, ease: "back.out(2.2)" }, t)
+    .to(b, { opacity: 0, y: -30, duration: .3 }, t + dur);
+}
+badge(4.84, "BRILLIANT ORIGINAL IDEA", "ROUND 1 PICK", 2.0);
+badge(10.10, "EXECUTION", "ROUND 2 PICK", .85);
+badge(25.45, "INSTANT PLAYER UNDERSTANDING", "ROUND 4 PICK", 2.4);
+
+/* final-round suspense + stamp */
+const ques = el(`<div id="ques" class="abs" style="top:${V ? 330 : 330}px;font-size:${V ? 260 : 220}px">?</div>`);
+gsap.set(ques, { opacity: 0 });
+tl.fromTo(ques, { opacity: 0, scale: .3 }, { opacity: 1, scale: 1, duration: .3, ease: "back.out(3)" }, 31.95)
+  .to(ques, { scale: 1.15, duration: .18, yoyo: true, repeat: 3 }, 32.25)
+  .to(ques, { opacity: 0, duration: .12 }, 33.0);
+const stamp = el(`<div id="stamp" class="abs" style="font-size:${L.stampSize}px">FLAWLESS<br>EXECUTION</div>`);
+gsap.set(stamp, { opacity: 0 });
+tl.fromTo(stamp, { opacity: 0, scale: 2.6 }, { opacity: 1, scale: 1, duration: .22, ease: "power4.in" }, 33.08)
+  .to("#stage", { x: 10, y: -8, duration: .04, yoyo: true, repeat: 7, ease: "none" }, 33.30)
+  .to(stamp, { opacity: 0, scale: .9, duration: .25 }, 34.05);
+
+/* callouts */
+function callout(t, dur, icon, html, extra = "") {
+  const c = el(`<div class="call abs" style="top:${L.callY}px">${extra ? "" : ""}<div class="ib">${ico(icon)}</div><b>${html}</b>${extra}</div>`);
+  if (V) { c.style.left = "50%"; gsap.set(c, { xPercent: -50 }); } else { c.style.left = "60px"; }
+  gsap.set(c, { opacity: 0 });
+  tl.fromTo(c, { opacity: 0, y: 40, scale: .9 }, { opacity: 1, y: 0, scale: 1, duration: .45, ease: "back.out(1.8)" }, t)
+    .to(c, { opacity: 0, y: -20, duration: .3 }, t + dur);
+  return c;
+}
+const why = callout(34.50, 2.35, "help", `<em>WHY</em> FLAWLESS<br>EXECUTION?`);
+callout(20.15, 1.95, "trophy", `RECIPE FOR<br><em>SUCCESS</em>`);
+const imp = callout(37.25, 3.9, "trending-up", `SMALL, <em>INCREMENTAL</em><br>IMPROVEMENTS`, `<div class="bars"><i style="height:20%"></i><i style="height:42%"></i><i style="height:66%"></i><i style="height:100%"></i></div>`);
+imp.querySelectorAll(".bars i").forEach((b, i) => tl.from(b, { scaleY: 0, transformOrigin: "bottom", duration: .3, ease: "back.out(2)" }, 37.6 + i * .28));
+callout(43.05, 2.65, "chess-king", `HARD TO<br><em>COMPETE WITH</em>`);
+callout(46.4, 3.1, "lightning-bolt", `SPEED +<br><em>EXECUTION</em>`);
+
+/* equation: speed of AI + human craft = winning combination */
+const eqBox = el(`<div class="abs" style="left:${V ? 0 : L.eqX}px;top:${L.eqY}px;width:${V ? W : 700}px;display:flex;flex-direction:column;align-items:center;gap:4px"></div>`);
+const eqRow = (bg, fg, icon, txt) => { const r = document.createElement("div"); r.className = "eq"; r.style.background = bg; r.style.color = fg; r.innerHTML = `<div class="ib">${ico(icon)}</div>${txt}`; if (fg !== "#fff") r.querySelector(".ico").style.background = fg; eqBox.appendChild(r); return r; };
+const op = s => { const o = document.createElement("div"); o.className = "op"; o.textContent = s; eqBox.appendChild(o); return o; };
+const e1 = eqRow("linear-gradient(135deg,#1F6BFF,#0A3FC2)", "#fff", "robot-outline", "Speed of AI");
+const o1 = op("+");
+const e2 = eqRow("linear-gradient(135deg,#FFE27A,#FFD23F)", "#0B0F1A", "hand-back-right", "Human craft");
+const o2 = op("=");
+const e3 = eqRow("linear-gradient(135deg,#19C37D,#0E8F5A)", "#fff", "trophy", "Winning combination");
+gsap.set([e1, o1, e2, o2, e3], { opacity: 0 });
+tl.fromTo(e1, { opacity: 0, x: -200 }, { opacity: 1, x: 0, duration: .45, ease: "back.out(1.7)" }, 50.6)
+  .fromTo(o1, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: .3, ease: "back.out(3)" }, 52.5)
+  .fromTo(e2, { opacity: 0, x: 200 }, { opacity: 1, x: 0, duration: .45, ease: "back.out(1.7)" }, 52.95)
+  .fromTo(o2, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: .3, ease: "back.out(3)" }, 56.7)
+  .fromTo(e3, { opacity: 0, scale: .3 }, { opacity: 1, scale: 1, duration: .5, ease: "back.out(2.4)" }, 57.6)
+  .to(e3, { scale: 1.06, duration: .3, yoyo: true, repeat: 3, ease: "sine.inOut" }, 58.1)
+  .to(eqBox, { opacity: 0, duration: .3 }, 58.75);
+
+/* cut flashes */
+const CUTS = [2.83, 4.75, 7.03, 10.05, 11.07, 13.97, 15.70, 17.90, 22.03, 25.45, 28.00, 32.90, 34.07, 36.87, 39.40, 41.40, 43.40, 45.80, 49.70, 52.00, 54.23];
+const BIG = new Set([4.75, 13.97, 15.70, 39.40, 43.40, 49.70, 52.00, 32.90]);
+const flash = el(`<div id="flash" class="abs"></div>`);
+const streak = el(`<div class="streak abs" style="top:${H * .45}px"></div>`);
+CUTS.forEach(c => {
+  const big = BIG.has(c);
+  tl.fromTo(flash, { opacity: big ? .75 : .35 }, { opacity: 0, duration: big ? .28 : .16, ease: "power2.out", immediateRender: false }, c);
+  if (big) tl.fromTo(streak, { opacity: .9, y: -H * .5 }, { opacity: 0, y: H * .5, duration: .3, ease: "power2.in", immediateRender: false }, c - .08);
+});
+
+/* outro */
+const outro = el(`<div id="outro" class="abs">
+  <div class="sub">MORE FROM THE SKIES</div>
+  <div class="t1">iGAMING<br><span>REAL TALK</span></div>
+  <div class="btn" style="background:${V ? "var(--blue)" : "#FF0033"}">${ico(V ? "account-group" : "bell")}${V ? "FOLLOW FOR MORE" : "SUBSCRIBE"}</div></div>`);
+tl.fromTo(outro, { opacity: 0 }, { opacity: 1, duration: .35 }, 58.7)
+  .from(outro.children, { y: 60, opacity: 0, stagger: .1, duration: .4, ease: "back.out(2)" }, 58.8)
+  .to(outro.querySelector(".btn"), { scale: 1.08, duration: .25, yoyo: true, repeat: 3 }, 59.4);
+
+/* captions (frame-exact, no tweening) */
+let CAPS = [];
+const cap = el(`<div id="cap" class="abs" style="top:${L.capY}px;font-size:${L.capSize}px"></div>`);
+const HIDE = [[33.0, 34.2], [58.6, 99]];
+function renderCaps(t) {
+  if (HIDE.some(([a, b]) => t >= a && t < b)) { cap.innerHTML = ""; return; }
+  const c = CAPS.find(c => t >= c.s && t < c.e);
+  if (!c) { cap.innerHTML = ""; return; }
+  const age = t - c.s;
+  const pop = age < .12 ? .85 + age / .12 * .15 : 1;
+  cap.innerHTML = `<div style="display:inline-block;max-width:${L.capMax}px;transform:scale(${pop})">` +
+    c.w.map((w, i) => {
+      const on = t >= w.s && (i === c.w.length - 1 || t < c.w[i + 1].s);
+      return `<span class="w${w.k ? " k" : ""}${on ? " on" : ""}">${w.t}</span>`;
+    }).join("") + `</div>`;
+}
+window.renderAt = t => { tl.seek(t, false); renderCaps(t); };
+CAPS = window.CAPS_DATA;
+window.ready = document.fonts.ready.then(() => true);
+</script></body></html>
