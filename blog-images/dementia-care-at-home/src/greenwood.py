@@ -7,16 +7,16 @@ G = D + '/g/'
 F = D + '/fonts/'
 OUT = sys.argv[2]
 W, H = 1200, 800  # 3:2, same shape as the site's recent featured images (1024x683)
-NAVY = (27, 48, 81)      # #1b3051 logo wordmark
-TEAL = (147, 206, 196)   # #93cec4 logo icon
-AMBER = (255, 192, 110)  # #ffc06e logo icon
-TEAL_PALE = (231, 244, 241)
-BG = (248, 250, 249)
+NAVY = (26, 48, 82)      # #1a3052 hero button / logo wordmark
+TEAL = (156, 203, 194)   # #9ccbc2 logo leaves
+AMBER = (229, 154, 88)   # #e59a58 hero panel / Get Started button
+TEAL_PALE = (232, 243, 240)
+BG = (248, 248, 248)     # #f8f8f8 page background
 GREY = (84, 98, 118)
 WHITE = (255, 255, 255)
-fB = lambda s: ImageFont.truetype(F + 'Poppins-Bold.ttf', s)
-fX = lambda s: ImageFont.truetype(F + 'Poppins-ExtraBold.ttf', s)
-fS = lambda s: ImageFont.truetype(F + 'Poppins-SemiBold.ttf', s)
+fX = lambda s: ImageFont.truetype(F + 'DMSerifDisplay-Regular.ttf', int(s * 1.15))  # serif headings, as on the site
+fB = lambda s: ImageFont.truetype(F + 'FiraSans-SemiBold.ttf', s)
+fS = lambda s: ImageFont.truetype(F + 'FiraSans-Medium.ttf', s)
 
 
 def soft(base, shape_fn, col, op=255, blur=0):
@@ -53,26 +53,36 @@ def pill(d, x, y, text, font, fg, bg, padx=18, h=38):
     return tw + 2 * padx
 
 
-# ---------- featured ----------
+# ---------- featured: mirrors the homepage hero (orange panel with a curved edge over a photo) ----------
 img = Image.new('RGBA', (W, H), BG + (255,))
-ph = Image.open(G + 'ph/carer.jpg').convert('RGB')
-ph = ph.resize((W, int(ph.height * W / ph.width)), Image.LANCZOS)
-top_h = 520
-img.paste(ph.crop((0, 50, W, 50 + top_h)), (0, 0))
-# gentle curved edge into the text panel
-EL = (-1400, top_h - 60, W + 1400, top_h + 1400)  # wide, gentle curve
-soft(img, lambda dd, op: dd.ellipse(EL, fill=op), BG, 255, 1)
-soft(img, lambda dd, op: dd.arc(EL, 180, 360, fill=op, width=6), TEAL, 255, 0)
+ph = Image.open(G + 'ph/carer2.jpg').convert('RGB')
+ph = ph.resize((int(ph.width * 820 / ph.height), 820), Image.LANCZOS)
+img.paste(ph, (W - ph.width + 150, -10))
+yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+edge = 700 * np.sqrt(np.clip(1 - ((H - yy) / 1000) ** 2, 0, 1))  # bulges right towards the bottom
+panel = np.clip(edge - xx + 0.5, 0, 1)
+lay = Image.new('RGBA', (W, H), AMBER + (255,))
+lay.putalpha(Image.fromarray((panel * 255).astype(np.uint8)))
+img.alpha_composite(lay)
 d = ImageDraw.Draw(img)
-pill(d, 60, 500, 'UK GUIDE FOR FAMILIES', fB(16), NAVY, AMBER, 20, 40)
-d.text((56, 556), 'Dementia Care at Home', font=fX(62), fill=NAVY)
-d.text((60, 640), 'The Complete UK Guide for Families', font=fS(28), fill=GREY)
-x = 60
-for t in ['Care options', 'Stages & support', '2026 costs', 'Funding help']:
-    x += pill(d, x, 704, t, fS(17), NAVY, TEAL_PALE, 18, 40) + 12
-url = 'greenwoodhomecare.co.uk'
-uw = d.textlength(url, font=fS(16))
-d.text((W - 60 - uw, 716), url, font=fS(16), fill=GREY)
+logo = Image.open(G + 'site/logo.png').convert('RGBA')
+logo = logo.resize((int(logo.width * 50 / logo.height), 50), Image.LANCZOS)
+d.rounded_rectangle((52, 44, 52 + logo.width + 40, 44 + 50 + 28), 16, fill=WHITE)
+img.alpha_composite(logo, (72, 58))
+d = ImageDraw.Draw(img)
+y = 196
+for ln in ['Dementia Care', 'at Home']:
+    d.text((60, y), ln, font=ImageFont.truetype(F + 'DMSerifDisplay-Regular.ttf', 78), fill=WHITE)
+    y += 92
+y += 18
+for ln in ['The Complete UK Guide', 'for Families']:
+    d.text((62, y), ln, font=ImageFont.truetype(F + 'FiraSans-Medium.ttf', 34), fill=WHITE)
+    y += 44
+btn = 'Care options, 2026 costs and funding'
+bf = ImageFont.truetype(F + 'FiraSans-SemiBold.ttf', 22)
+bw = d.textlength(btn, font=bf)
+d.rounded_rectangle((60, 548, 60 + bw + 64, 612), 10, fill=NAVY)
+d.text((92, 563), btn, font=bf, fill=WHITE)
 img.convert('RGB').save(OUT + '/dementia-care-at-home-featured.webp', quality=90)
 img.convert('RGB').save(OUT + '/dementia-care-at-home-featured.jpg', quality=92)
 img.convert('RGB').save(OUT + '/dementia-care-at-home-featured.png')
