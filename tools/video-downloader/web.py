@@ -5,10 +5,12 @@ Run:  python web.py   then open http://localhost:8000
 
 import os
 import shutil
+import sys
 import tempfile
 import threading
 import time
 import uuid
+import webbrowser
 
 from flask import Flask, abort, jsonify, request, send_file
 
@@ -137,5 +139,8 @@ if __name__ == "__main__":
     threading.Thread(target=janitor, daemon=True).start()
     port = int(os.environ.get("PORT", "8000"))
     print(f"Open http://localhost:{port}  (same Wi-Fi devices: http://<this-PC-IP>:{port})")
+    if "--open" in sys.argv:
+        # Open the browser only once the server is up.
+        threading.Timer(1.5, webbrowser.open, args=(f"http://localhost:{port}",)).start()
     from waitress import serve
     serve(app, host="0.0.0.0", port=port, threads=16)

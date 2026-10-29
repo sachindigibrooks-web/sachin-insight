@@ -3,8 +3,9 @@ REM Starts the website on http://localhost:8000
 cd /d "%~dp0"
 call :findpy || goto :eof
 %PY% -m pip install --upgrade -r requirements.txt
-start "" http://localhost:8000
-%PY% web.py
+echo.
+echo Starting server... browser will open automatically. Keep this window open.
+%PY% web.py --open
 pause
 goto :eof
 
