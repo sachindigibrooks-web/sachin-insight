@@ -21,17 +21,20 @@ logo = logo.crop(logo.getbbox())
 
 # Copy is kept word for word from the approved ad preview.
 ADS = [
-    dict(slug='run-strong', photo='knead.jpg', focus=(0.46, 0.5), mirror=False, zoom=1.0,
+    dict(slug='run-strong', bg='A4579vLezz8.jpg', bg_focus=(0.42, 0.42), bg_mirror=True,
+         inset='knead.jpg', in_focus=(0.47, 0.42), in_zoom=1.15,
          head=[('RUN STRONG', WHITE), ('IN NYC.', GOLD)],
          sub=['Pre-Marathon', 'Sports Massage'],
          copy='Targeted bodywork to help you feel more mobile, reduce muscle tension and prepare for race day.',
          icons=[('tension', 'Reduce\nMuscle Tension'), ('mobility', 'Improve\nMobility'), ('ready', 'Feel\nRace-Ready')]),
-    dict(slug='marathon-ready', photo='forearm.jpg', focus=(0.46, 0.70), mirror=False, zoom=1.3,
+    dict(slug='marathon-ready', bg='sK-nciHHnYA.jpg', bg_focus=(0.42, 0.40), bg_mirror=False,
+         inset='forearm.jpg', in_focus=(0.46, 0.74), in_zoom=1.0,
          head=[('NYC', WHITE), ('MARATHON', WHITE), ('READY?', GOLD)],
          sub=['Pre-Race', 'Sports Massage'],
          copy='Personalized, one-on-one sessions to support your body, mobility and race preparation.',
          icons=None),
-    dict(slug='race-prep', photo='physio.jpg', focus=(0.50, 0.5), mirror=False, zoom=1.0,
+    dict(slug='race-prep', bg='1xx1hq2RJts.jpg', bg_focus=(0.66, 0.62), bg_mirror=False,
+         inset='thumbs.jpg', in_focus=(0.84, 0.56), in_zoom=1.35,
          head=[('Your', WHITE), ('Race Prep', GOLD), ('Starts Here.', WHITE)],
          sub=['Pre-Marathon', 'Sports Massage'],
          copy='Bespoke treatments for runners to support flexibility, ease muscle tension and help you feel prepared for race day.',
@@ -43,9 +46,9 @@ def grade(im):
     """Warm, low-key grade so every photo sits in the black-and-gold Mudras look."""
     a = np.asarray(im.convert('RGB')).astype(np.float32) / 255
     lum = a @ np.array([0.299, 0.587, 0.114], np.float32)
-    a = a * 0.55 + lum[..., None] * 0.45                      # pull saturation down
-    a = a * np.array([1.06, 0.98, 0.86], np.float32)          # warm
-    a = np.clip(a, 0, 1) ** 1.25 * 0.92                        # deeper shadows
+    a = a * 0.45 + lum[..., None] * 0.55                      # pull saturation down
+    a = a * np.array([1.12, 0.97, 0.78], np.float32)          # golden warm
+    a = np.clip(a, 0, 1) ** 1.2 * 0.95                         # deeper shadows
     return Image.fromarray((np.clip(a, 0, 1) * 255).astype(np.uint8))
 
 
@@ -109,41 +112,55 @@ def pin(d, x, y, h, col=GOLD):
     d.ellipse((x - r * 0.4, y + r * 0.6, x + r * 0.4, y + r * 1.4), fill=(8, 7, 5))
 
 
-def right_photo(ad, W, H, frac=0.64, fade=280):
-    """Photo fills the right side at full height; its left edge melts into black, like the original layout."""
-    im = Image.open(M + 'u/full/' + ad['photo']).convert('RGB')
-    if ad['mirror']:
+def cover(path, W, H, focus, target, mirror=False, zoom=1.0):
+    im = Image.open(M + 'u/full/' + path).convert('RGB')
+    if mirror:
         im = ImageOps.mirror(im)
-    fx = (1 - ad['focus'][0]) if ad['mirror'] else ad['focus'][0]
-    rw = int(W * frac)
-    sc = H / im.height * ad['zoom']
+        focus = (1 - focus[0], focus[1])
+    sc = max(W / im.width, H / im.height) * zoom
     im = im.resize((int(im.width * sc), int(im.height * sc)), Image.LANCZOS)
-    cx = int(np.clip(fx * im.width - rw / 2, 0, max(0, im.width - rw)))
-    cy = int(np.clip(ad['focus'][1] * im.height - H / 2, 0, im.height - H))
-    ph = grade(im.crop((cx, cy, cx + rw, cy + H))).convert('RGBA')
-    xx = np.arange(rw, dtype=np.float32)
-    a = (np.clip(xx / fade, 0, 1) ** 1.6 * 255)
-    ph.putalpha(Image.fromarray(np.repeat(a[None, :], H, 0).astype(np.uint8)))
-    img = Image.new('RGBA', (W, H), (9, 8, 6, 255))
-    glow = Image.new('L', (W, H), 0)
-    ImageDraw.Draw(glow).ellipse((-W * 0.4, H * 0.1, W * 0.7, H * 0.9), fill=40)
-    lay = Image.new('RGBA', (W, H), (60, 44, 22, 255))
-    lay.putalpha(glow.filter(ImageFilter.GaussianBlur(160)))
-    img.alpha_composite(lay)
-    img.alpha_composite(ph, (W - rw, 0))
-    # gentle top/bottom darkening keeps logo and CTA crisp
-    yy = np.arange(H, dtype=np.float32)
-    v = np.maximum(np.clip(1 - yy / (H * 0.2), 0, 1) ** 1.5 * 150, np.clip((yy - H * 0.8) / (H * 0.2), 0, 1) ** 1.5 * 170)
+    x0 = int(np.clip(focus[0] * im.width - target[0], 0, im.width - W))
+    y0 = int(np.clip(focus[1] * im.height - target[1], 0, im.height - H))
+    return grade(im.crop((x0, y0, x0 + W, y0 + H)))
+
+
+def background(ad, W, H):
+    img = cover(ad['bg'], W, H, ad['bg_focus'], (W * 0.68, H * 0.42), ad['bg_mirror']).convert('RGBA')
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+    left = np.clip(1 - xx / (W * 0.80), 0, 1) ** 0.85 * 235
+    top = np.clip(1 - yy / (H * 0.28), 0, 1) ** 1.4 * 170
+    bot = np.clip((yy - H * 0.62) / (H * 0.38), 0, 1) ** 1.2 * 225
+    a = np.clip(np.maximum.reduce([left, top, bot]), 0, 240)
     lay = Image.new('RGBA', (W, H), (9, 8, 6, 255))
-    lay.putalpha(Image.fromarray(np.repeat(v[:, None], W, 1).astype(np.uint8)))
+    lay.putalpha(Image.fromarray(a.astype(np.uint8)))
     img.alpha_composite(lay)
     return img
+
+
+def inset_card(img, ad, box):
+    x0, y0, x1, y1 = box
+    w, h = x1 - x0, y1 - y0
+    ph = cover(ad['inset'], w, h, ad['in_focus'], (w / 2, h / 2), zoom=ad['in_zoom']).convert('RGBA')
+    mask = Image.new('L', (w, h), 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, w - 1, h - 1), 26, fill=255)
+    sh = Image.new('L', img.size, 0)
+    ImageDraw.Draw(sh).rounded_rectangle((x0 + 4, y0 + 14, x1 + 4, y1 + 18), 30, fill=170)
+    lay = Image.new('RGBA', img.size, (0, 0, 0, 255))
+    lay.putalpha(sh.filter(ImageFilter.GaussianBlur(22)))
+    img.alpha_composite(lay)
+    ph.putalpha(mask)
+    img.alpha_composite(ph, (x0, y0))
+    ImageDraw.Draw(img).rounded_rectangle((x0, y0, x1, y1), 26, outline=GOLD, width=4)
 
 
 def render(ad, W, H, story):
     pad = 80
     top0 = 240 if story else 58
-    img = right_photo(ad, W, H, frac=0.70 if story else 0.64, fade=300 if story else 280)
+    img = background(ad, W, H)
+    if story:
+        inset_card(img, ad, (W - 80 - 360, 1150, W - 80, 1580))
+    else:
+        inset_card(img, ad, (W - 64 - 360, 560, W - 64, 1010))
     d = ImageDraw.Draw(img)
     colw = int(W * 0.50)
     lw = 330
