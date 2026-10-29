@@ -1,3 +1,7 @@
+"""Rebuild the three approved Mudras ad designs 1:1, swapping only the photos.
+
+Every position and text size is measured from the original 642x809 previews and scaled to 1080x1350.
+"""
 import sys
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
@@ -6,216 +10,229 @@ D = sys.argv[1]
 M = D + '/m/'
 F = D + '/fonts/'
 OUT = sys.argv[2]
-GOLD = (222, 178, 96)
-GOLD_BTN = (226, 186, 106)
+W, H = 1080, 1350
+K = 1350 / 809         # scale from the reference previews
+OX = (W - 642 * K) / 2
+OY = 0
+GOLD = (228, 184, 104)
+GOLD_LINE = (214, 170, 92)
 WHITE = (255, 255, 255)
-BODY = (238, 232, 222)
-INK = (18, 15, 10)
-serif = lambda s: ImageFont.truetype(F + 'DMSerifDisplay-Regular.ttf', s)
-sans = lambda s: ImageFont.truetype(F + 'Poppins-SemiBold.ttf', s)
-body = lambda s: ImageFont.truetype(F + 'FiraSans-Regular.ttf', s)
-bold = lambda s: ImageFont.truetype(F + 'Poppins-Bold.ttf', s)
+BODY = (240, 236, 228)
+DARK = (24, 18, 10)
+
+
+def X(v):
+    return int(OX + v * K)
+
+
+def Y(v):
+    return int(OY + v * K)
+
+
+def S_(v):
+    return int(v * K)
+
+
+def vf(path, size, weight):
+    f = ImageFont.truetype(F + path, size)
+    f.set_variation_by_axes([weight])
+    return f
+
+
+serif = lambda s, w=700: vf('PlayfairDisplay.ttf', s, w)
+sans = lambda s, w=400: vf('Montserrat.ttf', s, w)
 
 logo = Image.open(M + 'site/18.img').convert('RGBA')
 logo = logo.crop(logo.getbbox())
+ICONS = {n: Image.open(M + f'icons/{n}.png').convert('RGBA') for n in ('run', 'arm-flex-outline', 'spa-outline')}
 
-# Copy is kept word for word from the approved ad preview.
+
+def fit(text, maker, target_w, start):
+    s = start
+    d = ImageDraw.Draw(Image.new('L', (8, 8)))
+    while d.textlength(text, font=maker(s)) > target_w and s > 10:
+        s -= 1
+    while d.textlength(text, font=maker(s + 1)) <= target_w:
+        s += 1
+    return s
+
+
+# Original copy, line breaks and positions (reference px). Only the photos are new.
 ADS = [
-    dict(slug='run-strong', bg='A4579vLezz8.jpg', bg_focus=(0.42, 0.42), bg_mirror=True,
-         inset='knead.jpg', in_focus=(0.47, 0.42), in_zoom=1.15,
-         head=[('RUN STRONG', WHITE), ('IN NYC.', GOLD)],
-         sub=['Pre-Marathon', 'Sports Massage'],
-         copy='Targeted bodywork to help you feel more mobile, reduce muscle tension and prepare for race day.',
-         icons=[('tension', 'Reduce\nMuscle Tension'), ('mobility', 'Improve\nMobility'), ('ready', 'Feel\nRace-Ready')]),
-    dict(slug='marathon-ready', bg='sK-nciHHnYA.jpg', bg_focus=(0.42, 0.40), bg_mirror=False,
-         inset='forearm.jpg', in_focus=(0.46, 0.74), in_zoom=1.0,
-         head=[('NYC', WHITE), ('MARATHON', WHITE), ('READY?', GOLD)],
-         sub=['Pre-Race', 'Sports Massage'],
-         copy='Personalized, one-on-one sessions to support your body, mobility and race preparation.',
-         icons=None),
-    dict(slug='race-prep', bg='1xx1hq2RJts.jpg', bg_focus=(0.66, 0.62), bg_mirror=False,
-         inset='thumbs.jpg', in_focus=(0.84, 0.56), in_zoom=1.35,
-         head=[('Your', WHITE), ('Race Prep', GOLD), ('Starts Here.', WHITE)],
-         sub=['Pre-Marathon', 'Sports Massage'],
-         copy='Bespoke treatments for runners to support flexibility, ease muscle tension and help you feel prepared for race day.',
-         icons=None),
+    dict(slug='run-strong', photo='knead.jpg', crop=None, focus=(0.42, 0.40), target=(0.74, 0.56), zoom=1.05,
+         logo=(55, 35, 255),
+         head=[('RUN STRONG', WHITE, 168, 418), ('IN NYC.', GOLD, 232, 280)],
+         rule=307,
+         sub=[('Pre-Marathon', 323, 247), ('Sports Massage', 360, 268)],
+         body=(412, 25, ['Targeted bodywork to help', 'you feel more mobile, reduce', 'muscle tension and prepare', 'for race day.']),
+         icons=dict(cy=557, xs=[118, 252, 376], div=[188, 315], label_y=595,
+                    items=[('run', 'Reduce', 'Muscle Tension'), ('arm-flex-outline', 'Improve', 'Mobility'), ('spa-outline', 'Feel', 'Race-Ready')]),
+         loc=(62, 655, 683), btn=(58, 717, 313, 773)),
+    dict(slug='marathon-ready', photo='forearm.jpg', crop=None, mirror=True, focus=(0.56, 0.72), target=(0.74, 0.62), zoom=1.35,
+         logo=(55, 38, 245),
+         head=[('NYC', WHITE, 148, 153), ('MARATHON', WHITE, 215, 336), ('READY?', GOLD, 278, 308)],
+         rule=361,
+         sub=[('Pre-Race', 385, 160), ('Sports Massage', 423, 275)],
+         body=(480, 26, ['Personalized, one-on-one', 'sessions to support your', 'body, mobility and race', 'preparation.']),
+         icons=None, loc=(64, 636, 663), btn=(60, 705, 322, 763)),
+    dict(slug='race-prep', photo='physio.jpg', crop=(560, 620, 2400, 1600), mirror=False, focus=(0.36, 0.30), target=(0.76, 0.42), zoom=1.35, lift=0.8,
+         logo=(55, 40, 240),
+         head=[('Your', WHITE, 170, 150), ('Race Prep', GOLD, 235, 325), ('Starts Here.', WHITE, 300, 358)],
+         rule=378,
+         sub=[('Pre-Marathon', 400, 240), ('Sports Massage', 440, 265)],
+         body=(493, 26, ['Bespoke treatments for runners', 'to support flexibility, ease muscle', 'tension and help you feel prepared', 'for race day.']),
+         icons=None, loc=(66, 630, 657), btn=(60, 692, 338, 750)),
 ]
 
 
 def grade(im):
-    """Warm, low-key grade so every photo sits in the black-and-gold Mudras look."""
+    """Warm, rich grade similar to the original golden-hour imagery."""
     a = np.asarray(im.convert('RGB')).astype(np.float32) / 255
     lum = a @ np.array([0.299, 0.587, 0.114], np.float32)
-    a = a * 0.45 + lum[..., None] * 0.55                      # pull saturation down
-    a = a * np.array([1.12, 0.97, 0.78], np.float32)          # golden warm
-    a = np.clip(a, 0, 1) ** 1.2 * 0.95                         # deeper shadows
+    a = a * 0.75 + lum[..., None] * 0.25
+    a = a * np.array([1.08, 0.97, 0.84], np.float32)
+    a = np.clip((a - 0.5) * 1.12 + 0.5, 0, 1) ** 1.12
     return Image.fromarray((np.clip(a, 0, 1) * 255).astype(np.uint8))
 
 
-def photo(ad, W, H, target):
+def photo(ad):
     im = Image.open(M + 'u/full/' + ad['photo']).convert('RGB')
-    if ad['mirror']:
-        im = ImageOps.mirror(im)
-        ad = dict(ad, focus=(1 - ad['focus'][0], ad['focus'][1]))
+    if ad['crop']:
+        im = im.crop(ad['crop'])  # drop everything above the shoulders so no face is shown
+    if ad.get('mirror'):
+        im = ImageOps.mirror(im)  # subject on the right, as in the originals
     sc = max(W / im.width, H / im.height) * ad['zoom']
     im = im.resize((int(im.width * sc), int(im.height * sc)), Image.LANCZOS)
-    fx, fy = ad['focus'][0] * im.width, ad['focus'][1] * im.height
-    x0 = int(np.clip(fx - target[0], 0, im.width - W))
-    y0 = int(np.clip(fy - target[1], 0, im.height - H))
-    return grade(im.crop((x0, y0, x0 + W, y0 + H))).convert('RGBA')
-
-
-def shade(img, left_end, top_band, bottom_band):
-    W, H = img.size
+    x0 = int(np.clip(ad['focus'][0] * im.width - ad['target'][0] * W, 0, im.width - W))
+    y0 = int(np.clip(ad['focus'][1] * im.height - ad['target'][1] * H, 0, im.height - H))
+    img = grade(im.crop((x0, y0, x0 + W, y0 + H)))
+    if ad.get('lift'):
+        img = Image.fromarray(np.clip(np.asarray(img).astype(np.float32) * ad['lift'], 0, 255).astype(np.uint8))
+    img = img.convert('RGBA')
+    # left-side darkening like the originals: near black behind the copy, photo fully visible on the right
     yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
-    left = np.clip(1 - xx / left_end, 0, 1) ** 0.9 * 238
-    top = np.clip(1 - yy / top_band, 0, 1) ** 1.5 * 210
-    bot = np.clip((yy - (H - bottom_band)) / bottom_band, 0, 1) ** 1.3 * 225
-    vig = (np.hypot((xx - W * 0.7) / W, (yy - H * 0.5) / H) * 120)
-    a = np.clip(np.maximum.reduce([left, top, bot]) + vig * 0.6, 0, 245)
-    lay = Image.new('RGBA', (W, H), (8, 7, 5, 255))
-    lay.putalpha(Image.fromarray(a.astype(np.uint8)))
-    img.alpha_composite(lay)
-
-
-def wrap(d, text, font, width):
-    out, cur = [], ''
-    for w in text.split():
-        t = (cur + ' ' + w).strip()
-        if d.textlength(t, font=font) > width and cur:
-            out.append(cur); cur = w
-        else:
-            cur = t
-    return out + [cur]
-
-
-def icon(d, kind, cx, cy, r, col=GOLD):
-    d.ellipse((cx - r, cy - r, cx + r, cy + r), outline=col, width=3)
-    s = r * 0.5
-    if kind == 'tension':  # tight zig-zag easing into a smooth line
-        pts = [(cx - s, cy), (cx - s * 0.6, cy - s * 0.5), (cx - s * 0.2, cy + s * 0.5), (cx + s * 0.15, cy - s * 0.3),
-               (cx + s * 0.4, cy + s * 0.1), (cx + s, cy + s * 0.1)]
-        d.line(pts, fill=col, width=4, joint='curve')
-    elif kind == 'mobility':  # circular arrows
-        d.arc((cx - s, cy - s, cx + s, cy + s), 200, 340, fill=col, width=4)
-        d.arc((cx - s, cy - s, cx + s, cy + s), 20, 160, fill=col, width=4)
-        d.polygon([(cx + s * 0.95, cy - s * 0.55), (cx + s * 1.15, cy - s * 0.05), (cx + s * 0.55, cy - s * 0.2)], fill=col)
-        d.polygon([(cx - s * 0.95, cy + s * 0.55), (cx - s * 1.15, cy + s * 0.05), (cx - s * 0.55, cy + s * 0.2)], fill=col)
-    else:  # race-ready: check mark
-        d.line((cx - s * 0.75, cy + s * 0.05, cx - s * 0.2, cy + s * 0.6, cx + s * 0.85, cy - s * 0.6), fill=col, width=5, joint='curve')
-
-
-def pin(d, x, y, h, col=GOLD):
-    r = h * 0.36
-    d.ellipse((x - r, y, x + r, y + 2 * r), fill=col)
-    d.polygon([(x - r * 0.86, y + r * 1.5), (x + r * 0.86, y + r * 1.5), (x, y + h)], fill=col)
-    d.ellipse((x - r * 0.4, y + r * 0.6, x + r * 0.4, y + r * 1.4), fill=(8, 7, 5))
-
-
-def cover(path, W, H, focus, target, mirror=False, zoom=1.0):
-    im = Image.open(M + 'u/full/' + path).convert('RGB')
-    if mirror:
-        im = ImageOps.mirror(im)
-        focus = (1 - focus[0], focus[1])
-    sc = max(W / im.width, H / im.height) * zoom
-    im = im.resize((int(im.width * sc), int(im.height * sc)), Image.LANCZOS)
-    x0 = int(np.clip(focus[0] * im.width - target[0], 0, im.width - W))
-    y0 = int(np.clip(focus[1] * im.height - target[1], 0, im.height - H))
-    return grade(im.crop((x0, y0, x0 + W, y0 + H)))
-
-
-def background(ad, W, H):
-    img = cover(ad['bg'], W, H, ad['bg_focus'], (W * 0.68, H * 0.42), ad['bg_mirror']).convert('RGBA')
-    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
-    left = np.clip(1 - xx / (W * 0.80), 0, 1) ** 0.85 * 235
-    top = np.clip(1 - yy / (H * 0.28), 0, 1) ** 1.4 * 170
-    bot = np.clip((yy - H * 0.62) / (H * 0.38), 0, 1) ** 1.2 * 225
-    a = np.clip(np.maximum.reduce([left, top, bot]), 0, 240)
-    lay = Image.new('RGBA', (W, H), (9, 8, 6, 255))
+    left = np.clip(1 - xx / (W * 0.80), 0, 1) ** 0.95 * 246
+    top = np.clip(1 - yy / (H * 0.20), 0, 1) ** 1.6 * 120
+    bot = np.clip((yy - H * 0.80) / (H * 0.20), 0, 1) ** 1.6 * 130
+    a = np.clip(np.maximum.reduce([left, top, bot]), 0, 242)
+    lay = Image.new('RGBA', (W, H), (8, 6, 4, 255))
     lay.putalpha(Image.fromarray(a.astype(np.uint8)))
     img.alpha_composite(lay)
     return img
 
 
-def inset_card(img, ad, box):
-    x0, y0, x1, y1 = box
+def gold_rule(img, x0, x1, y):
+    w = x1 - x0
+    g = np.clip(1.15 - np.linspace(0, 1, w), 0, 1)
+    strip = Image.new('RGBA', (w, 4), GOLD_LINE + (255,))
+    strip.putalpha(Image.fromarray((np.repeat(g[None, :], 4, 0) * 255).astype(np.uint8)))
+    img.alpha_composite(strip, (x0, y))
+
+
+def pin(d, x, y, h):
+    r = h * 0.34
+    d.ellipse((x - r, y, x + r, y + 2 * r), fill=GOLD)
+    d.polygon([(x - r * 0.88, y + r * 1.45), (x + r * 0.88, y + r * 1.45), (x, y + h)], fill=GOLD)
+    d.ellipse((x - r * 0.42, y + r * 0.58, x + r * 0.42, y + r * 1.42), fill=(10, 8, 5))
+
+
+def button(img, box):
+    x0, y0, x1, y1 = [X(box[0]), Y(box[1]), X(box[2]), Y(box[3])]
     w, h = x1 - x0, y1 - y0
-    ph = cover(ad['inset'], w, h, ad['in_focus'], (w / 2, h / 2), zoom=ad['in_zoom']).convert('RGBA')
-    mask = Image.new('L', (w, h), 0)
-    ImageDraw.Draw(mask).rounded_rectangle((0, 0, w - 1, h - 1), 26, fill=255)
-    sh = Image.new('L', img.size, 0)
-    ImageDraw.Draw(sh).rounded_rectangle((x0 + 4, y0 + 14, x1 + 4, y1 + 18), 30, fill=170)
-    lay = Image.new('RGBA', img.size, (0, 0, 0, 255))
-    lay.putalpha(sh.filter(ImageFilter.GaussianBlur(22)))
-    img.alpha_composite(lay)
-    ph.putalpha(mask)
-    img.alpha_composite(ph, (x0, y0))
-    ImageDraw.Draw(img).rounded_rectangle((x0, y0, x1, y1), 26, outline=GOLD, width=4)
-
-
-def render(ad, W, H, story):
-    pad = 80
-    top0 = 240 if story else 58
-    img = background(ad, W, H)
-    if story:
-        inset_card(img, ad, (W - 80 - 360, 1150, W - 80, 1580))
-    else:
-        inset_card(img, ad, (W - 64 - 360, 560, W - 64, 1010))
+    gx = np.linspace(0, 1, w)[None, :]
+    gy = np.linspace(0, 1, h)[:, None]
+    t = np.clip(gx * 0.7 + gy * 0.3, 0, 1)[..., None]
+    c0, c1 = np.array([242, 206, 138]), np.array([214, 166, 86])
+    grad = (c0 * (1 - t) + c1 * t).astype(np.uint8)
+    b = Image.fromarray(grad, 'RGB').convert('RGBA')
+    m = Image.new('L', (w, h), 0)
+    ImageDraw.Draw(m).rounded_rectangle((0, 0, w - 1, h - 1), h // 2, fill=255)
+    b.putalpha(m)
+    img.alpha_composite(b, (x0, y0))
     d = ImageDraw.Draw(img)
-    colw = int(W * 0.50)
-    lw = 330
-    lg = logo.resize((lw, int(logo.height * lw / logo.width)), Image.LANCZOS)
-    img.alpha_composite(lg, (pad, top0))
-    gap = 1.5 if story else 1.0
-    y = top0 + lg.height + int(52 * gap)
-    hs = 112 if len(ad['head']) == 2 else 104
-    while max(d.textlength(t, font=serif(hs)) for t, _ in ad['head']) > W * 0.62:
-        hs -= 2
-    for t, c in ad['head']:
-        d.text((pad - 4, y), t, font=serif(hs), fill=c)
-        y += int(hs * 0.98)
-    y += 20
-    d.rounded_rectangle((pad, y, pad + 140, y + 5), 2, fill=GOLD)
-    y += int(30 * gap)
-    for t in ad['sub']:
-        d.text((pad, y), t, font=serif(58), fill=WHITE)
-        y += 60
-    y += int(18 * gap)
-    for ln in wrap(d, ad['copy'], body(33), colw):
-        d.text((pad, y), ln, font=body(33), fill=BODY)
-        y += 44
+    f = sans(S_(21.5), 600)
+    text = 'BOOK NOW'
+    sp = 2.2
+    tw = sum(d.textlength(c, font=f) + sp for c in text) - sp
+    arrow = S_(24)
+    total = tw + S_(14) + arrow
+    tx = x0 + (w - total) / 2
+    ty = y0 + (h - f.size) / 2 - S_(2.5)
+    for c in text:
+        d.text((tx, ty), c, font=f, fill=DARK)
+        tx += d.textlength(c, font=f) + sp
+    ax = tx + S_(14) - sp
+    cy = y0 + h / 2
+    d.line((ax, cy, ax + arrow, cy), fill=DARK, width=4)
+    d.line((ax + arrow - S_(8), cy - S_(8), ax + arrow + 1, cy, ax + arrow - S_(8), cy + S_(8)), fill=DARK, width=4)
+
+
+def render(ad):
+    img = photo(ad)
+    d = ImageDraw.Draw(img)
+    lx, ly, lw = ad['logo']
+    lg = logo.resize((X(lx + lw) - X(lx), int(logo.height * (X(lx + lw) - X(lx)) / logo.width)), Image.LANCZOS)
+    img.alpha_composite(lg, (X(lx), Y(ly)))
+    ImageDraw.Draw(img).text((X(lx) + lg.width + 6, Y(ly) - 4), '\u00ae', font=sans(S_(15), 500), fill=GOLD)
+    for text, col, top, width in ad['head']:
+        s = fit(text, serif, width * K, 60)
+        f = serif(s)
+        bb = d.textbbox((0, 0), text, font=f)
+        d.text((X(58) - bb[0], Y(top) - bb[1]), text, font=f, fill=col)
+    gold_rule(img, X(60), X(207), Y(ad['rule']))
+    d = ImageDraw.Draw(img)
+    for text, top, width in ad['sub']:
+        s = fit(text, lambda z: serif(z, 600), width * K, 40)
+        f = serif(s, 600)
+        bb = d.textbbox((0, 0), text, font=f)
+        d.text((X(60) - bb[0], Y(top) - bb[1]), text, font=f, fill=WHITE)
+    top, lh, lines = ad['body']
+    bf = sans(S_(18.6), 400)
+    for i, ln in enumerate(lines):
+        bb = d.textbbox((0, 0), 'Tg', font=bf)
+        d.text((X(60), Y(top + i * lh) - bb[1]), ln, font=bf, fill=BODY)
     if ad['icons']:
-        y += int(26 * gap)
-        cw = 172
-        for i, (k, label) in enumerate(ad['icons']):
-            cx = pad + 78 + i * cw
-            icon(d, k, cx, y + 40, 38)
-            for j, ln in enumerate(label.split('\n')):
-                tw = d.textlength(ln, font=sans(22))
-                d.text((cx - tw / 2, y + 90 + j * 27), ln, font=sans(22), fill=WHITE)
-            if i < 2:
-                d.line((cx + cw / 2, y + 4, cx + cw / 2, y + 140), fill=(120, 96, 56), width=2)
-        y += 150
-    by = H - (330 if story else 70) - 100
-    btn = 'BOOK NOW'
-    bf = bold(38)
-    tw = d.textlength(btn, font=bf)
-    bw = tw + 56 + 46 + 36
-    d.rounded_rectangle((pad, by, pad + bw, by + 100), 50, fill=GOLD_BTN)
-    d.text((pad + 46, by + 24), btn, font=bf, fill=INK)
-    ax = pad + 46 + tw + 22
-    d.line((ax, by + 50, ax + 30, by + 50), fill=INK, width=5)
-    d.line((ax + 17, by + 37, ax + 31, by + 50, ax + 17, by + 63), fill=INK, width=5)
-    ly = by - 124
-    pin(d, pad + 16, ly + 2, 42)
-    d.text((pad + 54, ly - 2), 'Chelsea  |  SoHo  |  Tribeca', font=sans(34), fill=GOLD)
-    d.text((pad + 54, ly + 48), 'By Appointment Only', font=sans(26), fill=BODY)
-    assert y < ly - 10, (ad['slug'], story, y, ly)
+        ic = ad['icons']
+        r = S_(30)
+        for (name, l1, l2), cx in zip(ic['items'], ic['xs']):
+            cx, cy = X(cx), Y(ic['cy'])
+            d.ellipse((cx - r, cy - r, cx + r, cy + r), outline=GOLD, width=3)
+            g = ICONS[name].resize((int(r * 1.15), int(r * 1.15)), Image.LANCZOS)
+            img.alpha_composite(g, (cx - g.width // 2, cy - g.height // 2))
+            d = ImageDraw.Draw(img)
+            lf = sans(S_(13.6), 500)
+            for j, t in enumerate((l1, l2)):
+                tw = d.textlength(t, font=lf)
+                d.text((cx - tw / 2, Y(ic['label_y'] + j * 17)), t, font=lf, fill=WHITE)
+        for dx in ic['div']:
+            d.line((X(dx), Y(ic['cy'] - 25), X(dx), Y(ic['cy'] + 70)), fill=(150, 120, 70), width=2)
+    px, ty1, ty2 = ad['loc']
+    pin(d, X(px + 8), Y(ty1 - 5), S_(28))
+    lf = sans(S_(19.5), 500)
+    x = X(px + 35)
+    parts = ['Chelsea', 'SoHo', 'Tribeca']
+    for i, p in enumerate(parts):
+        d.text((x, Y(ty1) - 4), p, font=lf, fill=GOLD)
+        x += d.textlength(p, font=lf)
+        if i < 2:
+            x += S_(9)
+            d.line((x, Y(ty1) + 2, x, Y(ty1) + S_(19)), fill=GOLD, width=2)
+            x += S_(11)
+    d.text((X(px + 36), Y(ty2) - 2), 'By Appointment Only', font=sans(S_(14.8), 400), fill=BODY)
+    button(img, ad['btn'])
+    return img
+
+
+def run(ad, story):
+    global H, OY
+    H = 1920 if story else 1350
+    OY = (1920 - 1350) // 2 if story else 0
+    img = render(ad)
     name = f'mudras-{ad["slug"]}-{"story-1080x1920" if story else "feed-1080x1350"}'
     img.convert('RGB').save(OUT + f'/{name}.jpg', quality=93)
-    return name, y, ly
 
 
 for ad in ADS:
-    print(render(ad, 1080, 1350, False))
-    print(render(ad, 1080, 1920, True))
+    run(ad, False)
+    run(ad, True)
+    print('ok', ad['slug'])
