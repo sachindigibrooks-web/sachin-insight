@@ -1,6 +1,6 @@
 # Free Video Downloader
 
-A simple 4K Video Downloader / IDM-style app: paste a YouTube (or 1000+ other
+A simple 4K Video Downloader / IDM-style app (desktop app **and** website): paste a YouTube (or 1000+ other
 sites) link, it lists every available quality — 8K / 4K / 2K / 1080p / 720p …
 plus MP3 audio — and downloads with parallel chunks. 100% free, no ads, no limits.
 Built on [yt-dlp](https://github.com/yt-dlp/yt-dlp).
@@ -19,6 +19,30 @@ Built on [yt-dlp](https://github.com/yt-dlp/yt-dlp).
 3. URL paste karo → **Paste & Fetch** → quality chuno → **Download**.
 
 ffmpeg `imageio-ffmpeg` ke saath apne aap aa jata hai (1080p+ video merge aur MP3 ke liye zaroori).
+
+## Website version
+
+Browser me chalne wala version — PC, phone, tablet sab par.
+
+```bash
+pip install -r requirements.txt
+python web.py
+```
+
+Phir browser me <http://localhost:8000> kholo (Windows par `start_website.bat` double-click bhi kar sakte ho).
+
+**Phone / ghar ke doosre devices se:** jo PC par `web.py` chal raha hai uska IP nikalo
+(`ipconfig` → IPv4 Address, jaise `192.168.1.5`) aur phone ke browser me
+`http://192.168.1.5:8000` kholo. Windows Firewall puche to "Allow" karo.
+
+Video pehle server (aapke PC) par download hoti hai, phir browser me save hoti hai.
+Settings (environment variables): `PORT` (default 8000), `MAX_PARALLEL` (ek saath kitne
+downloads, default 3).
+
+> **Internet par public website banana ho to:** YouTube cloud/VPS server (AWS, Render,
+> Railway, DigitalOcean…) ke IP ko block karta hai ("Sign in to confirm you're not a bot").
+> Isliye ye ghar ke PC/internet par sabse achha chalta hai. Bahar se access chahiye to
+> apne PC par chala kar Cloudflare Tunnel (free) se link share kar sakte ho.
 
 ## .exe banana (dusron ko dene ke liye)
 

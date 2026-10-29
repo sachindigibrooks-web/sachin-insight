@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Video Downloader</title>
+<style>
+  :root {
+    --bg: #f4f5f9; --card: #fff; --text: #1b1d27; --muted: #6b6f80;
+    --line: #e2e4ec; --accent: #e5322d; --accent-2: #ff6a3d; --ok: #1a9e5c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0f1117; --card: #181b24; --text: #eceef4; --muted: #9298aa; --line: #2a2e3b; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; background: var(--bg); color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: flex; flex-direction: column; align-items: center; padding: 48px 16px;
+  }
+  h1 { font-size: clamp(26px, 5vw, 38px); margin: 0 0 6px; letter-spacing: -0.5px; text-align: center; }
+  h1 span { background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sub { color: var(--muted); margin: 0 0 28px; text-align: center; }
+  .card { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--line);
+          border-radius: 16px; padding: 22px; box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+  .row { display: flex; gap: 10px; }
+  input, select, button { font: inherit; border-radius: 10px; }
+  input, select { width: 100%; padding: 12px 14px; border: 1px solid var(--line);
+                  background: var(--bg); color: var(--text); min-width: 0; }
+  input:focus, select:focus { outline: 2px solid var(--accent); border-color: transparent; }
+  button { border: 0; padding: 12px 20px; cursor: pointer; font-weight: 600; white-space: nowrap;
+           background: linear-gradient(90deg, var(--accent), var(--accent-2)); color: #fff; }
+  button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+  button:disabled { opacity: .55; cursor: wait; }
+  .hidden { display: none !important; }
+  #result { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 18px; }
+  .meta { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+  .meta img { width: 120px; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; background: var(--line); }
+  .meta b { display: block; word-break: break-word; }
+  .meta small { color: var(--muted); }
+  .opts { display: grid; grid-template-columns: 1fr 110px; gap: 10px; margin-bottom: 12px; }
+  .bar { height: 10px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 16px 0 8px; }
+  .bar div { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .3s; }
+  #status { color: var(--muted); font-size: 14px; min-height: 21px; word-break: break-word; }
+  #status.err { color: var(--accent); }
+  #status.ok { color: var(--ok); font-weight: 600; }
+  .feats { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 24px; max-width: 680px; }
+  .feats span { font-size: 13px; color: var(--muted); border: 1px solid var(--line); padding: 4px 10px; border-radius: 99px; }
+  footer { margin-top: 28px; font-size: 12px; color: var(--muted); text-align: center; max-width: 560px; }
+  @media (max-width: 520px) {
+    .row { flex-direction: column; }
+    .meta img { width: 96px; }
+  }
+</style>
+</head>
+<body>
+  <h1>Free <span>4K Video</span> Downloader</h1>
+  <p class="sub">Paste a YouTube link — get every quality up to 8K, or MP3. Free, no ads, no limits.</p>
+
+  <div class="card">
+    <form id="fetchForm" class="row">
+      <input id="url" type="url" placeholder="https://www.youtube.com/watch?v=..." required autofocus>
+      <button id="fetchBtn" type="submit">Get Video</button>
+    </form>
+
+    <div id="result" class="hidden">
+      <div class="meta">
+        <img id="thumb" alt="">
+        <div><b id="title"></b><small id="duration"></small></div>
+      </div>
+      <div class="opts">
+        <select id="quality" aria-label="Quality"></select>
+        <select id="container" aria-label="Format">
+          <option value="mp4">MP4</option>
+          <option value="mkv">MKV</option>
+        </select>
+      </div>
+      <button id="dlBtn" type="button" style="width:100%">Download</button>
+    </div>
+
+    <div class="bar hidden" id="bar"><div></div></div>
+    <div id="status"></div>
+  </div>
+
+  <div class="feats">
+    <span>8K / 4K / 2K / 1080p</span><span>MP3 audio</span><span>Parallel chunk download</span>
+    <span>1000+ sites</span><span>Works on phone</span>
+  </div>
+  <footer>Only download videos you own or have permission to download. Powered by yt-dlp.</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+let currentUrl = "";
+
+function status(text, cls = "") { $("status").textContent = text; $("status").className = cls; }
+function bar(pct) { $("bar").classList.remove("hidden"); $("bar").firstElementChild.style.width = pct + "%"; }
+
+function youtubeId(url) {
+  const m = url.match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([\w-]{11})/);
+  return m && m[1];
+}
+
+async function api(path, body) {
+  const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(body) });
+  const data = await r.json().catch(() => ({ error: "Server error" }));
+  if (!r.ok) throw new Error(data.error || "Request failed");
+  return data;
+}
+
+$("fetchForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  currentUrl = $("url").value.trim();
+  $("fetchBtn").disabled = true;
+  $("result").classList.add("hidden");
+  $("bar").classList.add("hidden");
+  status("Fetching available qualities...");
+  try {
+    const info = await api("/api/info", { url: currentUrl });
+    $("title").textContent = info.title;
+    const d = info.duration;
+    $("duration").textContent = d ? `${Math.floor(d / 60)}:${String(Math.floor(d % 60)).padStart(2, "0")}` : "";
+    const id = youtubeId(currentUrl);
+    $("thumb").classList.toggle("hidden", !id);
+    if (id) $("thumb").src = `https://i.ytimg.com/vi/${id}/mqdefault.jpg`;
+    $("quality").innerHTML = info.options.map((o, i) => `<option value="${i}"></option>`).join("");
+    [...$("quality").options].forEach((opt, i) => opt.textContent = info.options[i]);
+    $("result").classList.remove("hidden");
+    status(`${info.options.length} options found — highest quality selected.`);
+  } catch (err) {
+    status(err.message, "err");
+  } finally {
+    $("fetchBtn").disabled = false;
+  }
+});
+
+$("quality").addEventListener("change", () => {
+  $("container").disabled = $("quality").selectedOptions[0].textContent.startsWith("Audio");
+});
+
+$("dlBtn").addEventListener("click", async () => {
+  $("dlBtn").disabled = $("fetchBtn").disabled = true;
+  bar(0);
+  status("Starting download on server...");
+  try {
+    const { job } = await api("/api/download", {
+      url: currentUrl, option: +$("quality").value, container: $("container").value });
+    while (true) {
+      await new Promise(r => setTimeout(r, 1000));
+      const p = await (await fetch(`/api/progress/${job}`)).json();
+      if (p.status === "error") throw new Error(p.text);
+      bar(p.percent);
+      status(p.text);
+      if (p.status === "done") {
+        status("Ready! Your download is starting...", "ok");
+        window.location.href = `/api/file/${job}`;
+        break;
+      }
+    }
+  } catch (err) {
+    status(err.message, "err");
+  } finally {
+    $("dlBtn").disabled = $("fetchBtn").disabled = false;
+  }
+});
+</script>
+</body>
+</html>
