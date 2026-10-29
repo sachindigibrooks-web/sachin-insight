@@ -16,7 +16,8 @@ from flask import Flask, abort, jsonify, request, send_file
 
 import core
 
-HERE = os.path.dirname(os.path.abspath(__file__))
+# Inside a PyInstaller .exe the bundled files live in sys._MEIPASS.
+HERE = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
 WORK_DIR = os.path.join(tempfile.gettempdir(), "free-video-downloader")
 MAX_PARALLEL = int(os.environ.get("MAX_PARALLEL", "3"))
 JOB_TTL = 60 * 60  # unfetched files are deleted after an hour
@@ -139,7 +140,7 @@ if __name__ == "__main__":
     threading.Thread(target=janitor, daemon=True).start()
     port = int(os.environ.get("PORT", "8000"))
     print(f"Open http://localhost:{port}  (same Wi-Fi devices: http://<this-PC-IP>:{port})")
-    if "--open" in sys.argv:
+    if "--open" in sys.argv or getattr(sys, "frozen", False):
         # Open the browser only once the server is up.
         threading.Timer(1.5, webbrowser.open, args=(f"http://localhost:{port}",)).start()
     from waitress import serve

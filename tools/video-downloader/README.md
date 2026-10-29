@@ -46,8 +46,14 @@ downloads, default 3).
 
 ## .exe banana (dusron ko dene ke liye)
 
-`build_windows.bat` par double-click karo. `dist\FreeVideoDownloader.exe` ban jayegi —
-ye single file kisi bhi Windows PC par bina Python ke chalegi.
+`build_windows.bat` par double-click karo (5–10 minute lagte hain). `dist` folder me do files banengi:
+
+- `FreeVideoDownloader.exe` — desktop app
+- `FreeVideoDownloaderWeb.exe` — website version; double-click karte hi browser me khulti hai
+
+Ye single files kisi bhi Windows PC par bina Python ke chalengi (ffmpeg andar hi hai).
+Pehli baar chalane par Windows "Windows protected your PC" dikha sakta hai (exe signed nahi
+hai) — **More info → Run anyway** dabao.
 
 ## Command line
 
