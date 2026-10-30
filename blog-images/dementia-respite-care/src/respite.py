@@ -46,15 +46,15 @@ def save(im, name):
 
 
 # ---------- in-article 1: respite options compared ----------
-im = canvas('Dementia Respite Care Options Compared', 'The setting matters as much as the length of the break')
+im = canvas('Where Can a Respite Break Happen?', 'Four ways to get time off while your loved one is looked after')
 opts = [
-    ('Respite at home', NAVY, WHITE, 'Best for familiar routine',
+    ('In their own home', NAVY, WHITE, 'Best for familiar routine',
      ['Carer visits or stays in the house', 'Meals, bedtime and habits stay the same', 'From 30 minutes to several weeks']),
-    ('Day centres', (92, 150, 160), WHITE, 'Best for company',
+    ('At a day centre', (92, 150, 160), WHITE, 'Best for company',
      ['Structured activities at set times', 'Suits people who enjoy groups', 'Crowds or travel can be hard for some']),
-    ('Care home short stay', AMBER, WHITE, 'Best for nursing needs',
+    ('A short care home stay', AMBER, WHITE, 'Best for nursing needs',
      ['Staff on site day and night', 'Helps with longer breaks', 'New surroundings can unsettle']),
-    ('Family and friends', TEAL, NAVY, 'Best for short gaps',
+    ('Friends and relatives', TEAL, NAVY, 'Best for short gaps',
      ['Useful for an hour or two', 'Hard to rely on for nights', 'Or for personal care']),
 ]
 cw, gap = 255, 20
@@ -79,12 +79,12 @@ footnote(im, 'Source: NHS guidance on carer breaks and respite care.', 742)
 save(im, 'dementia-respite-options-compared')
 
 # ---------- in-article 2: 2026 costs ----------
-im = canvas('How Much Does Dementia Respite Care Cost in 2026?', 'Typical UK prices by setting')
+im = canvas('Respite Prices at a Glance', 'What UK families typically pay this year')
 rows = [
-    ('Respite at home', '£26 to £38 an hour', 'Many families pay around £30 to £32. Specialist dementia support can reach £40+.'),
-    ('Example: 4 hour afternoon', '£120 to £128', 'Based on £30 to £32 an hour.'),
-    ('Care home short stay', '£700 to £800 a week', 'Average cited by the NHS. Varies by home and care needed.'),
-    ('Overnight and live in', 'Ask for a quote', 'Live in can be better value than many separate visits.'),
+    ('Carer visits at home', '£26 to £38 an hour', 'Many families pay around £30 to £32. Specialist dementia support can reach £40+.'),
+    ('A four hour afternoon off', '£120 to £128', 'Based on £30 to £32 an hour.'),
+    ('A week in a care home', '£700 to £800 a week', 'Average cited by the NHS. Varies by home and care needed.'),
+    ('Nights or a carer living in', 'Ask for a quote', 'Live in can be better value than many separate visits.'),
 ]
 y = 178
 for t, price, note in rows:
@@ -104,13 +104,13 @@ d.text(((W - tw) / 2, y + 28), msg, font=fB(19), fill=NAVY)
 save(im, 'dementia-respite-care-costs-2026')
 
 # ---------- in-article 3: how to arrange ----------
-im = canvas('How to Arrange Dementia Respite Care', 'Five steps, ideally before a crisis rather than during one')
+im = canvas('Your Respite Plan in 5 Steps', 'Plan the break before you need it')
 steps = [
-    ('Ask for assessments', 'A needs assessment for your relative and a carer’s assessment for you.'),
-    ('Decide what you need', 'Weekly hours, a week of nights, a holiday or an emergency backup.'),
-    ('Book a home assessment', 'We meet your relative and learn their routines, likes and worries.'),
-    ('Try a short trial', 'A few visits first so your relative gets to know the carer.'),
-    ('Review afterwards', 'Tell us what worked. Regular respite usually helps most.'),
+    ('Get assessed', 'Ask the council to assess your relative’s needs, and yours as a carer.'),
+    ('Pick the type of break', 'Regular afternoons, a run of nights, a holiday or a backup plan.'),
+    ('Free home visit', 'Greenwood meets your relative and gets to know their routine.'),
+    ('Start small', 'Short visits first, so the carer becomes a familiar face.'),
+    ('Check in and adjust', 'Share what worked and fine-tune the plan for next time.'),
 ]
 y = 176
 for i, (t, body) in enumerate(steps):
