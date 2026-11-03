@@ -259,7 +259,7 @@ def download(url, option, out_dir, container="mp4", progress=None, playlist=Fals
         fmt = budget_format(option, x.budget_mb / (picked or playlist_size or 1))
     opts = base_opts(browser) | {
         "format": fmt,
-        "outtmpl": os.path.join(out_dir, name),
+        "outtmpl": os.path.join(out_dir.replace("%", "%%"), name),
         "noplaylist": not playlist,
         "ignoreerrors": playlist,  # one private/deleted video shouldn't stop the playlist
         "noprogress": True,

@@ -102,7 +102,7 @@ def site_subtitles(url, lang, base, browser=None):
         "skip_download": True, "noplaylist": True,
         "writesubtitles": True, "writeautomaticsub": True,
         "subtitleslangs": [lang, f"{lang}-.*"], "subtitlesformat": "srt/vtt/best",
-        "outtmpl": base + ".%(ext)s",
+        "outtmpl": base.replace("%", "%%") + ".%(ext)s",  # a literal % in the title
         "postprocessors": [{"key": "FFmpegSubtitlesConvertor", "format": "srt"}],
     }
     try:
