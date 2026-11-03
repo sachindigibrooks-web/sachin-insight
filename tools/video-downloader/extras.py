@@ -11,6 +11,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 
 # Windowed .exe builds have no console; progress bars writing to it would crash.
 os.environ.setdefault("HF_HUB_DISABLE_PROGRESS_BARS", "1")
@@ -54,12 +55,12 @@ def ffmpeg():
     return exe
 
 
-def run_ffmpeg(args, duration=None, progress=None, label=""):
+def run_ffmpeg(args, duration=None, progress=None, label="", cwd=None):
     """Run ffmpeg, reporting percent done from its -progress output."""
     cmd = [ffmpeg(), "-nostdin", "-hide_banner", "-loglevel", "error", "-y",
            "-progress", "pipe:1"] + args
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
-                            encoding="utf-8", errors="replace", creationflags=NO_WINDOW)
+                            encoding="utf-8", errors="replace", creationflags=NO_WINDOW, cwd=cwd)
     for line in proc.stdout:
         if progress and duration and line.startswith("out_time_us="):
             try:
@@ -201,9 +202,9 @@ def write_srt(lines, path):
 
 
 def filter_path(p):
-    """Escape a path for use inside an ffmpeg filter argument."""
+    """Quote a path (with no ' in it) for use inside an ffmpeg filter argument."""
     p = os.path.abspath(p).replace("\\", "/")
-    return "'" + p.replace(":", "\\:").replace("'", "\\'") + "'"
+    return "'" + p.replace(":", "\\:") + "'"
 
 
 INDIC = {"hi", "mr", "ne", "bn", "ta", "te", "gu", "kn", "ml", "pa"}
@@ -237,10 +238,14 @@ def add_subtitles(video, srt, lang, mode, duration, progress):
     tmp = video + ".tmp" + os.path.splitext(video)[1]
     if mode == "burn":
         fonts, style = font_style(lang)
-        vf = f"subtitles={filter_path(srt)}:fontsdir={filter_path(fonts)}:force_style='{style}'"
-        run_ffmpeg(["-i", video, "-vf", vf, "-c:v", "libx264", "-preset", "veryfast",
-                    "-crf", "20", "-c:a", "copy", tmp], duration, progress,
-                   "Adding subtitles into the video")
+        # Video titles often contain ' and other characters ffmpeg's filter syntax can't
+        # take, so the filter only sees a plain copy of the subtitles in a temp folder.
+        with tempfile.TemporaryDirectory() as work:
+            shutil.copyfile(srt, os.path.join(work, "subs.srt"))
+            vf = f"subtitles=subs.srt:fontsdir={filter_path(fonts)}:force_style='{style}'"
+            run_ffmpeg(["-i", os.path.abspath(video), "-vf", vf, "-c:v", "libx264",
+                        "-preset", "veryfast", "-crf", "20", "-c:a", "copy", os.path.abspath(tmp)],
+                       duration, progress, "Adding subtitles into the video", cwd=work)
     else:
         codec = "srt" if video.endswith(".mkv") else "mov_text"
         run_ffmpeg(["-i", video, "-i", srt, "-map", "0", "-map", "1", "-c", "copy",
