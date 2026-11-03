@@ -2,3 +2,6 @@ yt-dlp
 imageio-ffmpeg
 flask
 waitress
+# AI subtitles (offline speech-to-text + translation)
+faster-whisper
+sentencepiece

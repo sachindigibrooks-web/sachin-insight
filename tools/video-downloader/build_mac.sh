@@ -8,9 +8,9 @@ cd "$(dirname "$0")"
 python3 -m pip install --upgrade -r requirements.txt pyinstaller
 
 python3 -m PyInstaller --noconfirm --windowed --name FreeVideoDownloader \
-  --collect-all imageio_ffmpeg app.py
+  --collect-all imageio_ffmpeg --collect-all faster_whisper --collect-all ctranslate2 app.py
 python3 -m PyInstaller --noconfirm --onefile --name FreeVideoDownloaderWeb \
-  --add-data "web:web" --collect-all imageio_ffmpeg web.py
+  --add-data "web:web" --collect-all imageio_ffmpeg --collect-all faster_whisper --collect-all ctranslate2 web.py
 
 cd dist
 rm -rf FreeVideoDownloader FreeVideoDownloader-Mac FreeVideoDownloader-Mac.zip  # onedir folder; the .app holds the same files

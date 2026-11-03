@@ -28,6 +28,31 @@ class Option:
     label: str
     format: str
     audio_only: bool = False
+    height: int | None = None
+    size: int | None = None  # estimated bytes for the whole video, when known
+
+
+@dataclass
+class Extras:
+    """Optional features, all off by default."""
+    start: float | None = None  # clip: seconds into the video
+    end: float | None = None
+    sponsorblock: bool = False  # cut sponsors / intros / outros (YouTube)
+    budget_mb: float | None = None  # playlists: keep the whole download under this size
+    subs_lang: str | None = None  # extras.LANGUAGES code, or extras.ORIGINAL
+    subs_mode: str = "embed"  # embed | burn | srt
+    ai_model: str = "accurate"  # accurate | fast
+    whatsapp_mb: int | None = None  # also make a copy that fits in this many MB
+
+    def needs_processing(self):
+        return bool(self.subs_lang or self.whatsapp_mb)
+
+
+@dataclass
+class Result:
+    failed: bool  # some playlist videos could not be downloaded
+    files: list  # final file paths (videos, subtitles, WhatsApp copies)
+    warnings: list
 
 
 @dataclass
@@ -54,16 +79,78 @@ def ffmpeg_location():
         return None
 
 
-def video_option(h, fps=0, up_to=False):
+def video_option(h, fps=0, up_to=False, size=None):
     name = HEIGHT_NAMES.get(h, "")
     label = ("Up to " if up_to else "") + f"{h}p" + (f"{int(fps)}" if fps > 30 else "")
     if name:
         label += f"  ({name})"
+    if size:
+        label += f"   ~{human_size(size)}"
     # The trailing /best keeps sites whose formats lack height info working.
-    return Option(label, f"bestvideo[height<={h}]+bestaudio/best[height<={h}]/best")
+    return Option(label, f"bestvideo[height<={h}]+bestaudio/best[height<={h}]/best",
+                  height=h, size=size)
 
 
-AUDIO_OPTION = Option("Audio only - MP3 (best quality)", "bestaudio/best", audio_only=True)
+AUDIO_LABEL = "Audio only - MP3 (best quality)"
+AUDIO_OPTION = Option(AUDIO_LABEL, "bestaudio/best", audio_only=True)
+
+
+def human_size(n):
+    return f"{n / 1e9:.1f} GB" if n >= 1e9 else f"{n / 1e6:.0f} MB"
+
+
+def format_size(f, duration):
+    size = f.get("filesize") or f.get("filesize_approx")
+    if not size and f.get("tbr") and duration:
+        size = f["tbr"] * 1000 / 8 * duration
+    return size
+
+
+def estimate_sizes(info):
+    """Estimated download size per height (and for audio only), mirroring the format choice.
+
+    yt-dlp lists formats worst to best, so the last match is the one it picks.
+    """
+    fmts, dur = info.get("formats") or [], info.get("duration")
+    audio = [f for f in fmts if f.get("vcodec") == "none" and f.get("acodec") not in (None, "none")]
+    audio_size = format_size(audio[-1], dur) if audio else None
+    sizes = {}
+    for h in {f["height"] for f in fmts if f.get("height")}:
+        only = [f for f in fmts if f.get("height") and f["height"] <= h and f.get("acodec") == "none"
+                and f.get("vcodec") not in (None, "none")]
+        both = [f for f in fmts if f.get("height") and f["height"] <= h
+                and f.get("acodec") not in (None, "none") and f.get("vcodec") not in (None, "none")]
+        if only and audio_size:
+            v = format_size(only[-1], dur)
+            sizes[h] = v + audio_size if v else None
+        elif both:
+            sizes[h] = format_size(both[-1], dur)
+    return sizes, audio_size
+
+
+def budget_format(option, per_video_mb):
+    """Format for one playlist video that stays under `per_video_mb` (sizes are estimates)."""
+    mb = per_video_mb
+    if option.audio_only:
+        return f"ba[filesize<?{mb:.1f}M][filesize_approx<?{mb:.1f}M]/wa/w"
+    h, v, a = option.height or 4320, mb * 0.85, mb * 0.15
+    return (f"bv[height<={h}][filesize<?{v:.1f}M][filesize_approx<?{v:.1f}M]"
+            f"+ba[filesize<?{a:.1f}M][filesize_approx<?{a:.1f}M]"
+            f"/b[height<={h}][filesize<?{mb:.1f}M][filesize_approx<?{mb:.1f}M]/wv+wa/w")
+
+
+def parse_time(text):
+    """'1:20:05', '20:05', '75' or '' -> seconds (None when empty)."""
+    text = (text or "").strip()
+    if not text:
+        return None
+    try:
+        secs = 0.0
+        for part in text.split(":"):
+            secs = secs * 60 + float(part)
+        return secs
+    except ValueError:
+        raise ValueError(f"Time should look like 1:20:05 or 20:05, not '{text}'.")
 
 
 def base_opts(browser=None):
@@ -103,26 +190,35 @@ def fetch_info(url, playlist=False, browser=None):
             continue
         heights[h] = max(heights.get(h, 0), f.get("fps") or 0)
 
-    options = [video_option(h, heights[h]) for h in sorted(heights, reverse=True)]
+    sizes, audio_size = estimate_sizes(info)
+    options = [video_option(h, heights[h], size=sizes.get(h)) for h in sorted(heights, reverse=True)]
     if not options:
         # Site exposed no per-resolution formats; let yt-dlp pick the best it has.
         options.append(Option("Best available", "bestvideo+bestaudio/best"))
-    options.append(AUDIO_OPTION)
+    label = AUDIO_LABEL + (f"   ~{human_size(audio_size)}" if audio_size else "")
+    options.append(Option(label, AUDIO_OPTION.format, audio_only=True, size=audio_size))
     return Info(info.get("title") or "video", info.get("duration"), info.get("thumbnail"),
                 options, site, has_playlist="list=" in url and not playlist)
 
 
 def download(url, option, out_dir, container="mp4", progress=None, playlist=False, items=None,
-             browser=None):
-    """Download `url` using `option` into `out_dir`.
+             browser=None, extras=None, playlist_size=None):
+    """Download `url` using `option` into `out_dir`, then run the chosen `extras`.
 
     With `playlist`, every video goes into a sub-folder named after the
     playlist; unavailable videos are skipped. `items` picks videos by
-    position, e.g. "1-10" or "1,3,5-7" (all when empty). `progress(percent, text)` is
-    called as the download advances. Returns non-zero if any video failed.
+    position, e.g. "1-10" or "1,3,5-7" (all when empty); `playlist_size` is
+    the playlist's length, used to split a data budget. `progress(percent, text)`
+    is called as the download advances.
     """
+    x = extras or Extras()
     items = (items or "").replace(" ", "") if playlist else ""
     picked = count_items(items)
+    files = []  # (final path, info) per downloaded video
+
+    def done_hook(d):
+        if d["status"] == "finished" and d["postprocessor"] == "MoveFiles":
+            files.append((d["info_dict"]["filepath"], d["info_dict"]))
 
     def hook(d):
         if not progress:
@@ -151,13 +247,17 @@ def download(url, option, out_dir, container="mp4", progress=None, playlist=Fals
     name = "%(title)s.%(ext)s" if option.audio_only else "%(title)s [%(height)sp].%(ext)s"
     if playlist:
         name = os.path.join("%(playlist_title,playlist,playlist_id|Playlist)s", "%(playlist_index)03d - " + name)
+    fmt = option.format
+    if playlist and x.budget_mb:
+        fmt = budget_format(option, x.budget_mb / (picked or playlist_size or 1))
     opts = base_opts(browser) | {
-        "format": option.format,
+        "format": fmt,
         "outtmpl": os.path.join(out_dir, name),
         "noplaylist": not playlist,
         "ignoreerrors": playlist,  # one private/deleted video shouldn't stop the playlist
         "noprogress": True,
         "progress_hooks": [hook],
+        "postprocessor_hooks": [done_hook],
         "concurrent_fragment_downloads": 8,  # parallel chunks, IDM-style
         "windowsfilenames": True,
     }
@@ -166,14 +266,39 @@ def download(url, option, out_dir, container="mp4", progress=None, playlist=Fals
     ff = ffmpeg_location()
     if ff:
         opts["ffmpeg_location"] = ff
+    pps = []
     if option.audio_only:
-        opts["postprocessors"] = [{"key": "FFmpegExtractAudio", "preferredcodec": "mp3",
-                                   "preferredquality": "0"}]
+        pps.append({"key": "FFmpegExtractAudio", "preferredcodec": "mp3", "preferredquality": "0"})
     else:
         opts["merge_output_format"] = container
+    if x.start is not None or x.end is not None:
+        from yt_dlp.utils import download_range_func
+        start, end = x.start or 0, x.end if x.end is not None else float("inf")
+        if end <= start:
+            raise ValueError("Clip end must be after the start.")
+        opts["download_ranges"] = download_range_func(None, [(start, end)])
+        opts["force_keyframes_at_cuts"] = True  # exact cut points (re-encodes the clip edges)
+    if x.sponsorblock:
+        cats = ["sponsor", "intro", "outro", "selfpromo", "interaction"]
+        pps += [{"key": "SponsorBlock", "categories": cats, "when": "after_filter"},
+                {"key": "ModifyChapters", "remove_sponsor_segments": cats}]
+    if pps:
+        opts["postprocessors"] = pps
 
     with yt_dlp.YoutubeDL(opts) as ydl:
-        return ydl.download([url])
+        failed = bool(ydl.download([url]))
+
+    warnings = []
+    if x.needs_processing() and files:
+        import extras
+        warnings = extras.process(files, x, progress or (lambda p, t: None), browser)
+    out = []
+    for path, _ in files:
+        stem = os.path.splitext(path)[0]
+        folder = os.path.dirname(path) or "."
+        out += [os.path.join(folder, f) for f in os.listdir(folder)
+                if os.path.join(folder, f).startswith(stem) and not f.endswith((".part", ".ytdl"))]
+    return Result(failed, sorted(set(out)), warnings)
 
 
 def friendly_error(e):
@@ -222,12 +347,20 @@ def valid_items(items):
 if __name__ == "__main__":
     import sys
 
+    flags = dict(a[2:].partition("=")[::2] for a in sys.argv[1:] if a.startswith("--"))
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    pl = "--playlist" in sys.argv
-    items = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--items=")), None)
     if not args:
-        sys.exit("usage: python core.py <url> [option-number] [output-dir] [--playlist] [--items=1-10]")
-    info = fetch_info(args[0], pl)
+        sys.exit("usage: python core.py <url> [option-number] [output-dir] [--playlist] [--items=1-10]\n"
+                 "  [--start=1:20 --end=2:00] [--sponsorblock] [--budget=500] [--subs=hi|en|orig]\n"
+                 "  [--burn | --srt-only] [--fast] [--whatsapp=16]")
+    x = Extras(start=parse_time(flags.get("start")), end=parse_time(flags.get("end")),
+               sponsorblock="sponsorblock" in flags,
+               budget_mb=float(flags["budget"]) if flags.get("budget") else None,
+               subs_lang=flags.get("subs") or None,
+               subs_mode="burn" if "burn" in flags else "srt" if "srt-only" in flags else "embed",
+               ai_model="fast" if "fast" in flags else "accurate",
+               whatsapp_mb=int(flags["whatsapp"]) if flags.get("whatsapp") else None)
+    info = fetch_info(args[0], "playlist" in flags)
     print(f"[{info.site}] {info.title}")
     if info.is_playlist:
         print(f"  Playlist with {len(info.entries)} videos")
@@ -235,7 +368,12 @@ if __name__ == "__main__":
         print(f"  {i}. {o.label}")
     if len(args) > 1:
         choice = info.options[int(args[1]) - 1]
-        failed = download(args[0], choice, args[2] if len(args) > 2 else ".",
-                          progress=lambda p, t: print(f"\r{p:5.1f}% | {t}", end="", flush=True),
-                          playlist=info.is_playlist, items=items)
-        print("\nDone" + (" (some videos failed)" if failed else ""))
+        res = download(args[0], choice, args[2] if len(args) > 2 else ".",
+                       progress=lambda p, t: print(f"\r{p:5.1f}% | {t:80.80}", end="", flush=True),
+                       playlist=info.is_playlist, items=flags.get("items"), extras=x,
+                       playlist_size=len(info.entries))
+        print("\nDone" + (" (some videos failed)" if res.failed else ""))
+        for f in res.files:
+            print("  ", f)
+        for w in res.warnings:
+            print("  WARNING:", w)

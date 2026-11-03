@@ -16,12 +16,12 @@ if not defined PY (
 echo.
 echo [1/2] Building desktop app...
 %PY% -m PyInstaller --noconfirm --onefile --windowed --name FreeVideoDownloader ^
-  --collect-all imageio_ffmpeg app.py || goto :fail
+  --collect-all imageio_ffmpeg --collect-all faster_whisper --collect-all ctranslate2 app.py || goto :fail
 
 echo.
 echo [2/2] Building website version...
 %PY% -m PyInstaller --noconfirm --onefile --name FreeVideoDownloaderWeb ^
-  --add-data "web;web" --collect-all imageio_ffmpeg web.py || goto :fail
+  --add-data "web;web" --collect-all imageio_ffmpeg --collect-all faster_whisper --collect-all ctranslate2 web.py || goto :fail
 
 rmdir /s /q build 2>nul
 del /q *.spec 2>nul

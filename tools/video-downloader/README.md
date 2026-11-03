@@ -16,6 +16,24 @@ tick karo). Quality "Up to 1080p" jaisi hoti hai — har video us quality tak ki
 Desktop app playlist ke naam ka folder banati hai; website ek `.zip` file deti hai.
 Private / deleted videos apne aap skip ho jaati hain.
 
+## More options (advanced features)
+
+Desktop app me **▸ More options** dabao, website me **More options** kholo.
+
+| Feature | Kya karta hai |
+|---|---|
+| **Clip only** | Sirf ek hissa download karo, jaise `1:20:00` se `1:35:00`. Poori video download nahi hoti. |
+| **Skip sponsors** | YouTube video se sponsor, intro, outro aur "subscribe karo" wale hisse kaat deta hai ([SponsorBlock](https://sponsor.ajay.app) data se). |
+| **Data limit** | MB likho (jaise `500`) — app wo best quality chun leti hai jo itne MB me aaye. Clip ke saath bhi hisaab lagata hai. Playlist me ye poori playlist ka total hai. Size andaza hai; jo site size nahi batati (jaise Dailymotion) wahan kaam nahi karta — YouTube par karta hai. |
+| **AI subtitles** | Video ke subtitles 24 bhashaon me — Hindi, English, Tamil, Telugu, Bengali, Marathi, Urdu… Pehle site ke apne subtitles dhundhta hai (YouTube Hindi auto-translate bhi deta hai); na mile to **aapke PC par AI** bolne ko sun kar likhta hai (Whisper) aur translate karta hai (NLLB). Internet par kuch upload nahi hota. Teen tarike: video me add (on/off ho sakte hain), video ki picture me hamesha ke liye (burn), ya sirf `.srt` file. |
+| **WhatsApp copy** | Video ki ek aur copy jo 16 / 64 / 100 MB me fit ho aur har phone par chale. |
+| **Clipboard watcher** (sirf desktop app) | IDM jaisa: kahin bhi video link copy karo, kone me popup aata hai — "Download (best quality)" ya "Choose quality". Download chal raha ho to naye link queue me lag jaate hain. |
+
+**AI subtitles ke baare me:**
+- Pehli baar AI models ek baar download hote hain: Fast ≈ 150 MB, Accurate ≈ 460 MB, translation ≈ 630 MB. Uske baad offline chalta hai.
+- Speed PC par depend karti hai — normal laptop par "Accurate" 10 minute ki video me lagbhag 5–10 minute leta hai. Jaldi chahiye to "Fast" chuno.
+- Translation model (NLLB, Meta) ka license **non-commercial** hai — free tool ke liye theek hai, isse paisa kamane wale product me mat lagana.
+
 ## Private / login wali videos (Instagram, Facebook, …)
 
 Kuch videos bina login ke nahi milti (private posts, stories, age-restricted). Unke liye:
@@ -82,6 +100,7 @@ hai) — **More info → Run anyway** dabao.
 python core.py "<url>"            # qualities list karo
 python core.py "<url>" 1 D:\Videos  # option 1 (highest) download karo
 python core.py "<playlist-url>" 3 D:\Videos --items=1-10  # playlist ki pehli 10 videos
+python core.py "<url>" 1 D:\Videos --start=1:20 --end=2:00 --subs=hi --burn --whatsapp=16
 ```
 
 ## Tips

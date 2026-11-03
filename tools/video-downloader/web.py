@@ -18,6 +18,7 @@ import zipfile
 from flask import Flask, abort, jsonify, request, send_file
 
 import core
+import extras
 
 # Inside a PyInstaller .exe the bundled files live in sys._MEIPASS.
 HERE = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -44,6 +45,34 @@ def index():
     return app.send_static_file("index.html")
 
 
+@app.get("/api/config")
+def config():
+    return jsonify(languages=[[name, code] for name, code, _ in extras.LANGUAGES],
+                   whatsapp=extras.WHATSAPP_SIZES, browsers=core.BROWSERS)
+
+
+def read_extras(data):
+    """Extras from the request; raises ValueError with a user-facing message."""
+    lang = data.get("subs_lang") or None
+    codes = {code for _, code, _ in extras.LANGUAGES} | {extras.ORIGINAL}
+    if lang and lang not in codes:
+        raise ValueError("Unknown subtitle language.")
+    budget, wa = data.get("budget_mb"), data.get("whatsapp_mb")
+    try:
+        budget = float(budget) if budget not in (None, "") else None
+    except ValueError:
+        raise ValueError("Data limit should be a number of MB, like 500.")
+    if wa not in (None, "") and int(wa) not in extras.WHATSAPP_SIZES:
+        raise ValueError("Unknown WhatsApp size.")
+    return core.Extras(
+        start=core.parse_time(data.get("start")), end=core.parse_time(data.get("end")),
+        sponsorblock=bool(data.get("sponsorblock")), budget_mb=budget, subs_lang=lang,
+        subs_mode=data.get("subs_mode") if data.get("subs_mode") in ("embed", "burn", "srt")
+        else "embed",
+        ai_model="fast" if data.get("ai_model") == "fast" else "accurate",
+        whatsapp_mb=int(wa) if wa not in (None, "") else None)
+
+
 @app.post("/api/info")
 def info():
     data = request.get_json(silent=True) or {}
@@ -55,9 +84,11 @@ def info():
         info = core.fetch_info(url, playlist, login_browser(data))
     except Exception as e:
         return jsonify(error=core.friendly_error(e)), 400
-    info_cache[(url, info.is_playlist)] = info.options
+    info_cache[(url, info.is_playlist)] = (info.options, len(info.entries))
     return jsonify(title=info.title, duration=info.duration, thumbnail=info.thumbnail,
                    site=info.site, options=[o.label for o in info.options],
+                   sizes=[o.size for o in info.options],
+                   audio_only=[o.audio_only for o in info.options],
                    is_playlist=info.is_playlist, has_playlist=info.has_playlist,
                    count=len(info.entries), entries=info.entries[:200])
 
@@ -67,9 +98,10 @@ def start_download():
     data = request.get_json(silent=True) or {}
     url = data.get("url", "").strip()
     playlist = bool(data.get("playlist"))
-    options = info_cache.get((url, playlist))
-    if not options:
+    cached = info_cache.get((url, playlist))
+    if not cached:
         return jsonify(error="Fetch the link first."), 400
+    options, count = cached
     try:
         option = options[int(data.get("option", 0))]
     except (ValueError, IndexError):
@@ -78,6 +110,10 @@ def start_download():
     items = (data.get("items") or "") if playlist else ""
     if not core.valid_items(items):
         return jsonify(error="Videos should look like 1-10 or 1,3,5-7."), 400
+    try:
+        x = read_extras(data)
+    except ValueError as e:
+        return jsonify(error=str(e)), 400
 
     job_id = uuid.uuid4().hex
     job_dir = os.path.join(WORK_DIR, job_id)
@@ -85,12 +121,12 @@ def start_download():
     with jobs_lock:
         jobs[job_id] = {"status": "queued", "percent": 0, "text": "Waiting in queue...",
                         "dir": job_dir, "file": None, "created": time.time()}
-    args = (job_id, url, option, container, playlist, items, login_browser(data))
+    args = (job_id, url, option, container, playlist, items, login_browser(data), x, count)
     threading.Thread(target=run_job, args=args, daemon=True).start()
     return jsonify(job=job_id)
 
 
-def run_job(job_id, url, option, container, playlist, items, browser):
+def run_job(job_id, url, option, container, playlist, items, browser, x, count):
     job = jobs[job_id]
 
     def progress(pct, text):
@@ -99,18 +135,19 @@ def run_job(job_id, url, option, container, playlist, items, browser):
     with slots:
         job.update(status="downloading", text="Starting...")
         try:
-            failed = core.download(url, option, job["dir"], container, progress, playlist, items,
-                                   browser)
-            files = [os.path.join(root, f) for root, _, names in os.walk(job["dir"])
-                     for f in names if not f.endswith((".part", ".ytdl"))]
+            res = core.download(url, option, job["dir"], container, progress, playlist, items,
+                                browser, x, count)
+            files = [f for f in res.files if os.path.isfile(f)]
             if not files:
                 raise RuntimeError("No file was produced.")
-            if playlist:
-                job.update(text="Packing the videos into one .zip file...")
+            if len(files) > 1:  # a playlist, or a video plus subtitles / WhatsApp copy
+                job.update(text="Packing the files into one .zip file...")
                 path = zip_folder(job["dir"], files)
             else:
-                path = max(files, key=os.path.getsize)
-            note = " Some videos were skipped (private, deleted or blocked)." if failed else ""
+                path = files[0]
+            note = " Some videos were skipped (private, deleted or blocked)." if res.failed else ""
+            if res.warnings:
+                note += " Not done: " + " | ".join(res.warnings[:3])
             job.update(status="done", percent=100, text="Ready!" + note, file=path)
         except Exception as e:
             job.update(status="error", text=core.friendly_error(e))
@@ -118,9 +155,12 @@ def run_job(job_id, url, option, container, playlist, items, browser):
 
 def zip_folder(job_dir, files):
     """Store the playlist's files in one zip (no compression: video is already compressed)."""
-    folders = {os.path.relpath(f, job_dir).split(os.sep)[0] for f in files}
-    name = (folders.pop() if len(folders) == 1 else "playlist") + ".zip"
-    path = os.path.join(job_dir, name)
+    tops = {os.path.relpath(f, job_dir).split(os.sep)[0] for f in files}
+    if len(tops) == 1:  # a playlist folder
+        name = tops.pop()
+    else:  # one video's files: name the zip after the video
+        name = os.path.splitext(os.path.basename(max(files, key=os.path.getsize)))[0]
+    path = os.path.join(job_dir, name + ".zip")
     with zipfile.ZipFile(path, "w", zipfile.ZIP_STORED, allowZip64=True) as z:
         for f in files:
             z.write(f, os.path.relpath(f, job_dir))

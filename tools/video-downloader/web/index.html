@@ -52,6 +52,17 @@
   .login { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; margin-bottom: 12px; }
   .login span { color: var(--muted); font-size: 14px; white-space: nowrap; }
   .login select { padding: 8px 12px; }
+  #more { border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; }
+  #more summary { cursor: pointer; font-weight: 600; }
+  .grid { display: grid; grid-template-columns: 130px 1fr; gap: 10px 12px; align-items: center; margin-top: 12px; }
+  .grid > span { color: var(--muted); font-size: 14px; }
+  .grid input, .grid select { padding: 8px 12px; }
+  .pair { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .pair input { width: 110px; }
+  .pair select { width: auto; flex: 1; min-width: 140px; }
+  .hint { color: var(--muted); font-size: 12px; }
+  .check { display: flex; gap: 10px; align-items: center; grid-column: 1 / -1; cursor: pointer; }
+  @media (max-width: 520px) { .grid { grid-template-columns: 1fr; } .grid > span { margin-bottom: -6px; } }
   .bar { height: 10px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 16px 0 8px; }
   .bar div { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .3s; }
   #status { color: var(--muted); font-size: 14px; min-height: 21px; word-break: break-word; }
@@ -100,6 +111,38 @@
           <option value="mkv">MKV</option>
         </select>
       </div>
+      <details id="more">
+        <summary>More options — clip, skip sponsors, data limit, AI subtitles, WhatsApp</summary>
+        <div class="grid">
+          <span>Clip only</span>
+          <div class="pair">
+            <input id="start" placeholder="from 1:20:00"> <input id="end" placeholder="to 1:35:00">
+            <span class="hint">empty = full video</span>
+          </div>
+
+          <label class="check"><input id="sponsor" type="checkbox"> Skip sponsors, intros, outros and “subscribe” reminders (YouTube)</label>
+
+          <span>Data limit</span>
+          <div class="pair">
+            <input id="budget" type="number" min="1" placeholder="MB"> <span class="hint">picks the best quality that fits (playlist: total size)</span>
+          </div>
+
+          <span>AI subtitles</span>
+          <div class="pair">
+            <select id="subLang"><option value="">Off</option><option value="orig">Original language</option></select>
+            <select id="subMode">
+              <option value="embed">Add to video (on/off)</option>
+              <option value="burn">Burn into picture</option>
+              <option value="srt">.srt file only</option>
+            </select>
+            <select id="aiModel"><option value="accurate">Accurate (slower)</option><option value="fast">Fast</option></select>
+          </div>
+
+          <span>WhatsApp copy</span>
+          <select id="whatsapp"><option value="">Off</option></select>
+        </div>
+        <p class="hint" style="margin:10px 0 0">AI subtitles run on this PC. The first time, the AI models download once (≈150–1100 MB).</p>
+      </details>
       <button id="dlBtn" type="button" style="width:100%">Download</button>
     </div>
 
@@ -151,6 +194,34 @@ async function api(path, body) {
   return data;
 }
 
+fetch("/api/config").then(r => r.json()).then(cfg => {
+  for (const [name, code] of cfg.languages) $("subLang").add(new Option(name, code));
+  for (const mb of cfg.whatsapp) $("whatsapp").add(new Option(`${mb} MB`, mb));
+});
+
+function seconds(t) {
+  if (!t.trim()) return null;
+  return t.split(":").reduce((a, p) => a * 60 + Number(p), 0);
+}
+
+// Single video + data limit: select the best quality whose estimated size fits.
+function applyBudget() {
+  const info = current && current.info, limit = Number($("budget").value) * 1e6;
+  if (!info || info.is_playlist || !limit) return;
+  let frac = 1;
+  const s = seconds($("start").value) || 0, e = seconds($("end").value), d = info.duration;
+  if (d && (s || e !== null) && !isNaN(s) && !isNaN(e)) frac = Math.max(0, Math.min(e ?? d, d) - s) / d;
+  const vids = info.sizes.map((size, i) => ({ size: size * frac, i })).filter(v => v.size && !info.audio_only[v.i]);
+  const fit = vids.find(v => v.size <= limit) || vids[vids.length - 1];
+  if (!fit) return;
+  $("quality").value = fit.i;
+  const mb = Math.round(fit.size / 1e6);
+  status(fit.size <= limit ? `Data limit: ${info.options[fit.i].split("~")[0].trim()} fits (~${mb} MB).`
+                           : `Nothing fits in ${$("budget").value} MB; the smallest is ~${mb} MB. Try audio only or a clip.`,
+         fit.size <= limit ? "" : "err");
+}
+for (const id of ["budget", "start", "end"]) $(id).addEventListener("input", applyBudget);
+
 async function fetchInfo(url, playlist) {
   busy(true);
   $("bar").classList.add("hidden");
@@ -195,6 +266,7 @@ function show(info) {
   status(info.is_playlist ? "Each video downloads at the best quality up to the one you pick. You get one .zip file."
        : info.has_playlist ? "This video is part of a playlist — tick the box to download all of it."
        : `${info.options.length} options found — highest quality selected.`);
+  applyBudget();
 }
 
 $("fetchForm").addEventListener("submit", e => {
@@ -217,7 +289,10 @@ $("dlBtn").addEventListener("click", async () => {
   try {
     const { job } = await api("/api/download", {
       url: current.url, playlist: current.info.is_playlist, items: $("items").value,
-      option: +$("quality").value, container: $("container").value, browser: $("browser").value });
+      option: +$("quality").value, container: $("container").value, browser: $("browser").value,
+      start: $("start").value, end: $("end").value, sponsorblock: $("sponsor").checked,
+      budget_mb: $("budget").value, subs_lang: $("subLang").value, subs_mode: $("subMode").value,
+      ai_model: $("aiModel").value, whatsapp_mb: $("whatsapp").value });
     while (true) {
       await new Promise(r => setTimeout(r, 1000));
       const p = await (await fetch(`/api/progress/${job}`)).json();
