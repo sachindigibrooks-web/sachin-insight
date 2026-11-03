@@ -103,7 +103,6 @@ def site_subtitles(url, lang, base, browser=None):
         "subtitleslangs": [lang, f"{lang}-.*"], "subtitlesformat": "srt/vtt/best",
         "outtmpl": base + ".%(ext)s",
         "postprocessors": [{"key": "FFmpegSubtitlesConvertor", "format": "srt"}],
-        "ffmpeg_location": ffmpeg(),
     }
     try:
         with yt_dlp.YoutubeDL(opts) as ydl:

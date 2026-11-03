@@ -157,6 +157,13 @@ def base_opts(browser=None):
     opts = {"quiet": True, "no_warnings": True}
     if browser:
         opts["cookiesfrombrowser"] = (browser,)
+    ff = ffmpeg_location()
+    if ff:
+        opts["ffmpeg_location"] = ff
+        # Some yt-dlp checks (e.g. for clip downloads) ignore the option and read this
+        # per-thread default instead; without it the bundled ffmpeg of the .exe isn't found.
+        from yt_dlp.postprocessor.ffmpeg import FFmpegPostProcessor
+        FFmpegPostProcessor._ffmpeg_location.set(ff)
     return opts
 
 
@@ -263,9 +270,6 @@ def download(url, option, out_dir, container="mp4", progress=None, playlist=Fals
     }
     if items:
         opts["playlist_items"] = items
-    ff = ffmpeg_location()
-    if ff:
-        opts["ffmpeg_location"] = ff
     pps = []
     if option.audio_only:
         pps.append({"key": "FFmpegExtractAudio", "preferredcodec": "mp3", "preferredquality": "0"})
