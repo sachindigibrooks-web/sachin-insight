@@ -1,4 +1,6 @@
-# Free Video Downloader
+# Free Video & Photo Downloader
+
+**Made by Sachin Samria**
 
 A simple 4K Video Downloader / IDM-style app (desktop app **and** website): paste a video
 or playlist link, it lists every available quality — 8K / 4K / 2K / 1080p / 720p …
@@ -7,6 +9,15 @@ Built on [yt-dlp](https://github.com/yt-dlp/yt-dlp).
 
 **Sites:** YouTube, Instagram, Facebook, X / Twitter, TikTok, Vimeo, Dailymotion, Reddit,
 Twitch, SoundCloud, Pinterest, LinkedIn and [1000+ more](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md).
+
+## Photo download
+
+Photo wala link daalo (Instagram post, Pinterest pin ya board, X / Twitter, Reddit, Tumblr,
+Flickr, Imgur… 300+ sites). Link me video na mile to app apne aap photos dhundh leti hai aur
+dikhati hai kitni mili. **Which ones** me `1-10` likh kar kuch hi photos le sakte ho.
+Photos original quality me `Save to` ke andar `Photos/<site>` folder me aati hain; website
+ek se zyada photo ek `.zip` me deti hai. Instagram photos ke liye aksar login chahiye —
+neeche "Private / login wali" dekho. ([gallery-dl](https://github.com/mikf/gallery-dl) se.)
 
 ## Playlist download
 

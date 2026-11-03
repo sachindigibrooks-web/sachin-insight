@@ -2,6 +2,7 @@ yt-dlp
 imageio-ffmpeg
 flask
 waitress
+gallery-dl
 # AI subtitles (offline speech-to-text + translation)
 faster-whisper
 sentencepiece

@@ -1,8 +1,9 @@
-"""Free video downloader GUI: paste a URL, pick a quality (up to 4K/8K), download.
+"""Free video & photo downloader GUI: paste a URL, pick a quality (up to 4K/8K), download.
 
-Handles single videos and playlists from YouTube and 1000+ other sites, plus
-extras: clip a part, skip sponsors, a data limit, AI subtitles in many
-languages, WhatsApp-sized copies, and an IDM-style clipboard watcher.
+Handles single videos and playlists from YouTube and 1000+ other sites, photo
+posts and galleries (Instagram, Pinterest, X, ...), plus extras: clip a part,
+skip sponsors, a data limit, AI subtitles in many languages, WhatsApp-sized
+copies, and an IDM-style clipboard watcher.
 """
 
 import os
@@ -14,6 +15,10 @@ from tkinter import filedialog, messagebox, ttk
 
 import core
 import extras
+import photos
+
+APP_NAME = "Free Video & Photo Downloader"
+CREDIT = "Made by Sachin Samria"
 
 URL_RE = re.compile(r"^https?://\S+$")
 SUB_MODES = {"Add to video (can turn on/off)": "embed", "Burn into the picture": "burn",
@@ -24,10 +29,11 @@ AI_CHOICES = {"Accurate (slower)": "accurate", "Fast": "fast"}
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Free Video Downloader")
+        self.title(f"{APP_NAME}  -  {CREDIT}")
         self.minsize(560, 470)
         self.info = None
         self.info_url = None
+        self.photo_mode = False  # the fetched link is a photo post / gallery
         self.working = False
         self.auto = False  # download as soon as the fetch finishes (clipboard / queue)
         self.queue = []  # links waiting while a download runs
@@ -99,12 +105,15 @@ class App(tk.Tk):
         self.dl_btn.pack(side="left", padx=5)
         ttk.Button(btns, text="Open folder", command=self.open_folder).pack(side="left", padx=5)
         self.watch = tk.BooleanVar(value=True)
-        ttk.Checkbutton(btns, text="Watch clipboard (popup when a video link is copied)",
+        ttk.Checkbutton(btns, text="Watch clipboard (popup when a link is copied)",
                         variable=self.watch).pack(side="left", padx=10)
 
-        ttk.Label(frm, text="Works with: " + ", ".join(core.POPULAR_SITES) + " and 1000+ more",
+        ttk.Label(frm, text="Videos: " + ", ".join(core.POPULAR_SITES) + " and 1000+ more.\n"
+                  "Photos: " + ", ".join(photos.POPULAR_SITES) + " and 300+ more.",
                   foreground="gray", wraplength=600).grid(row=11, column=0, columnspan=3,
                                                           sticky="w", **pad)
+        ttk.Label(frm, text=CREDIT, font=("", 10, "bold")).grid(row=12, column=0, columnspan=3,
+                                                                pady=(6, 0))
 
         if not core.ffmpeg_location():
             self.status.config(text="Warning: ffmpeg not found - 1080p+ and MP3 need it (see README).")
@@ -206,7 +215,7 @@ class App(tk.Tk):
     def is_video_link(self, text):
         if not URL_RE.match(text) or self.extractors is None:
             return False
-        return any(ie.suitable(text) for ie in self.extractors)
+        return any(ie.suitable(text) for ie in self.extractors) or photos.supported(text)
 
     def poll_clipboard(self):
         clip = self.read_clipboard()
@@ -218,12 +227,12 @@ class App(tk.Tk):
 
     def popup(self, link):
         win = tk.Toplevel(self)
-        win.title("Video link copied")
+        win.title("Link copied")
         win.attributes("-topmost", True)
         win.resizable(False, False)
         body = ttk.Frame(win, padding=12)
         body.pack(fill="both")
-        ttk.Label(body, text="Video link copied - download it?", font=("", 10, "bold")).pack(
+        ttk.Label(body, text="Video / photo link copied - download it?", font=("", 10, "bold")).pack(
             anchor="w")
         ttk.Label(body, text=link if len(link) < 60 else link[:57] + "...",
                   foreground="gray").pack(anchor="w", pady=(2, 8))
@@ -288,11 +297,39 @@ class App(tk.Tk):
     def _fetch(self, url, playlist, browser):
         try:
             self.ui(self._fetched, url, core.fetch_info(url, playlist, browser))
+            return
         except Exception as e:
-            self.ui(self._failed, f"Could not read this link:\n{core.friendly_error(e)}")
+            video_error = e
+        try:  # no video here - maybe a photo post or gallery
+            self.ui(self._fetched_photos, url, photos.probe(url, browser))
+        except Exception as photo_error:
+            self.ui(self._failed, f"Could not read this link:\n{photos.pick_error(video_error, photo_error)}")
+
+    def _fetched_photos(self, url, info):
+        self.info, self.info_url, self.photo_mode = info, url, True
+        self.title_lbl.config(text=f"Photos: {info.count} found on {info.site}"
+                              + (f"  -  {info.title}" if info.title else ""))
+        self.pl_frame.grid()
+        self.pl_check.pack_forget()
+        self.items_lbl.config(text="Which ones (e.g. 1-10, blank = all):")
+        self.items_lbl.pack(side="left")
+        self.items_entry.pack(side="left")
+        self.items.set("")
+        self.quality.config(values=["Original quality (as uploaded)"])
+        self.quality.current(0)
+        self.busy(False)
+        self.set_status("Photos are saved in a 'Photos' folder inside Save to.")
+        if self.auto:
+            self.auto = False
+            self.download()
 
     def _fetched(self, url, info):
-        self.info, self.info_url = info, url
+        self.info, self.info_url, self.photo_mode = info, url, False
+        self.pl_check.pack_forget()
+        self.items_lbl.pack_forget()
+        self.items_entry.pack_forget()
+        self.pl_check.pack(side="left")
+        self.items_lbl.config(text="   Videos (e.g. 1-10, blank = all):")
         if info.is_playlist:
             self.title_lbl.config(text=f"Playlist: {info.title}  ({len(info.entries)} videos)")
         else:
@@ -341,7 +378,7 @@ class App(tk.Tk):
 
     def apply_budget(self):
         """With a data limit, select the best single-video quality that fits it."""
-        if not self.info or self.info.is_playlist:
+        if not self.info or self.photo_mode or self.info.is_playlist:
             return
         try:
             limit = float(self.budget.get()) * 1e6
@@ -407,6 +444,8 @@ class App(tk.Tk):
             # The link was edited after fetching; fetch the new one first.
             self.fetch()
             return
+        if self.photo_mode:
+            return self.download_photos()
         items = self.items.get() if self.info.is_playlist else ""
         try:
             if not core.valid_items(items):
@@ -433,6 +472,29 @@ class App(tk.Tk):
             res = core.download(url, option, out_dir, container, progress, playlist, items,
                                 browser, x, size)
             self.ui(self._done, res)
+        except Exception as e:
+            self.ui(self._failed, f"Download failed:\n{core.friendly_error(e)}")
+
+    def download_photos(self):
+        items = self.items.get().replace(" ", "")
+        if not core.valid_items(items):
+            messagebox.showerror("Error", "Photos should look like 1-10 or 1,3,5-7.")
+            return
+        out_dir = self.out_dir.get()
+        os.makedirs(out_dir, exist_ok=True)
+        self.busy(True)
+        self.bar["value"] = 0
+        total = core.count_items(items) or self.info.count
+        args = (self.info_url, out_dir, self.login_browser(), items, total)
+        threading.Thread(target=self._download_photos, args=args, daemon=True).start()
+
+    def _download_photos(self, url, out_dir, browser, items, total):
+        def progress(pct, text):
+            self.ui(self.bar.config, {"value": pct})
+            self.ui(self.set_status, text)
+        try:
+            files = photos.download(url, out_dir, progress, browser, items, total)
+            self.ui(self._done, core.Result(False, files, []))
         except Exception as e:
             self.ui(self._failed, f"Download failed:\n{core.friendly_error(e)}")
 

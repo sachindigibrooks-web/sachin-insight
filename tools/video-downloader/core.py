@@ -317,7 +317,7 @@ def friendly_error(e):
                 "again, or pick Firefox.")
     if any(k in low for k in ("login", "log in", "sign in", "authentication", "cookies",
                               "private", "rate-limit", "age-restricted", "confirm your age")):
-        return ("This video needs a login. Log in to the site in your browser, then pick that "
+        return ("This video / post needs a login. Log in to the site in your browser, then pick that "
                 "browser in 'Use login from' and try again.")
     if "unsupported url" in low:
         return "This website is not supported, or the link is not a video page."

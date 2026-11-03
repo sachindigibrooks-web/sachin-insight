@@ -19,6 +19,7 @@ from flask import Flask, abort, jsonify, request, send_file
 
 import core
 import extras
+import photos
 
 # Inside a PyInstaller .exe the bundled files live in sys._MEIPASS.
 HERE = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -82,8 +83,14 @@ def info():
         return jsonify(error="Please paste a valid http(s) link."), 400
     try:
         info = core.fetch_info(url, playlist, login_browser(data))
-    except Exception as e:
-        return jsonify(error=core.friendly_error(e)), 400
+    except Exception as video_error:
+        try:  # no video here - maybe a photo post or gallery
+            p = photos.probe(url, login_browser(data))
+        except Exception as photo_error:
+            return jsonify(error=photos.pick_error(video_error, photo_error)), 400
+        info_cache[(url, "photos")] = p.count
+        return jsonify(mode="photos", title=p.title, site=p.site, count=p.count,
+                       previews=p.previews)
     info_cache[(url, info.is_playlist)] = (info.options, len(info.entries))
     return jsonify(title=info.title, duration=info.duration, thumbnail=info.thumbnail,
                    site=info.site, options=[o.label for o in info.options],
@@ -97,6 +104,8 @@ def info():
 def start_download():
     data = request.get_json(silent=True) or {}
     url = data.get("url", "").strip()
+    if data.get("mode") == "photos":
+        return start_photos(url, data)
     playlist = bool(data.get("playlist"))
     cached = info_cache.get((url, playlist))
     if not cached:
@@ -115,15 +124,54 @@ def start_download():
     except ValueError as e:
         return jsonify(error=str(e)), 400
 
+    job_id = new_job()
+    args = (job_id, url, option, container, playlist, items, login_browser(data), x, count)
+    threading.Thread(target=run_job, args=args, daemon=True).start()
+    return jsonify(job=job_id)
+
+
+def new_job():
     job_id = uuid.uuid4().hex
     job_dir = os.path.join(WORK_DIR, job_id)
     os.makedirs(job_dir)
     with jobs_lock:
         jobs[job_id] = {"status": "queued", "percent": 0, "text": "Waiting in queue...",
                         "dir": job_dir, "file": None, "created": time.time()}
-    args = (job_id, url, option, container, playlist, items, login_browser(data), x, count)
-    threading.Thread(target=run_job, args=args, daemon=True).start()
+    return job_id
+
+
+def start_photos(url, data):
+    count = info_cache.get((url, "photos"))
+    if count is None:
+        return jsonify(error="Fetch the link first."), 400
+    items = (data.get("items") or "").replace(" ", "")
+    if not core.valid_items(items):
+        return jsonify(error="Photos should look like 1-10 or 1,3,5-7."), 400
+    job_id = new_job()
+    total = core.count_items(items) or count
+    args = (job_id, url, items, total, login_browser(data))
+    threading.Thread(target=run_photos, args=args, daemon=True).start()
     return jsonify(job=job_id)
+
+
+def run_photos(job_id, url, items, total, browser):
+    job = jobs[job_id]
+
+    def progress(pct, text):
+        job.update(status="downloading", percent=round(pct, 1), text=text)
+
+    with slots:
+        job.update(status="downloading", text="Starting...")
+        try:
+            files = photos.download(url, job["dir"], progress, browser, items, total)
+            if len(files) > 1:
+                job.update(text="Packing the photos into one .zip file...")
+                path = zip_folder(job["dir"], files)
+            else:
+                path = files[0]
+            job.update(status="done", percent=100, text="Ready!", file=path)
+        except Exception as e:
+            job.update(status="error", text=core.friendly_error(e))
 
 
 def run_job(job_id, url, option, container, playlist, items, browser, x, count):

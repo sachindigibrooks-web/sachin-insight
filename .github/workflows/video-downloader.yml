@@ -33,8 +33,8 @@ jobs:
       - name: Build (Windows)
         if: runner.os == 'Windows'
         run: |
-          python -m PyInstaller --noconfirm --onefile --windowed --name FreeVideoDownloader --collect-all imageio_ffmpeg --collect-all faster_whisper --collect-all ctranslate2 app.py
-          python -m PyInstaller --noconfirm --onefile --name FreeVideoDownloaderWeb --add-data "web;web" --collect-all imageio_ffmpeg --collect-all faster_whisper --collect-all ctranslate2 web.py
+          python -m PyInstaller --noconfirm --onefile --windowed --name FreeVideoDownloader --collect-all imageio_ffmpeg --collect-all faster_whisper --collect-all ctranslate2 --collect-all gallery_dl app.py
+          python -m PyInstaller --noconfirm --onefile --name FreeVideoDownloaderWeb --add-data "web;web" --collect-all imageio_ffmpeg --collect-all faster_whisper --collect-all ctranslate2 --collect-all gallery_dl web.py
 
       - name: Build (Mac)
         if: runner.os == 'macOS'

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Free Video Downloader</title>
+<title>Free Video &amp; Photo Downloader — Made by Sachin Samria</title>
 <style>
   :root {
     --bg: #f4f5f9; --card: #fff; --text: #1b1d27; --muted: #6b6f80;
@@ -68,6 +68,10 @@
   #status { color: var(--muted); font-size: 14px; min-height: 21px; word-break: break-word; }
   #status.err { color: var(--accent); }
   #status.ok { color: var(--ok); font-weight: 600; }
+  .credit { margin: -18px 0 26px; font-weight: 700; letter-spacing: .3px; text-align: center; }
+  .credit span { color: var(--accent); }
+  .previews { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; margin-bottom: 12px; }
+  .previews img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; background: var(--line); }
   .sites { max-width: 680px; margin-top: 24px; text-align: center; }
   .sites p { margin: 0 0 8px; font-size: 13px; color: var(--muted); }
   .feats { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
@@ -80,13 +84,14 @@
 </style>
 </head>
 <body>
-  <h1>Free <span>4K Video</span> Downloader</h1>
-  <p class="sub">YouTube, Instagram, Facebook, TikTok, X and more — single videos or whole playlists, up to 8K or MP3. Free, no ads, no limits.</p>
+  <h1>Free <span>4K Video &amp; Photo</span> Downloader</h1>
+  <p class="sub">YouTube, Instagram, Facebook, TikTok, Pinterest, X and more — videos, playlists and photos, up to 8K or MP3. Free, no ads, no limits.</p>
+  <p class="credit">Made by <span>Sachin Samria</span></p>
 
   <div class="card">
     <form id="fetchForm" class="row">
-      <input id="url" type="url" placeholder="Paste a video or playlist link..." required autofocus>
-      <button id="fetchBtn" type="submit">Get Video</button>
+      <input id="url" type="url" placeholder="Paste a video, playlist or photo link..." required autofocus>
+      <button id="fetchBtn" type="submit">Get</button>
     </form>
 
     <div id="result" class="hidden">
@@ -104,6 +109,15 @@
         <details id="plList" class="hidden"><summary>Show videos</summary><ol id="entries"></ol></details>
       </div>
 
+      <div id="photoBox" class="hidden">
+        <div id="previews" class="previews"></div>
+        <div class="pl"><div class="items" style="margin-top:0">
+          <span>Which ones</span>
+          <input id="photoItems" placeholder="All — or e.g. 1-10, 1,3,5-7">
+        </div></div>
+      </div>
+
+      <div id="videoOpts">
       <div class="opts">
         <select id="quality" aria-label="Quality"></select>
         <select id="container" aria-label="Format">
@@ -143,6 +157,7 @@
         </div>
         <p class="hint" style="margin:10px 0 0">AI subtitles run on this PC. The first time, the AI models download once (≈150–1100 MB).</p>
       </details>
+      </div>
       <button id="dlBtn" type="button" style="width:100%">Download</button>
     </div>
 
@@ -150,7 +165,7 @@
     <div id="status"></div>
 
     <details style="margin-top:14px">
-      <summary>Private or login-only video? (Instagram stories, private posts, age-restricted…)</summary>
+      <summary>Private or login-only? (Instagram photos &amp; stories, private posts, age-restricted…)</summary>
       <div class="login" style="margin-top:10px">
         <span>Use login from</span>
         <select id="browser">
@@ -169,14 +184,20 @@
   </div>
 
   <div class="sites">
-    <p>Works with</p>
+    <p>Videos from</p>
     <div class="feats">
       <span>YouTube</span><span>Instagram</span><span>Facebook</span><span>TikTok</span><span>X / Twitter</span>
       <span>Vimeo</span><span>Dailymotion</span><span>Reddit</span><span>Twitch</span><span>SoundCloud</span>
       <span>Pinterest</span><span>LinkedIn</span><span>+1000 more</span>
     </div>
+    <p style="margin-top:14px">Photos from</p>
+    <div class="feats">
+      <span>Instagram</span><span>Pinterest</span><span>X / Twitter</span><span>Reddit</span><span>Facebook</span>
+      <span>Tumblr</span><span>Flickr</span><span>Imgur</span><span>DeviantArt</span><span>ArtStation</span>
+      <span>Bluesky</span><span>+300 more</span>
+    </div>
   </div>
-  <footer>Only download videos you own or have permission to download. Powered by yt-dlp.</footer>
+  <footer><b>Made by Sachin Samria</b><br>Only download videos and photos you own or have permission to download. Powered by yt-dlp and gallery-dl.</footer>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -237,7 +258,30 @@ async function fetchInfo(url, playlist) {
   }
 }
 
+function showPhotos(info) {
+  $("title").textContent = info.title || `${info.site} photos`;
+  $("sub").innerHTML = `<span class="badge"></span>`;
+  $("sub").firstChild.textContent = info.site;
+  $("sub").append(`${info.count} found`);
+  $("thumb").classList.add("hidden");
+  $("plBox").classList.add("hidden");
+  $("previews").innerHTML = "";
+  for (const src of info.previews) {
+    const img = Object.assign(document.createElement("img"), { src, loading: "lazy", referrerPolicy: "no-referrer" });
+    img.onerror = () => img.remove();
+    $("previews").append(img);
+  }
+  $("photoItems").value = "";
+  $("photoBox").classList.remove("hidden");
+  $("videoOpts").classList.add("hidden");
+  $("result").classList.remove("hidden");
+  status(info.count > 1 ? `${info.count} photos / files found. You get one .zip file.` : "1 photo found.");
+}
+
 function show(info) {
+  if (info.mode === "photos") return showPhotos(info);
+  $("photoBox").classList.add("hidden");
+  $("videoOpts").classList.remove("hidden");
   $("title").textContent = info.title;
   const site = info.site ? info.site.replace(/(Tab|Playlist|Set|Vod)$/, "") : "";
   const d = info.duration;
@@ -287,7 +331,8 @@ $("dlBtn").addEventListener("click", async () => {
   bar(0);
   status("Starting download on server...");
   try {
-    const { job } = await api("/api/download", {
+    const { job } = await api("/api/download", current.info.mode === "photos"
+      ? { url: current.url, mode: "photos", items: $("photoItems").value, browser: $("browser").value } : {
       url: current.url, playlist: current.info.is_playlist, items: $("items").value,
       option: +$("quality").value, container: $("container").value, browser: $("browser").value,
       start: $("start").value, end: $("end").value, sponsorblock: $("sponsor").checked,
