@@ -285,11 +285,50 @@ def whatsapp_copy(video, limit_mb, duration, progress):
 
 # ---------------------------------------------------------------- pipeline
 
+def read_srt(path):
+    """[(start, end, text)] from an .srt file."""
+    with open(path, encoding="utf-8-sig", errors="replace") as f:
+        blocks = f.read().replace("\r", "").strip().split("\n\n")
+    lines = []
+    for b in blocks:
+        rows = b.split("\n")
+        times = next((r for r in rows if "-->" in r), None)
+        if not times:
+            continue
+        a, _, z = times.partition("-->")
+        text = " ".join(r for r in rows[rows.index(times) + 1:]).strip()
+        text = re.sub(r"<[^>]+>", "", text)  # site subtitles may carry <i>/<font> tags
+        if text:
+            lines.append((parse_srt_time(a), parse_srt_time(z), text))
+    return lines
+
+
+def parse_srt_time(t):
+    h, m, s = t.strip().replace(",", ".").split(":")[-3:]
+    return int(h) * 3600 + int(m) * 60 + float(s)
+
+
+def ringtone(path, start, progress, seconds=30):
+    """30-second ringtones from `start`: an MP3 (Android) and an M4R (iPhone)."""
+    base = os.path.splitext(path)[0]
+    fade = f"afade=t=in:d=0.5,afade=t=out:st={seconds - 2}:d=2"
+    outs = []
+    for name, codec in ((" (Ringtone).mp3", ["-c:a", "libmp3lame", "-q:a", "2"]),
+                        (" (iPhone Ringtone).m4r", ["-c:a", "aac", "-b:a", "192k", "-f", "ipod"])):
+        out = base + name
+        run_ffmpeg(["-ss", str(start), "-t", str(seconds), "-i", path, "-vn", "-af", fade]
+                   + codec + [out], seconds, progress, "Making ringtone")
+        outs.append(out)
+    return outs
+
+
 def process(files, x, progress, browser=None):
     """Run the chosen extras on each downloaded (path, info) pair.
 
-    Returns a list of warnings (one bad file shouldn't lose the others).
+    Returns a list of warnings; each step fails on its own, so one problem
+    doesn't lose the other extras or the other files.
     """
+    import searchindex
     warnings = []
     for n, (path, info) in enumerate(files, 1):
         tag = f"Video {n}/{len(files)}: " if len(files) > 1 else ""
@@ -297,26 +336,46 @@ def process(files, x, progress, browser=None):
         def step(pct, text):
             progress(pct, tag + text)
 
-        try:
-            # The file's own length: a clip or SponsorBlock cut is shorter than the video.
-            duration = media_duration(path) or info.get("duration")
-            if x.subs_lang:
-                base = os.path.splitext(path)[0]
-                srt = None
-                if x.subs_lang != ORIGINAL and info.get("webpage_url"):
-                    step(0, "Looking for the site's own subtitles...")
-                    srt = site_subtitles(info["webpage_url"], x.subs_lang, base, browser)
-                    lang = x.subs_lang
-                if not srt:
-                    lines, lang = ai_subtitles(path, x.subs_lang, x.ai_model, step)
-                    if not lines:
-                        raise ExtrasError("No speech found for subtitles.")
-                    srt = f"{base}.{lang}.srt"
-                    write_srt(lines, srt)
-                if x.subs_mode != "srt" and has_video(path):
-                    add_subtitles(path, srt, lang, x.subs_mode, duration, step)
-            if x.whatsapp_mb and has_video(path):
-                whatsapp_copy(path, x.whatsapp_mb, duration, step)
-        except Exception as e:
-            warnings.append(f"{os.path.basename(path)}: {e}")
+        def attempt(fn):
+            try:
+                return fn()
+            except Exception as e:
+                warnings.append(f"{os.path.basename(path)}: {e}")
+
+        # The file's own length: a clip or SponsorBlock cut is shorter than the video.
+        duration = media_duration(path) or info.get("duration")
+        srt = None
+        if x.subs_lang:
+            srt = attempt(lambda: make_subtitles(path, info, x, duration, step, browser))
+        if x.searchable:
+            def index():
+                if srt:
+                    lines = read_srt(srt)
+                else:
+                    lines, _ = ai_subtitles(path, ORIGINAL, x.ai_model, lambda p, t: step(
+                        p, "Making it searchable (AI) " + t.rsplit(" ", 1)[-1]))
+                searchindex.add(path, info.get("title") or os.path.basename(path), lines)
+            attempt(index)
+        if x.ringtone_start is not None:
+            attempt(lambda: ringtone(path, x.ringtone_start, step))
+        if x.whatsapp_mb and has_video(path):
+            attempt(lambda: whatsapp_copy(path, x.whatsapp_mb, duration, step))
     return warnings
+
+
+def make_subtitles(path, info, x, duration, step, browser):
+    """Write <name>.<lang>.srt (site's own or AI) and add it to the video. Returns its path."""
+    base = os.path.splitext(path)[0]
+    srt, lang = None, x.subs_lang
+    if x.subs_lang != ORIGINAL and info.get("webpage_url"):
+        step(0, "Looking for the site's own subtitles...")
+        srt = site_subtitles(info["webpage_url"], x.subs_lang, base, browser)
+    if not srt:
+        lines, lang = ai_subtitles(path, x.subs_lang, x.ai_model, step)
+        if not lines:
+            raise ExtrasError("No speech found for subtitles.")
+        srt = f"{base}.{lang}.srt"
+        write_srt(lines, srt)
+    if x.subs_mode != "srt" and has_video(path):
+        add_subtitles(path, srt, lang, x.subs_mode, duration, step)
+    return srt

@@ -45,6 +45,23 @@ Desktop app me **▸ More options** dabao, website me **More options** kholo.
 - Speed PC par depend karti hai — normal laptop par "Accurate" 10 minute ki video me lagbhag 5–10 minute leta hai. Jaldi chahiye to "Fast" chuno.
 - Translation model (NLLB, Meta) ka license **non-commercial** hai — free tool ke liye theek hai, isse paisa kamane wale product me mat lagana.
 
+## Toolbar ke features
+
+| Button | Kya karta hai |
+|---|---|
+| **History** | Har download ki list — search karo, file/folder kholo, "Download again", ya "Make searchable (AI)". |
+| **Search in videos** | Download ki hui videos me **bole gaye shabd** dhundho (Hindi ya English). Result par click karo to video usi second se chalti hai. Video ko pehle searchable banana hota hai: More options me "Make it searchable" tick karo, ya History se. |
+| **Follow channels** | YouTube channel / playlist ya Instagram / Pinterest profile follow karo. App khuli rahe to har ghante check karti hai aur nayi video / photo apne aap download karti hai (`Save to\Follows`). "Download now (latest)" me batao pehli baar kitni purani chahiye (0 = sirf nayi). |
+| **Phone / Website** | Isi PC par website chalu karti hai aur QR code dikhati hai — phone ke camera se scan karo (same Wi-Fi), website phone par khul jaati hai. |
+| **हिंदी / English** | Poora app Hindi me (yaad rehta hai). Website par bhi upar ye button hai. |
+| **Check updates** | App roz khud check karti hai aur YouTube / Instagram ke naye badlaav ke liye **yt-dlp aur gallery-dl apne aap update** karti hai (agli baar app kholne par lagu). Naya .exe banane ki zaroorat nahi. Update kharab nikla to app apne aap purane par chalti hai. |
+
+**Audio extras:** "Audio only - MP3" me ab gaane ki **cover photo, naam aur singer** bhi MP3 ke andar hote hain.
+**Ringtone:** More options → "Ringtone (30 sec) from" me time likho (jaise `0:45`) — Android ke liye `(Ringtone).mp3` aur iPhone ke liye `(iPhone Ringtone).m4r` banti hai.
+
+Settings, history, search aur follows yahan rehte hain: Windows `%LOCALAPPDATA%\FreeVideoDownloader`,
+Mac `~/Library/Application Support/FreeVideoDownloader`.
+
 ## Private / login wali videos (Instagram, Facebook, …)
 
 Kuch videos bina login ke nahi milti (private posts, stories, age-restricted). Unke liye:
@@ -55,7 +72,7 @@ Kuch videos bina login ke nahi milti (private posts, stories, age-restricted). U
 App browser ka saved login use karti hai — password kabhi nahi maangti ya save karti.
 Chrome/Edge par kabhi-kabhi login read nahi hota; tab Firefox use karo.
 
-## Chalane ka tarika (Windows)
+## Chalane ka tarika (Windows, Python se)
 
 1. Python 3.10+ install karo: <https://www.python.org/downloads/> (install ke time
    **"Add Python to PATH"** tick karna).
@@ -94,16 +111,21 @@ downloads, default 3).
 > Isliye ye ghar ke PC/internet par sabse achha chalta hai. Bahar se access chahiye to
 > apne PC par chala kar Cloudflare Tunnel (free) se link share kar sakte ho.
 
-## .exe banana (dusron ko dene ke liye)
+## Installer banana (dusron ko dene ke liye)
 
-`build_windows.bat` par double-click karo (5–10 minute lagte hain). `dist` folder me do files banengi:
+`build_windows.bat` par double-click karo (5–10 minute). Pehle [Inno Setup 6](https://jrsoftware.org/isdl.php)
+install kar lo, tab `dist` me ye banega:
 
-- `FreeVideoDownloader.exe` — desktop app
-- `FreeVideoDownloaderWeb.exe` — website version; double-click karte hi browser me khulti hai
+- `FreeVideoDownloader-Setup.exe` — installer: Start Menu + Desktop shortcut, Control Panel se
+  uninstall, admin password nahi maangta. Ise share karo.
+- `FreeVideoDownloader\` — app ka folder (bina install ke bhi chal jaata hai)
 
-Ye single files kisi bhi Windows PC par bina Python ke chalengi (ffmpeg andar hi hai).
-Pehli baar chalane par Windows "Windows protected your PC" dikha sakta hai (exe signed nahi
-hai) — **More info → Run anyway** dabao.
+App 1 second ke andar khulti hai (pehle single .exe har baar khud ko unpack karti thi).
+Website alag se nahi — app me **Phone / Website** button se chalti hai.
+Pehli baar Windows "Windows protected your PC" dikha sakta hai (installer signed nahi hai) —
+**More info → Run anyway** dabao.
+
+GitHub par har code change ke baad Windows installer + Mac app apne aap bante hain (Actions → Artifacts).
 
 ## Command line
 

@@ -43,9 +43,12 @@ class Extras:
     subs_mode: str = "embed"  # embed | burn | srt
     ai_model: str = "accurate"  # accurate | fast
     whatsapp_mb: int | None = None  # also make a copy that fits in this many MB
+    ringtone_start: float | None = None  # also make a 30 s ringtone starting here
+    searchable: bool = False  # index the spoken words for "Search in videos"
 
     def needs_processing(self):
-        return bool(self.subs_lang or self.whatsapp_mb)
+        return bool(self.subs_lang or self.whatsapp_mb or self.ringtone_start is not None
+                    or self.searchable)
 
 
 @dataclass
@@ -209,14 +212,15 @@ def fetch_info(url, playlist=False, browser=None):
 
 
 def download(url, option, out_dir, container="mp4", progress=None, playlist=False, items=None,
-             browser=None, extras=None, playlist_size=None):
+             browser=None, extras=None, playlist_size=None, archive=None):
     """Download `url` using `option` into `out_dir`, then run the chosen `extras`.
 
     With `playlist`, every video goes into a sub-folder named after the
     playlist; unavailable videos are skipped. `items` picks videos by
     position, e.g. "1-10" or "1,3,5-7" (all when empty); `playlist_size` is
-    the playlist's length, used to split a data budget. `progress(percent, text)`
-    is called as the download advances.
+    the playlist's length, used to split a data budget. `archive` is a file
+    that remembers finished videos so they are skipped next time (follows).
+    `progress(percent, text)` is called as the download advances.
     """
     x = extras or Extras()
     items = (items or "").replace(" ", "") if playlist else ""
@@ -251,7 +255,8 @@ def download(url, option, out_dir, container="mp4", progress=None, playlist=Fals
             pct = idx * 100 / count if prefix else 100
             progress(pct, prefix + "Processing (merging audio + video)...")
 
-    name = "%(title)s.%(ext)s" if option.audio_only else "%(title)s [%(height)sp].%(ext)s"
+    # " [720p]" only when the site reports a height (audio-only sites don't).
+    name = "%(title)s.%(ext)s" if option.audio_only else "%(title)s%(height& [{}p]|)s.%(ext)s"
     if playlist:
         name = os.path.join("%(playlist_title,playlist,playlist_id|Playlist)s", "%(playlist_index)03d - " + name)
     fmt = option.format
@@ -270,11 +275,23 @@ def download(url, option, out_dir, container="mp4", progress=None, playlist=Fals
     }
     if items:
         opts["playlist_items"] = items
+    if archive:
+        opts["download_archive"] = archive
     pps = []
+    if x.sponsorblock:
+        cats = ["sponsor", "intro", "outro", "selfpromo", "interaction"]
+        pps += [{"key": "SponsorBlock", "categories": cats, "when": "after_filter"},
+                {"key": "ModifyChapters", "remove_sponsor_segments": cats}]
     if option.audio_only:
-        pps.append({"key": "FFmpegExtractAudio", "preferredcodec": "mp3", "preferredquality": "0"})
+        # MP3 with the cover picture, title and artist, so music players show them.
+        opts["writethumbnail"] = True
+        pps += [{"key": "FFmpegThumbnailsConvertor", "format": "jpg", "when": "before_dl"},
+                {"key": "FFmpegExtractAudio", "preferredcodec": "mp3", "preferredquality": "0"},
+                {"key": "FFmpegMetadata", "add_metadata": True},
+                {"key": "EmbedThumbnail"}]
     else:
         opts["merge_output_format"] = container
+        pps.append({"key": "FFmpegMetadata", "add_metadata": True})  # title, artist, date
     if x.start is not None or x.end is not None:
         from yt_dlp.utils import download_range_func
         start, end = x.start or 0, x.end if x.end is not None else float("inf")
@@ -282,12 +299,7 @@ def download(url, option, out_dir, container="mp4", progress=None, playlist=Fals
             raise ValueError("Clip end must be after the start.")
         opts["download_ranges"] = download_range_func(None, [(start, end)])
         opts["force_keyframes_at_cuts"] = True  # exact cut points (re-encodes the clip edges)
-    if x.sponsorblock:
-        cats = ["sponsor", "intro", "outro", "selfpromo", "interaction"]
-        pps += [{"key": "SponsorBlock", "categories": cats, "when": "after_filter"},
-                {"key": "ModifyChapters", "remove_sponsor_segments": cats}]
-    if pps:
-        opts["postprocessors"] = pps
+    opts["postprocessors"] = pps
 
     with yt_dlp.YoutubeDL(opts) as ydl:
         failed = bool(ydl.download([url]))
@@ -356,14 +368,16 @@ if __name__ == "__main__":
     if not args:
         sys.exit("usage: python core.py <url> [option-number] [output-dir] [--playlist] [--items=1-10]\n"
                  "  [--start=1:20 --end=2:00] [--sponsorblock] [--budget=500] [--subs=hi|en|orig]\n"
-                 "  [--burn | --srt-only] [--fast] [--whatsapp=16]")
+                 "  [--burn | --srt-only] [--fast] [--whatsapp=16] [--ringtone=0:45] [--searchable]")
     x = Extras(start=parse_time(flags.get("start")), end=parse_time(flags.get("end")),
                sponsorblock="sponsorblock" in flags,
                budget_mb=float(flags["budget"]) if flags.get("budget") else None,
                subs_lang=flags.get("subs") or None,
                subs_mode="burn" if "burn" in flags else "srt" if "srt-only" in flags else "embed",
                ai_model="fast" if "fast" in flags else "accurate",
-               whatsapp_mb=int(flags["whatsapp"]) if flags.get("whatsapp") else None)
+               whatsapp_mb=int(flags["whatsapp"]) if flags.get("whatsapp") else None,
+               ringtone_start=parse_time(flags.get("ringtone")),
+               searchable="searchable" in flags)
     info = fetch_info(args[0], "playlist" in flags)
     print(f"[{info.site}] {info.title}")
     if info.is_playlist:

@@ -1,25 +1,36 @@
 """Website version: paste a video or playlist URL in the browser, pick a quality, download.
 
-Playlists are delivered as one .zip file.
+Playlists are delivered as one .zip file. The desktop app can also start this
+website in the background (serve_background) for phones on the same Wi-Fi.
 
 Run:  python web.py   then open http://localhost:8000
 """
 
-import os
-import shutil
-import sys
-import tempfile
-import threading
-import time
-import uuid
-import webbrowser
-import zipfile
+import updater
 
-from flask import Flask, abort, jsonify, request, send_file
+updater.apply()  # use newer site engines downloaded earlier - before anything imports them
 
-import core
-import extras
-import photos
+import os  # noqa: E402
+import shutil  # noqa: E402
+import socket  # noqa: E402
+import sys  # noqa: E402
+import tempfile  # noqa: E402
+import threading  # noqa: E402
+import time  # noqa: E402
+import uuid  # noqa: E402
+import webbrowser  # noqa: E402
+import zipfile  # noqa: E402
+from html import escape  # noqa: E402
+
+from flask import Flask, Response, abort, jsonify, request, send_file  # noqa: E402
+
+import core  # noqa: E402
+import extras  # noqa: E402
+import history  # noqa: E402
+import i18n  # noqa: E402
+import photos  # noqa: E402
+import qr  # noqa: E402
+import searchindex  # noqa: E402
 
 # Inside a PyInstaller .exe the bundled files live in sys._MEIPASS.
 HERE = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -49,7 +60,57 @@ def index():
 @app.get("/api/config")
 def config():
     return jsonify(languages=[[name, code] for name, code, _ in extras.LANGUAGES],
-                   whatsapp=extras.WHATSAPP_SIZES, browsers=core.BROWSERS)
+                   whatsapp=extras.WHATSAPP_SIZES, browsers=core.BROWSERS,
+                   ui=i18n.UI, phrases=i18n.PHRASES, language_names_hi=i18n.LANGUAGE_NAMES_HI)
+
+
+@app.get("/api/version")
+def version():
+    import yt_dlp
+    return jsonify(engines=updater.running_versions(), yt_dlp=yt_dlp.version.__version__)
+
+
+@app.get("/api/qr.svg")
+def qr_svg():
+    """QR code of this website's address on the home network, for phones."""
+    port = request.host.rsplit(":", 1)[-1] if ":" in request.host else "80"
+    url = f"http://{qr.lan_ip()}:{port}"
+    return Response(qr.svg(url), mimetype="image/svg+xml", headers={"X-Url": url})
+
+
+@app.get("/api/history")
+def history_list():
+    return jsonify([{k: e[k] for k in ("title", "url", "kind", "site", "time")}
+                    for e in history.search(request.args.get("q", ""))[:200]])
+
+
+@app.get("/api/search")
+def search():
+    return jsonify([{k: r[k] for k in ("video_id", "title", "start", "text")}
+                    for r in searchindex.search(request.args.get("q", ""))])
+
+
+@app.get("/media/<video_id>")
+def media(video_id):
+    """Stream a searchable video (with seeking) - only files in the search index."""
+    v = searchindex.video(video_id)
+    if not v or not os.path.isfile(v["path"]):
+        abort(404)
+    return send_file(v["path"], conditional=True)
+
+
+@app.get("/watch/<video_id>")
+def watch(video_id):
+    v = searchindex.video(video_id)
+    if not v:
+        abort(404)
+    t = request.args.get("t", "0")
+    t = t if t.isdigit() else "0"
+    return (f"<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width'>"
+            f"<title>{escape(v['title'])}</title><body style='margin:0;background:#000;color:#eee;"
+            f"font-family:system-ui'><video src='/media/{video_id}#t={t}' controls autoplay "
+            f"style='width:100%;max-height:90vh'></video><p style='padding:0 12px'>"
+            f"{escape(v['title'])}</p>")
 
 
 def read_extras(data):
@@ -71,7 +132,8 @@ def read_extras(data):
         subs_mode=data.get("subs_mode") if data.get("subs_mode") in ("embed", "burn", "srt")
         else "embed",
         ai_model="fast" if data.get("ai_model") == "fast" else "accurate",
-        whatsapp_mb=int(wa) if wa not in (None, "") else None)
+        whatsapp_mb=int(wa) if wa not in (None, "") else None,
+        ringtone_start=core.parse_time(data.get("ringtone")))
 
 
 @app.post("/api/info")
@@ -88,10 +150,10 @@ def info():
             p = photos.probe(url, login_browser(data))
         except Exception as photo_error:
             return jsonify(error=photos.pick_error(video_error, photo_error)), 400
-        info_cache[(url, "photos")] = p.count
+        info_cache[(url, "photos")] = (p.count, p.title or f"{p.site} photos", p.site)
         return jsonify(mode="photos", title=p.title, site=p.site, count=p.count,
                        previews=p.previews)
-    info_cache[(url, info.is_playlist)] = (info.options, len(info.entries))
+    info_cache[(url, info.is_playlist)] = (info.options, len(info.entries), info.title, info.site)
     return jsonify(title=info.title, duration=info.duration, thumbnail=info.thumbnail,
                    site=info.site, options=[o.label for o in info.options],
                    sizes=[o.size for o in info.options],
@@ -110,7 +172,7 @@ def start_download():
     cached = info_cache.get((url, playlist))
     if not cached:
         return jsonify(error="Fetch the link first."), 400
-    options, count = cached
+    options, count, title, site = cached
     try:
         option = options[int(data.get("option", 0))]
     except (ValueError, IndexError):
@@ -125,7 +187,8 @@ def start_download():
         return jsonify(error=str(e)), 400
 
     job_id = new_job()
-    args = (job_id, url, option, container, playlist, items, login_browser(data), x, count)
+    args = (job_id, url, option, container, playlist, items, login_browser(data), x, count,
+            title, site)
     threading.Thread(target=run_job, args=args, daemon=True).start()
     return jsonify(job=job_id)
 
@@ -141,20 +204,21 @@ def new_job():
 
 
 def start_photos(url, data):
-    count = info_cache.get((url, "photos"))
-    if count is None:
+    cached = info_cache.get((url, "photos"))
+    if cached is None:
         return jsonify(error="Fetch the link first."), 400
+    count, title, site = cached
     items = (data.get("items") or "").replace(" ", "")
     if not core.valid_items(items):
         return jsonify(error="Photos should look like 1-10 or 1,3,5-7."), 400
     job_id = new_job()
     total = core.count_items(items) or count
-    args = (job_id, url, items, total, login_browser(data))
+    args = (job_id, url, items, total, login_browser(data), title, site)
     threading.Thread(target=run_photos, args=args, daemon=True).start()
     return jsonify(job=job_id)
 
 
-def run_photos(job_id, url, items, total, browser):
+def run_photos(job_id, url, items, total, browser, title, site):
     job = jobs[job_id]
 
     def progress(pct, text):
@@ -164,6 +228,7 @@ def run_photos(job_id, url, items, total, browser):
         job.update(status="downloading", text="Starting...")
         try:
             files = photos.download(url, job["dir"], progress, browser, items, total)
+            history.add(title, url, [], "photos", site)  # the files go to the browser
             if len(files) > 1:
                 job.update(text="Packing the photos into one .zip file...")
                 path = zip_folder(job["dir"], files)
@@ -174,7 +239,7 @@ def run_photos(job_id, url, items, total, browser):
             job.update(status="error", text=core.friendly_error(e))
 
 
-def run_job(job_id, url, option, container, playlist, items, browser, x, count):
+def run_job(job_id, url, option, container, playlist, items, browser, x, count, title, site):
     job = jobs[job_id]
 
     def progress(pct, text):
@@ -188,6 +253,7 @@ def run_job(job_id, url, option, container, playlist, items, browser, x, count):
             files = [f for f in res.files if os.path.isfile(f)]
             if not files:
                 raise RuntimeError("No file was produced.")
+            history.add(title, url, [], "playlist" if playlist else "video", site)
             if len(files) > 1:  # a playlist, or a video plus subtitles / WhatsApp copy
                 job.update(text="Packing the files into one .zip file...")
                 path = zip_folder(job["dir"], files)
@@ -248,10 +314,40 @@ def janitor():
                         jobs.pop(job_id, None)
 
 
-if __name__ == "__main__":
+_server = {}
+
+
+def prepare():
     shutil.rmtree(WORK_DIR, ignore_errors=True)
     os.makedirs(WORK_DIR, exist_ok=True)
     threading.Thread(target=janitor, daemon=True).start()
+
+
+def port_free(port):
+    with socket.socket() as s:
+        return s.connect_ex(("127.0.0.1", port)) != 0
+
+
+def serve_background(port=8000):
+    """Start the website in this process (once) and return its port."""
+    if "port" in _server:
+        return _server["port"]
+    while not port_free(port):
+        port += 1
+    prepare()
+    from waitress import serve
+    threading.Thread(target=serve, args=(app,), kwargs={"host": "0.0.0.0", "port": port,
+                                                         "threads": 16}, daemon=True).start()
+    for _ in range(50):  # wait until it answers
+        if not port_free(port):
+            break
+        time.sleep(0.1)
+    _server["port"] = port
+    return port
+
+
+if __name__ == "__main__":
+    prepare()
     port = int(os.environ.get("PORT", "8000"))
     print(f"Open http://localhost:{port}  (same Wi-Fi devices: http://<this-PC-IP>:{port})")
     if "--open" in sys.argv or getattr(sys, "frozen", False):

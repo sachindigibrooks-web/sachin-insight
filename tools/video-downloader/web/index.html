@@ -68,6 +68,20 @@
   #status { color: var(--muted); font-size: 14px; min-height: 21px; word-break: break-word; }
   #status.err { color: var(--accent); }
   #status.ok { color: var(--ok); font-weight: 600; }
+  .lang { position: absolute; top: 14px; right: 16px; padding: 8px 14px; background: var(--card); color: var(--text); border: 1px solid var(--line); }
+  .panels { width: 100%; max-width: 680px; margin-top: 18px; display: grid; gap: 12px; }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; }
+  .panel summary { cursor: pointer; font-weight: 600; }
+  .panel .row { margin-top: 12px; }
+  .panel input { padding: 9px 12px; }
+  .list { list-style: none; padding: 0; margin: 10px 0 0; max-height: 320px; overflow: auto; }
+  .list li { display: flex; gap: 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); font-size: 14px; }
+  .list li div { flex: 1; min-width: 0; word-break: break-word; }
+  .list small { color: var(--muted); display: block; }
+  .list button, .list a.btn { padding: 6px 10px; font-size: 13px; text-decoration: none; border-radius: 8px; }
+  .list a.btn { background: linear-gradient(90deg, var(--accent), var(--accent-2)); color: #fff; font-weight: 600; white-space: nowrap; }
+  #qrBox { text-align: center; margin-top: 10px; }
+  #qrBox svg { width: 220px; height: 220px; border-radius: 8px; }
   .credit { margin: -18px 0 26px; font-weight: 700; letter-spacing: .3px; text-align: center; }
   .credit span { color: var(--accent); }
   .previews { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; margin-bottom: 12px; }
@@ -84,14 +98,15 @@
 </style>
 </head>
 <body>
-  <h1>Free <span>4K Video &amp; Photo</span> Downloader</h1>
-  <p class="sub">YouTube, Instagram, Facebook, TikTok, Pinterest, X and more — videos, playlists and photos, up to 8K or MP3. Free, no ads, no limits.</p>
-  <p class="credit">Made by <span>Sachin Samria</span></p>
+  <button id="langBtn" class="lang" type="button">हिंदी</button>
+  <h1 id="h1">Free <span>4K Video &amp; Photo</span> Downloader</h1>
+  <p class="sub" id="subline">YouTube, Instagram, Facebook, TikTok, Pinterest, X and more — videos, playlists and photos, up to 8K or MP3. Free, no ads, no limits.</p>
+  <p class="credit"><span data-i18n="credit">Made by Sachin Samria</span></p>
 
   <div class="card">
     <form id="fetchForm" class="row">
-      <input id="url" type="url" placeholder="Paste a video, playlist or photo link..." required autofocus>
-      <button id="fetchBtn" type="submit">Get</button>
+      <input id="url" type="url" data-i18n-ph="url_placeholder" placeholder="Paste a video, playlist or photo link..." required autofocus>
+      <button id="fetchBtn" type="submit" data-i18n="get">Get</button>
     </form>
 
     <div id="result" class="hidden">
@@ -101,9 +116,9 @@
       </div>
 
       <div id="plBox" class="pl hidden">
-        <label><input id="plCheck" type="checkbox"> <span id="plLabel">Download full playlist</span></label>
+        <label><input id="plCheck" type="checkbox"> <span id="plLabel" data-i18n="whole_playlist">Download full playlist</span></label>
         <div id="plItems" class="items hidden">
-          <span>Videos</span>
+          <span data-i18n="videos_label">Videos</span>
           <input id="items" placeholder="All — or e.g. 1-10, 1,3,5-7">
         </div>
         <details id="plList" class="hidden"><summary>Show videos</summary><ol id="entries"></ol></details>
@@ -112,7 +127,7 @@
       <div id="photoBox" class="hidden">
         <div id="previews" class="previews"></div>
         <div class="pl"><div class="items" style="margin-top:0">
-          <span>Which ones</span>
+          <span data-i18n="which_ones">Which ones</span>
           <input id="photoItems" placeholder="All — or e.g. 1-10, 1,3,5-7">
         </div></div>
       </div>
@@ -126,50 +141,55 @@
         </select>
       </div>
       <details id="more">
-        <summary>More options — clip, skip sponsors, data limit, AI subtitles, WhatsApp</summary>
+        <summary data-i18n="more_show">More options — clip, skip sponsors, data limit, AI subtitles, WhatsApp, ringtone</summary>
         <div class="grid">
-          <span>Clip only</span>
+          <span data-i18n="clip">Clip only</span>
           <div class="pair">
             <input id="start" placeholder="from 1:20:00"> <input id="end" placeholder="to 1:35:00">
-            <span class="hint">empty = full video</span>
+            <span class="hint" data-i18n="clip_hint">empty = full video</span>
           </div>
 
-          <label class="check"><input id="sponsor" type="checkbox"> Skip sponsors, intros, outros and “subscribe” reminders (YouTube)</label>
+          <label class="check"><input id="sponsor" type="checkbox"> <span data-i18n="sponsor">Skip sponsors, intros, outros and “subscribe” reminders (YouTube)</span></label>
 
-          <span>Data limit</span>
+          <span data-i18n="limit">Data limit</span>
           <div class="pair">
-            <input id="budget" type="number" min="1" placeholder="MB"> <span class="hint">picks the best quality that fits (playlist: total size)</span>
+            <input id="budget" type="number" min="1" placeholder="MB"> <span class="hint" data-i18n="limit_hint">picks the best quality that fits (playlist: total size)</span>
           </div>
 
-          <span>AI subtitles</span>
+          <span data-i18n="subs">AI subtitles</span>
           <div class="pair">
-            <select id="subLang"><option value="">Off</option><option value="orig">Original language</option></select>
+            <select id="subLang"><option value="" data-i18n="off">Off</option><option value="orig" data-i18n="orig_lang">Original language</option></select>
             <select id="subMode">
-              <option value="embed">Add to video (on/off)</option>
-              <option value="burn">Burn into picture</option>
-              <option value="srt">.srt file only</option>
+              <option value="embed" data-i18n="mode_embed">Add to video (on/off)</option>
+              <option value="burn" data-i18n="mode_burn">Burn into picture</option>
+              <option value="srt" data-i18n="mode_srt">.srt file only</option>
             </select>
-            <select id="aiModel"><option value="accurate">Accurate (slower)</option><option value="fast">Fast</option></select>
+            <select id="aiModel"><option value="accurate" data-i18n="ai_accurate">Accurate (slower)</option><option value="fast" data-i18n="ai_fast">Fast</option></select>
           </div>
 
-          <span>WhatsApp copy</span>
-          <select id="whatsapp"><option value="">Off</option></select>
+          <span data-i18n="whatsapp">WhatsApp copy</span>
+          <select id="whatsapp"><option value="" data-i18n="off">Off</option></select>
+
+          <span data-i18n="ringtone">Ringtone (30 sec) from</span>
+          <div class="pair">
+            <input id="ring" placeholder="0:45"> <span class="hint" data-i18n="ringtone_hint">empty = no ringtone</span>
+          </div>
         </div>
-        <p class="hint" style="margin:10px 0 0">AI subtitles run on this PC. The first time, the AI models download once (≈150–1100 MB).</p>
+        <p class="hint" style="margin:10px 0 0" data-i18n="ai_note">AI subtitles run on this PC. The first time, the AI models download once (≈150–1100 MB).</p>
       </details>
       </div>
-      <button id="dlBtn" type="button" style="width:100%">Download</button>
+      <button id="dlBtn" type="button" style="width:100%" data-i18n="download">Download</button>
     </div>
 
     <div class="bar hidden" id="bar"><div></div></div>
     <div id="status"></div>
 
     <details style="margin-top:14px">
-      <summary>Private or login-only? (Instagram photos &amp; stories, private posts, age-restricted…)</summary>
+      <summary data-i18n="private">Private or login-only? (Instagram photos &amp; stories, private posts, age-restricted…)</summary>
       <div class="login" style="margin-top:10px">
-        <span>Use login from</span>
+        <span data-i18n="login">Use login from</span>
         <select id="browser">
-          <option value="">None</option>
+          <option value="" data-i18n="none">None</option>
           <option value="firefox">Firefox</option>
           <option value="chrome">Chrome</option>
           <option value="edge">Edge</option>
@@ -179,31 +199,82 @@
           <option value="safari">Safari</option>
         </select>
       </div>
-      Log in to the site in that browser on the PC running this downloader, close the browser, then try again. Your password is never seen or stored.
+      <span data-i18n="private_hint">Log in to the site in that browser on the PC running this downloader, close the browser, then try again. Your password is never seen or stored.</span>
+    </details>
+  </div>
+
+  <div class="panels">
+    <details class="panel" id="phonePanel">
+      <summary data-i18n="phone">Phone / Website</summary>
+      <p class="hint" data-i18n="phone_hint">Scan with your phone's camera (phone and PC on the same Wi-Fi):</p>
+      <div id="qrBox"></div>
+    </details>
+    <details class="panel" id="histPanel">
+      <summary data-i18n="history">History</summary>
+      <div class="row"><input id="histQ" data-i18n-ph="search" placeholder="Search"></div>
+      <ul class="list" id="histList"></ul>
+    </details>
+    <details class="panel" id="searchPanel">
+      <summary data-i18n="search_videos">Search in videos</summary>
+      <p class="hint" data-i18n="search_hint">Type a word spoken in your downloaded videos (at least 3 letters):</p>
+      <form class="row" id="searchForm"><input id="searchQ"><button type="submit" data-i18n="search">Search</button></form>
+      <ul class="list" id="searchList"></ul>
     </details>
   </div>
 
   <div class="sites">
-    <p>Videos from</p>
+    <p data-i18n="videos_from">Videos from</p>
     <div class="feats">
       <span>YouTube</span><span>Instagram</span><span>Facebook</span><span>TikTok</span><span>X / Twitter</span>
       <span>Vimeo</span><span>Dailymotion</span><span>Reddit</span><span>Twitch</span><span>SoundCloud</span>
       <span>Pinterest</span><span>LinkedIn</span><span>+1000 more</span>
     </div>
-    <p style="margin-top:14px">Photos from</p>
+    <p style="margin-top:14px" data-i18n="photos_from">Photos from</p>
     <div class="feats">
       <span>Instagram</span><span>Pinterest</span><span>X / Twitter</span><span>Reddit</span><span>Facebook</span>
       <span>Tumblr</span><span>Flickr</span><span>Imgur</span><span>DeviantArt</span><span>ArtStation</span>
       <span>Bluesky</span><span>+300 more</span>
     </div>
   </div>
-  <footer><b>Made by Sachin Samria</b><br>Only download videos and photos you own or have permission to download. Powered by yt-dlp and gallery-dl.</footer>
+  <footer><b>Made by Sachin Samria</b><br><span data-i18n="disclaimer">Only download videos and photos you own or have permission to download.</span> Powered by yt-dlp and gallery-dl.</footer>
 
 <script>
 const $ = id => document.getElementById(id);
 let current = null;  // { url, info }
 
-function status(text, cls = "") { $("status").textContent = text; $("status").className = cls; }
+let cfg = null, lang = "en";
+try { lang = localStorage.getItem("lang") || "en"; } catch (e) {}
+const L = key => cfg && cfg.ui[key] ? cfg.ui[key][lang === "hi" ? 1 : 0] : null;
+function tr(text) {  // status / progress messages, phrase by phrase
+  if (lang !== "hi" || !cfg || !text) return text;
+  for (const [en, hi] of cfg.phrases) text = text.split(en).join(hi);
+  return text;
+}
+let lastStatus = ["", ""];
+function status(text, cls = "") {
+  lastStatus = [text, cls];
+  $("status").textContent = tr(text); $("status").className = cls;
+}
+function applyLang() {
+  if (!cfg) return;
+  for (const el of document.querySelectorAll("[data-i18n]"))
+    el.textContent = L(el.dataset.i18n).replace(/^[▸▾]\s*/, "").replace(/:\s*$/, "");
+  for (const el of document.querySelectorAll("[data-i18n-ph]")) el.placeholder = L(el.dataset.i18nPh);
+  for (const opt of $("subLang").options)
+    if (opt.dataset.name) opt.textContent = lang === "hi" ? (cfg.language_names_hi[opt.dataset.name] || opt.dataset.name) : opt.dataset.name;
+  if (lang === "hi") $("h1").textContent = L("app_title");
+  else $("h1").innerHTML = "Free <span>4K Video &amp; Photo</span> Downloader";
+  $("subline").classList.toggle("hidden", lang === "hi");
+  $("langBtn").textContent = L("language");
+  document.documentElement.lang = lang;
+  status(...lastStatus);
+  if ($("histPanel").open) loadHistory();  // its buttons are built in the current language
+}
+$("langBtn").addEventListener("click", () => {
+  lang = lang === "hi" ? "en" : "hi";
+  try { localStorage.setItem("lang", lang); } catch (e) {}
+  applyLang();
+});
 function bar(pct) { $("bar").classList.remove("hidden"); $("bar").firstElementChild.style.width = pct + "%"; }
 function busy(on) { $("dlBtn").disabled = $("fetchBtn").disabled = $("plCheck").disabled = on; }
 
@@ -215,9 +286,58 @@ async function api(path, body) {
   return data;
 }
 
-fetch("/api/config").then(r => r.json()).then(cfg => {
-  for (const [name, code] of cfg.languages) $("subLang").add(new Option(name, code));
+fetch("/api/config").then(r => r.json()).then(c => {
+  cfg = c;
+  for (const [name, code] of cfg.languages) {
+    const opt = new Option(name, code); opt.dataset.name = name; $("subLang").add(opt);
+  }
   for (const mb of cfg.whatsapp) $("whatsapp").add(new Option(`${mb} MB`, mb));
+  applyLang();
+});
+
+function when(t) { return new Date(t * 1000).toLocaleString(); }
+function clock(s) { s = Math.floor(s); const m = Math.floor(s / 60);
+  return m >= 60 ? `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`
+                 : `${m}:${String(s % 60).padStart(2, "0")}`; }
+function li(title, small, action) {
+  const item = document.createElement("li"), text = document.createElement("div");
+  const b = document.createElement("b"), sm = document.createElement("small");
+  b.textContent = title; sm.textContent = small; text.append(b, sm); item.append(text, action);
+  return item;
+}
+
+$("phonePanel").addEventListener("toggle", async () => {
+  if (!$("phonePanel").open || $("qrBox").childElementCount) return;
+  const r = await fetch("/api/qr.svg");
+  $("qrBox").innerHTML = await r.text();
+  const p = document.createElement("p"); p.innerHTML = "<b></b>";
+  p.firstChild.textContent = r.headers.get("X-Url"); $("qrBox").append(p);
+});
+
+async function loadHistory() {
+  const items = await (await fetch("/api/history?q=" + encodeURIComponent($("histQ").value))).json();
+  $("histList").innerHTML = "";
+  for (const e of items) {
+    const again = document.createElement("button");
+    again.type = "button"; again.textContent = L("again") || "Download again";
+    again.onclick = () => { $("url").value = e.url; scrollTo(0, 0); $("fetchForm").requestSubmit(); };
+    $("histList").append(li(e.title, `${e.site || e.kind} · ${when(e.time)}`, again));
+  }
+  if (!items.length) $("histList").innerHTML = "<li>—</li>";
+}
+$("histPanel").addEventListener("toggle", () => $("histPanel").open && loadHistory());
+$("histQ").addEventListener("input", loadHistory);
+
+$("searchForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const items = await (await fetch("/api/search?q=" + encodeURIComponent($("searchQ").value))).json();
+  $("searchList").innerHTML = "";
+  for (const r of items) {
+    const a = Object.assign(document.createElement("a"), { className: "btn", target: "_blank",
+      href: `/watch/${r.video_id}?t=${Math.floor(r.start)}`, textContent: `▶ ${clock(r.start)}` });
+    $("searchList").append(li(r.text, r.title, a));
+  }
+  if (!items.length) $("searchList").innerHTML = "<li>—</li>";
 });
 
 function seconds(t) {
@@ -337,7 +457,7 @@ $("dlBtn").addEventListener("click", async () => {
       option: +$("quality").value, container: $("container").value, browser: $("browser").value,
       start: $("start").value, end: $("end").value, sponsorblock: $("sponsor").checked,
       budget_mb: $("budget").value, subs_lang: $("subLang").value, subs_mode: $("subMode").value,
-      ai_model: $("aiModel").value, whatsapp_mb: $("whatsapp").value });
+      ai_model: $("aiModel").value, whatsapp_mb: $("whatsapp").value, ringtone: $("ring").value });
     while (true) {
       await new Promise(r => setTimeout(r, 1000));
       const p = await (await fetch(`/api/progress/${job}`)).json();

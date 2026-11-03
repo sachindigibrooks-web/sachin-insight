@@ -25,7 +25,7 @@ class PhotoInfo:
     title: str = ""
 
 
-def _configure(out_dir=None, browser=None, items=None):
+def _configure(out_dir=None, browser=None, items=None, archive=None):
     from gallery_dl import config
     config.clear()
     config.set((), "retries", 2)
@@ -38,6 +38,13 @@ def _configure(out_dir=None, browser=None, items=None):
         config.set(("extractor",), "cookies", [browser])
     if items:
         config.set(("extractor",), "image-range", items)
+    if archive:  # remembers finished files so a follow only fetches new ones
+        config.set(("extractor",), "archive", archive)
+    # Videos inside posts go through yt-dlp; give it the bundled ffmpeg too.
+    import core
+    ff = core.base_opts().get("ffmpeg_location")
+    if ff:
+        config.set(("downloader", "ytdl"), "raw-options", {"ffmpeg_location": ff})
 
 
 def supported(url):
@@ -75,16 +82,22 @@ def probe(url, browser=None):
     return PhotoInfo(j.extractor.category.title(), len(j.data_urls), images[:12], title)
 
 
-def download(url, out_dir, progress=None, browser=None, items=None, total=None):
+def download(url, out_dir, progress=None, browser=None, items=None, total=None, archive=None,
+             allow_empty=False):
     """Download every photo of `url` into out_dir/Photos/<site>/... Returns the saved files."""
     from gallery_dl import job
     files = []
 
     class Job(job.DownloadJob):
+        def handle_skip(self):  # already downloaded before (archive or file on disk)
+            self.skipped = True
+            super().handle_skip()
+
         def handle_url(self, url, kwdict):
+            self.skipped = False
             super().handle_url(url, kwdict)
             path = self.pathfmt.realpath
-            if path and os.path.isfile(path) and path not in files:
+            if not self.skipped and path and os.path.isfile(path) and path not in files:
                 files.append(path)
             if progress:
                 n = len(files)
@@ -92,12 +105,21 @@ def download(url, out_dir, progress=None, browser=None, items=None, total=None):
                 progress(min(pct, 99), f"Saved {n}" + (f" of {total}" if total else "") + " files")
 
     with _lock:
-        _configure(out_dir, browser, items)
+        _configure(out_dir, browser, items, archive)
         j = Job(url)
         j.run()
-    if not files:
+    if not files and not allow_empty:
         raise ValueError("No photos could be downloaded (the post may need a login).")
     return files
+
+
+def mark_existing(url, archive, browser=None, items=None):
+    """Record the current items in `archive` without downloading them (for follows)."""
+    from gallery_dl import config, job
+    with _lock:
+        _configure(None, browser, items, archive)
+        config.set(("extractor",), "archive-event", "file,skip")
+        job.SimulationJob(url).run()
 
 
 def pick_error(video_error, photo_error):

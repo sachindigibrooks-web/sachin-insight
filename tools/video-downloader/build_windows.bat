@@ -1,7 +1,6 @@
 @echo off
-REM Builds two single-file programs in the dist folder (ffmpeg bundled, no Python needed to run them):
-REM   FreeVideoDownloader.exe     - desktop app
-REM   FreeVideoDownloaderWeb.exe  - website version (opens in the browser)
+REM Builds the app into dist\FreeVideoDownloader\ and, if Inno Setup 6 is installed,
+REM the installer dist\FreeVideoDownloader-Setup.exe (Start Menu + Desktop shortcut + uninstall).
 cd /d "%~dp0"
 set PY=
 py -3 --version >nul 2>&1 && set PY=py -3
@@ -12,22 +11,19 @@ if not defined PY (
   exit /b 1
 )
 %PY% -m pip install --upgrade -r requirements.txt pyinstaller || goto :fail
-
-echo.
-echo [1/2] Building desktop app...
-%PY% -m PyInstaller --noconfirm --onefile --windowed --name FreeVideoDownloader ^
-  --collect-all imageio_ffmpeg --collect-all faster_whisper --collect-all ctranslate2 --collect-all gallery_dl app.py || goto :fail
-
-echo.
-echo [2/2] Building website version...
-%PY% -m PyInstaller --noconfirm --onefile --name FreeVideoDownloaderWeb ^
-  --add-data "web;web" --collect-all imageio_ffmpeg --collect-all faster_whisper --collect-all ctranslate2 --collect-all gallery_dl web.py || goto :fail
-
+%PY% build.py --installer
+if errorlevel 1 (
+  echo.
+  echo The app folder is ready, but the installer was not made.
+  echo Install Inno Setup 6 from https://jrsoftware.org/isdl.php and run this again.
+)
 rmdir /s /q build 2>nul
 del /q *.spec 2>nul
 echo.
 echo ============================================================
-echo  Done! Your .exe files are in: %~dp0dist
+echo  Done! Look in: %~dp0dist
+echo    FreeVideoDownloader-Setup.exe  - installer to share
+echo    FreeVideoDownloader\           - the app folder (portable)
 echo ============================================================
 explorer dist
 pause

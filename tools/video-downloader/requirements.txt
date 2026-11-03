@@ -3,6 +3,7 @@ imageio-ffmpeg
 flask
 waitress
 gallery-dl
+qrcode
 # AI subtitles (offline speech-to-text + translation)
 faster-whisper
 sentencepiece
