@@ -1,7 +1,7 @@
 # sachin-insight
 ## Tools
 
-- `tools/video-downloader` — free 4K/8K video downloader — desktop app + website (YouTube and 1000+ sites), built on yt-dlp. See its `README.md`.
+- `tools/video-downloader` — free 4K/8K video & playlist downloader — desktop app + website (YouTube, Instagram, Facebook, TikTok, X and 1000+ sites), built on yt-dlp. See its `README.md`.
 
 ## Vendored resources
 

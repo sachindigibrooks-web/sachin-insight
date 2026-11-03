@@ -29,23 +29,37 @@
   input, select { width: 100%; padding: 12px 14px; border: 1px solid var(--line);
                   background: var(--bg); color: var(--text); min-width: 0; }
   input:focus, select:focus { outline: 2px solid var(--accent); border-color: transparent; }
+  input[type=checkbox] { width: 18px; height: 18px; padding: 0; accent-color: var(--accent); }
   button { border: 0; padding: 12px 20px; cursor: pointer; font-weight: 600; white-space: nowrap;
            background: linear-gradient(90deg, var(--accent), var(--accent-2)); color: #fff; }
-  button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
   button:disabled { opacity: .55; cursor: wait; }
   .hidden { display: none !important; }
   #result { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 18px; }
   .meta { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
-  .meta img { width: 120px; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; background: var(--line); }
+  .meta img { width: 120px; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; background: var(--line); flex: none; }
   .meta b { display: block; word-break: break-word; }
   .meta small { color: var(--muted); }
+  .badge { display: inline-block; font-size: 12px; font-weight: 600; color: #fff; background: var(--accent);
+           border-radius: 6px; padding: 1px 7px; margin-right: 6px; vertical-align: 1px; }
   .opts { display: grid; grid-template-columns: 1fr 110px; gap: 10px; margin-bottom: 12px; }
+  .pl { border: 1px dashed var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+  .pl label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; }
+  .pl .items { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; margin-top: 10px; }
+  .pl .items span { color: var(--muted); font-size: 14px; }
+  .pl .items input { padding: 8px 12px; }
+  details { margin-top: 10px; font-size: 14px; color: var(--muted); }
+  details ol { max-height: 180px; overflow: auto; margin: 6px 0 0; padding-left: 28px; }
+  .login { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; margin-bottom: 12px; }
+  .login span { color: var(--muted); font-size: 14px; white-space: nowrap; }
+  .login select { padding: 8px 12px; }
   .bar { height: 10px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 16px 0 8px; }
   .bar div { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .3s; }
   #status { color: var(--muted); font-size: 14px; min-height: 21px; word-break: break-word; }
   #status.err { color: var(--accent); }
   #status.ok { color: var(--ok); font-weight: 600; }
-  .feats { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 24px; max-width: 680px; }
+  .sites { max-width: 680px; margin-top: 24px; text-align: center; }
+  .sites p { margin: 0 0 8px; font-size: 13px; color: var(--muted); }
+  .feats { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
   .feats span { font-size: 13px; color: var(--muted); border: 1px solid var(--line); padding: 4px 10px; border-radius: 99px; }
   footer { margin-top: 28px; font-size: 12px; color: var(--muted); text-align: center; max-width: 560px; }
   @media (max-width: 520px) {
@@ -56,19 +70,29 @@
 </head>
 <body>
   <h1>Free <span>4K Video</span> Downloader</h1>
-  <p class="sub">Paste a YouTube link — get every quality up to 8K, or MP3. Free, no ads, no limits.</p>
+  <p class="sub">YouTube, Instagram, Facebook, TikTok, X and more — single videos or whole playlists, up to 8K or MP3. Free, no ads, no limits.</p>
 
   <div class="card">
     <form id="fetchForm" class="row">
-      <input id="url" type="url" placeholder="https://www.youtube.com/watch?v=..." required autofocus>
+      <input id="url" type="url" placeholder="Paste a video or playlist link..." required autofocus>
       <button id="fetchBtn" type="submit">Get Video</button>
     </form>
 
     <div id="result" class="hidden">
       <div class="meta">
-        <img id="thumb" alt="">
-        <div><b id="title"></b><small id="duration"></small></div>
+        <img id="thumb" alt="" referrerpolicy="no-referrer" onerror="this.classList.add('hidden')">
+        <div><b id="title"></b><small id="sub"></small></div>
       </div>
+
+      <div id="plBox" class="pl hidden">
+        <label><input id="plCheck" type="checkbox"> <span id="plLabel">Download full playlist</span></label>
+        <div id="plItems" class="items hidden">
+          <span>Videos</span>
+          <input id="items" placeholder="All — or e.g. 1-10, 1,3,5-7">
+        </div>
+        <details id="plList" class="hidden"><summary>Show videos</summary><ol id="entries"></ol></details>
+      </div>
+
       <div class="opts">
         <select id="quality" aria-label="Quality"></select>
         <select id="container" aria-label="Format">
@@ -81,25 +105,43 @@
 
     <div class="bar hidden" id="bar"><div></div></div>
     <div id="status"></div>
+
+    <details style="margin-top:14px">
+      <summary>Private or login-only video? (Instagram stories, private posts, age-restricted…)</summary>
+      <div class="login" style="margin-top:10px">
+        <span>Use login from</span>
+        <select id="browser">
+          <option value="">None</option>
+          <option value="firefox">Firefox</option>
+          <option value="chrome">Chrome</option>
+          <option value="edge">Edge</option>
+          <option value="brave">Brave</option>
+          <option value="opera">Opera</option>
+          <option value="vivaldi">Vivaldi</option>
+          <option value="safari">Safari</option>
+        </select>
+      </div>
+      Log in to the site in that browser on the PC running this downloader, close the browser, then try again. Your password is never seen or stored.
+    </details>
   </div>
 
-  <div class="feats">
-    <span>8K / 4K / 2K / 1080p</span><span>MP3 audio</span><span>Parallel chunk download</span>
-    <span>1000+ sites</span><span>Works on phone</span>
+  <div class="sites">
+    <p>Works with</p>
+    <div class="feats">
+      <span>YouTube</span><span>Instagram</span><span>Facebook</span><span>TikTok</span><span>X / Twitter</span>
+      <span>Vimeo</span><span>Dailymotion</span><span>Reddit</span><span>Twitch</span><span>SoundCloud</span>
+      <span>Pinterest</span><span>LinkedIn</span><span>+1000 more</span>
+    </div>
   </div>
   <footer>Only download videos you own or have permission to download. Powered by yt-dlp.</footer>
 
 <script>
 const $ = id => document.getElementById(id);
-let currentUrl = "";
+let current = null;  // { url, info }
 
 function status(text, cls = "") { $("status").textContent = text; $("status").className = cls; }
 function bar(pct) { $("bar").classList.remove("hidden"); $("bar").firstElementChild.style.width = pct + "%"; }
-
-function youtubeId(url) {
-  const m = url.match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([\w-]{11})/);
-  return m && m[1];
-}
+function busy(on) { $("dlBtn").disabled = $("fetchBtn").disabled = $("plCheck").disabled = on; }
 
 async function api(path, body) {
   const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" },
@@ -109,43 +151,73 @@ async function api(path, body) {
   return data;
 }
 
-$("fetchForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  currentUrl = $("url").value.trim();
-  $("fetchBtn").disabled = true;
-  $("result").classList.add("hidden");
+async function fetchInfo(url, playlist) {
+  busy(true);
   $("bar").classList.add("hidden");
-  status("Fetching available qualities...");
+  status(playlist ? "Reading playlist..." : "Fetching available qualities...");
   try {
-    const info = await api("/api/info", { url: currentUrl });
-    $("title").textContent = info.title;
-    const d = info.duration;
-    $("duration").textContent = d ? `${Math.floor(d / 60)}:${String(Math.floor(d % 60)).padStart(2, "0")}` : "";
-    const id = youtubeId(currentUrl);
-    $("thumb").classList.toggle("hidden", !id);
-    if (id) $("thumb").src = `https://i.ytimg.com/vi/${id}/mqdefault.jpg`;
-    $("quality").innerHTML = info.options.map((o, i) => `<option value="${i}"></option>`).join("");
-    [...$("quality").options].forEach((opt, i) => opt.textContent = info.options[i]);
-    $("result").classList.remove("hidden");
-    status(`${info.options.length} options found — highest quality selected.`);
+    const info = await api("/api/info", { url, playlist, browser: $("browser").value });
+    current = { url, info };
+    show(info);
   } catch (err) {
     status(err.message, "err");
   } finally {
-    $("fetchBtn").disabled = false;
+    busy(false);
   }
+}
+
+function show(info) {
+  $("title").textContent = info.title;
+  const site = info.site ? info.site.replace(/(Tab|Playlist|Set|Vod)$/, "") : "";
+  const d = info.duration;
+  $("sub").innerHTML = "";
+  if (site) $("sub").insertAdjacentHTML("beforeend", `<span class="badge"></span>`);
+  if (site) $("sub").firstChild.textContent = site;
+  $("sub").append(info.is_playlist ? `Playlist · ${info.count} videos`
+    : d ? `${Math.floor(d / 60)}:${String(Math.floor(d % 60)).padStart(2, "0")}` : "");
+  $("thumb").classList.toggle("hidden", !info.thumbnail);
+  if (info.thumbnail) $("thumb").src = info.thumbnail;
+
+  $("plBox").classList.toggle("hidden", !(info.is_playlist || info.has_playlist));
+  $("plCheck").checked = info.is_playlist;
+  $("plLabel").textContent = info.is_playlist ? `Download full playlist (${info.count} videos)`
+                                              : "Download full playlist";
+  $("plItems").classList.toggle("hidden", !info.is_playlist);
+  $("plList").classList.toggle("hidden", !info.is_playlist);
+  $("items").value = "";
+  $("entries").innerHTML = "";
+  for (const t of info.entries) { const li = document.createElement("li"); li.textContent = t; $("entries").append(li); }
+
+  $("quality").innerHTML = "";
+  info.options.forEach((label, i) => $("quality").add(new Option(label, i)));
+  $("container").disabled = false;
+  $("result").classList.remove("hidden");
+  status(info.is_playlist ? "Each video downloads at the best quality up to the one you pick. You get one .zip file."
+       : info.has_playlist ? "This video is part of a playlist — tick the box to download all of it."
+       : `${info.options.length} options found — highest quality selected.`);
+}
+
+$("fetchForm").addEventListener("submit", e => {
+  e.preventDefault();
+  $("result").classList.add("hidden");
+  fetchInfo($("url").value.trim(), false);
 });
+
+$("plCheck").addEventListener("change", () => fetchInfo(current.url, $("plCheck").checked));
 
 $("quality").addEventListener("change", () => {
   $("container").disabled = $("quality").selectedOptions[0].textContent.startsWith("Audio");
 });
 
 $("dlBtn").addEventListener("click", async () => {
-  $("dlBtn").disabled = $("fetchBtn").disabled = true;
+  if ($("url").value.trim() !== current.url) return $("fetchForm").requestSubmit();
+  busy(true);
   bar(0);
   status("Starting download on server...");
   try {
     const { job } = await api("/api/download", {
-      url: currentUrl, option: +$("quality").value, container: $("container").value });
+      url: current.url, playlist: current.info.is_playlist, items: $("items").value,
+      option: +$("quality").value, container: $("container").value, browser: $("browser").value });
     while (true) {
       await new Promise(r => setTimeout(r, 1000));
       const p = await (await fetch(`/api/progress/${job}`)).json();
@@ -153,7 +225,7 @@ $("dlBtn").addEventListener("click", async () => {
       bar(p.percent);
       status(p.text);
       if (p.status === "done") {
-        status("Ready! Your download is starting...", "ok");
+        status(p.text.replace("Ready!", "Ready! Your download is starting..."), "ok");
         window.location.href = `/api/file/${job}`;
         break;
       }
@@ -161,7 +233,7 @@ $("dlBtn").addEventListener("click", async () => {
   } catch (err) {
     status(err.message, "err");
   } finally {
-    $("dlBtn").disabled = $("fetchBtn").disabled = false;
+    busy(false);
   }
 });
 </script>

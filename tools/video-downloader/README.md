@@ -1,9 +1,30 @@
 # Free Video Downloader
 
-A simple 4K Video Downloader / IDM-style app (desktop app **and** website): paste a YouTube (or 1000+ other
-sites) link, it lists every available quality — 8K / 4K / 2K / 1080p / 720p …
+A simple 4K Video Downloader / IDM-style app (desktop app **and** website): paste a video
+or playlist link, it lists every available quality — 8K / 4K / 2K / 1080p / 720p …
 plus MP3 audio — and downloads with parallel chunks. 100% free, no ads, no limits.
 Built on [yt-dlp](https://github.com/yt-dlp/yt-dlp).
+
+**Sites:** YouTube, Instagram, Facebook, X / Twitter, TikTok, Vimeo, Dailymotion, Reddit,
+Twitch, SoundCloud, Pinterest, LinkedIn and [1000+ more](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md).
+
+## Playlist download
+
+Playlist ka link daalo (ya playlist wali video ka link daal kar **Download full playlist**
+tick karo). Quality "Up to 1080p" jaisi hoti hai — har video us quality tak ki best me aati hai.
+**Videos** box me `1-10` ya `1,3,5-7` likh kar sirf kuch videos le sakte ho (khali = saari).
+Desktop app playlist ke naam ka folder banati hai; website ek `.zip` file deti hai.
+Private / deleted videos apne aap skip ho jaati hain.
+
+## Private / login wali videos (Instagram, Facebook, …)
+
+Kuch videos bina login ke nahi milti (private posts, stories, age-restricted). Unke liye:
+1. Apne browser (Firefox sabse achha chalta hai) me us site par login karo.
+2. Browser poora band karo.
+3. App me **Use login from** me wo browser chuno aur dobara try karo.
+
+App browser ka saved login use karti hai — password kabhi nahi maangti ya save karti.
+Chrome/Edge par kabhi-kabhi login read nahi hota; tab Firefox use karo.
 
 ## Chalane ka tarika (Windows)
 
@@ -60,6 +81,7 @@ hai) — **More info → Run anyway** dabao.
 ```bash
 python core.py "<url>"            # qualities list karo
 python core.py "<url>" 1 D:\Videos  # option 1 (highest) download karo
+python core.py "<playlist-url>" 3 D:\Videos --items=1-10  # playlist ki pehli 10 videos
 ```
 
 ## Tips
