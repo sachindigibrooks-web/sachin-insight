@@ -44,7 +44,7 @@ def home():
         <a href="/near1">N1</a> <a href="/near2">N2</a> <a href="/redirect1">R</a>
         <a href="/loop1">L</a> <a href="/missing">gone</a> <a href="/error">err</a>
         <a href="/slow">slow</a> <a href="/deep1">deep</a> <a href="/blocked/page">blocked</a>
-        <a href="/Upper_Case">U</a> <a href="/params?x=1">P</a>
+        <a href="/Upper_Case">U</a> <a href="/params?x=1">P</a> <a href="/js">JS app</a>
         <a href="{ext}/ext-missing">external broken</a> <a href="{ext}/ext-ok">external ok</a>
         <a href="mailto:x@example.com">mail</a>""",
                 head='<link rel="canonical" href="/">')
@@ -128,6 +128,24 @@ def orphan():
 @app.get("/params")
 def misc():
     return page(title="Some other page title for this test", body=f"<p>{text(300)}</p><a href='/'>h</a>")
+
+
+@app.get("/js")
+def js_page():
+    """Like a React / Vue app: the raw HTML is an empty shell, JavaScript builds everything."""
+    content = text(300)
+    return f"""<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width">
+        <meta name="description" content="A page built entirely by JavaScript, like a single page app.">
+        </head><body><div id="root"></div><script>
+        document.title = "Page rendered by JavaScript for testing";
+        document.getElementById("root").innerHTML =
+          "<h1>Built by JavaScript</h1><h2>Part</h2><p>{content}</p><a href='/js-child'>child</a>";
+        </script></body></html>"""
+
+
+@app.get("/js-child")
+def js_child():
+    return page(title="Child page only linked from JavaScript", body=f"<p>{text(300)}</p><a href='/'>h</a>")
 
 
 @app.get("/ext-ok")

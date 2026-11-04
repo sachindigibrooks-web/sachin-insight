@@ -3,3 +3,4 @@ selectolax
 flask
 waitress
 openpyxl
+playwright

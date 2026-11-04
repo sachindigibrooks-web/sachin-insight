@@ -45,25 +45,45 @@ def main():
             continue
         threading.Thread(target=srv.serve_forever, daemon=True).start()
     time.sleep(0.5)
-    c = crawler.Crawl(crawler.Settings(f"http://localhost:{test_site.PORT}/", concurrency=4))
+    failed = run_checks(render=False, expected=EXPECTED | {"h1_missing": "/js", "thin_content": "/js"})
+    failed += run_checks(render=True, expected={
+        "js_content": "/js", "title_missing": "/a", "broken_internal_link": "/"},
+        not_expected={"h1_missing": "/js", "thin_content": "/js", "title_missing": "/js"},
+        must_crawl="/js-child")
+    return failed
+
+
+def run_checks(render, expected, not_expected=NOT_EXPECTED, must_crawl=None):
+    s = crawler.Settings(f"http://localhost:{test_site.PORT}/", concurrency=4, render_js=render)
+    c = crawler.Crawl(s)
     t0 = time.time()
     c.run()
-    print(f"crawl {c.progress['status']}: {c.progress['crawled']} URLs in {time.time() - t0:.1f}s")
+    mode = "rendered" if render else "raw HTML"
+    print(f"[{mode}] crawl {c.progress['status']}: {c.progress['crawled']} URLs in {time.time() - t0:.1f}s"
+          + (f" with {c.db.meta('renderer')}" if render else ""))
+    if render and c.db.meta("render_error"):
+        print(f"[{mode}] SKIPPED - no browser: {c.db.meta('render_error')[:200]}")
+        return 0
     found = {}
     for r in c.db.query("SELECT code, url, detail FROM issues"):
         found.setdefault(r["code"], []).append(r["url"] + " " + r["detail"])
     failed = 0
-    for code, needle in EXPECTED.items():
-        hits = [x for x in found.get(code, []) if needle in x.split(" ")[0] or needle in x]
+    for code, needle in expected.items():
+        hits = [x for x in found.get(code, []) if x.split(" ")[0].endswith(needle) or needle in x]
         if not hits:
             failed += 1
-            print(f"MISSING  {code}: expected {needle}, got {found.get(code, [])[:3]}")
-    for code, needle in NOT_EXPECTED.items():
+            print(f"[{mode}] MISSING  {code}: expected {needle}, got {found.get(code, [])[:3]}")
+    for code, needle in not_expected.items():
         bad = [x for x in found.get(code, []) if x.split(" ")[0].endswith(needle)]
         if bad:
             failed += 1
-            print(f"WRONG    {code}: should not report {needle}: {bad[:2]}")
-    print(f"{len(EXPECTED) - failed}/{len(EXPECTED)} checks OK" if not failed else f"{failed} problem(s)")
+            print(f"[{mode}] WRONG    {code}: should not report {needle}: {bad[:2]}")
+    if must_crawl and not c.db.query("SELECT 1 FROM pages WHERE url LIKE ? AND status = 200",
+                                     ("%" + must_crawl,)):
+        failed += 1
+        print(f"[{mode}] MISSING  page {must_crawl} was not crawled")
+    print(f"[{mode}] {len(expected) - failed}/{len(expected)} checks OK" if not failed
+          else f"[{mode}] {failed} problem(s)")
     return failed
 
 

@@ -19,6 +19,14 @@ UI = {
     "check_images": ["Check images", "इमेज जाँचें"],
     "subdomains": ["Include subdomains", "सबडोमेन भी"],
     "sitemaps": ["Use XML sitemaps", "XML sitemap इस्तेमाल करें"],
+    "render_js": ["Render JavaScript (React, Vue, Next.js sites - slower)",
+                  "JavaScript render करें (React, Vue, Next.js साइट - धीमा)"],
+    "render_hint": ["Uses Microsoft Edge or Google Chrome already on this PC to see pages like Google "
+                    "does. Pages whose content needs JavaScript are flagged - AI assistants can't see "
+                    "that content.",
+                    "इस PC के Microsoft Edge या Google Chrome से पेज वैसे देखता है जैसे Google देखता है। "
+                    "जिन पेजों का कंटेंट JavaScript से बनता है उन्हें दिखाता है - AI असिस्टेंट वह कंटेंट नहीं देख पाते।"],
+    "rendered_with": ["Rendered with", "Render किया गया"],
     "settings": ["Settings", "सेटिंग"],
     "crawls": ["Your crawls", "आपके क्रॉल"],
     "crawling": ["Crawling", "क्रॉल हो रहा है"],

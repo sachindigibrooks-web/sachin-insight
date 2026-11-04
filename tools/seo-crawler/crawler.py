@@ -39,6 +39,7 @@ class Settings:
     check_images: bool = True
     include_subdomains: bool = False
     use_sitemaps: bool = True
+    render_js: bool = False  # also open pages in a headless browser (for React/Vue/Next.js sites)
     timeout: float = 20.0
     user_agent: str = USER_AGENT
 
@@ -218,6 +219,9 @@ class Crawl:
                                      follow_redirects=False, http2=False) as client:
             self.client = client
             self.queue = asyncio.Queue()
+            self.renderer = None
+            if self.s.render_js:
+                await self.start_renderer()
             await self.load_robots()
             self.add(self.start, 0, "start")
             sitemap_urls = await self.load_sitemaps() if self.s.use_sitemaps else []
@@ -233,7 +237,21 @@ class Crawl:
             for w in workers:
                 w.cancel()
             await asyncio.gather(*workers, return_exceptions=True)
+            if self.renderer:
+                await self.renderer.stop()
         self.db.commit()
+
+    async def start_renderer(self):
+        import renderer
+        self.progress["status"] = "starting browser"
+        r = renderer.Renderer(self.s.user_agent, self.s.concurrency, self.s.timeout)
+        try:
+            await r.start()
+            self.renderer = r
+            self.db.set_meta("renderer", r.browser_name)
+        except Exception as e:  # crawl without rendering rather than not at all
+            self.db.set_meta("render_error", str(e)[:500])
+            self.progress["note"] = str(e)[:300]
 
     def add(self, url, depth, source):
         if url in self.seen or len(self.seen) >= self.s.max_pages or self.stopping:
@@ -301,6 +319,15 @@ class Crawl:
             self.db.add_page(row)
             return
         page = parse_html(body.decode(r.encoding or "utf-8", errors="replace"), url)
+        if self.renderer:
+            # Keep what the raw HTML had, then check the page as the browser built it.
+            row["raw_words"] = page["words"]
+            row["raw_links"] = sum(1 for d, _, _, k in page["links"] if k == "a" and self.internal(d))
+            try:
+                page = parse_html(await self.renderer.render(url), url)
+                row["rendered"] = 1
+            except Exception as e:
+                row["render_error"] = str(e)[:300]
         links, images = page.pop("links"), page.pop("images")
         if url.startswith("https://"):
             row["mixed"] = sum(1 for d, _, _, k in links if k != "a" and d.startswith("http://"))

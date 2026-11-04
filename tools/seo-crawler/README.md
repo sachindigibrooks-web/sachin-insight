@@ -53,11 +53,24 @@ python app.py
 **Installer khud banana:** [Inno Setup 6](https://jrsoftware.org/isdl.php) install karo, phir
 `build_windows.bat` double-click. Mac: `./build_mac.sh`.
 
+## JavaScript rendering (React, Vue, Next.js, Angular sites)
+
+Settings me **Render JavaScript** tick karo. Har page pehle raw HTML se aur phir asli browser me
+khol kar (jaise Google karta hai) check hota hai. PC par pehle se laga **Microsoft Edge** (Windows
+me hamesha hota hai) ya **Google Chrome** use hota hai — kuch bada download nahi. Dono na hon to
+Chromium ek baar apne aap download hota hai (~150 MB).
+
+Iske saath ek nayi check: **"Content or links appear only after JavaScript"** — jin pages ka text
+ya links sirf JavaScript se bante hain. Google unhe der se dekhta hai aur **ChatGPT / Claude /
+Perplexity ke crawlers JavaScript chalate hi nahi**, to wo content AI search me nahi aata.
+Rendering dheema hai (ek saath max 4 pages), isliye sirf JavaScript wali sites par on karo.
+
 ## Settings
 
 - **Max pages** (default 10,000) — isse zyada nahi crawl karega
 - **Parallel requests** (default 5) — zyada = tez, par site par zyada load
-- robots.txt maanna, external links / images check, XML sitemap use karna, subdomains bhi
+- robots.txt maanna, external links / images check, XML sitemap use karna, subdomains bhi,
+  JavaScript rendering
 
 Normal PC par lagbhag 20–40 pages / second (site ki speed par depend). Ek 1,200 page ki site
 ~25 second me crawl hui, analysis 1 second se kam.
@@ -66,8 +79,6 @@ Normal PC par lagbhag 20–40 pages / second (site ki speed par depend). Ek 1,20
 
 - Sirf apni ya permission wali site crawl karo. Crawler robots.txt maanta hai aur dheere chalta hai.
 - Dashboard sirf isi PC par khulta hai (`127.0.0.1`) — crawl data private rehta hai.
-- JavaScript se banne wale pages (React/Next.js ke kuch sites) abhi raw HTML se padhe jaate
-  hain — un par content/links kam dikh sakte hain. (Agla step: browser rendering.)
 - Data yahan rehta hai: Windows `%LOCALAPPDATA%\FreeSEOCrawler`, Mac `~/Library/Application Support/FreeSEOCrawler`.
 
 ## Test

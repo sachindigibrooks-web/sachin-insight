@@ -35,7 +35,8 @@ VIEWS = {
 }
 SORTABLE = {"url", "status", "depth", "time_ms", "size", "words", "title"}
 PAGE_FIELDS = ["url", "status", "content_type", "depth", "time_ms", "size", "words", "title",
-               "meta_desc", "h1", "canonical", "meta_robots", "redirect_to", "error", "source"]
+               "meta_desc", "h1", "canonical", "meta_robots", "redirect_to", "error", "source",
+               "rendered", "raw_words"]
 
 
 def db_for(cid):
@@ -67,7 +68,8 @@ def start_crawl():
             check_external=bool(data.get("check_external", True)),
             check_images=bool(data.get("check_images", True)),
             include_subdomains=bool(data.get("include_subdomains", False)),
-            use_sitemaps=bool(data.get("use_sitemaps", True)))
+            use_sitemaps=bool(data.get("use_sitemaps", True)),
+            render_js=bool(data.get("render_js", False)))
         if "://" not in s.start_url:
             s.start_url = "https://" + s.start_url
         c = crawler.Crawl(s)
@@ -132,7 +134,8 @@ def summary(cid):
                            f"AND url IN (SELECT url FROM pages WHERE {checks.HTML_PAGES})")[0]["n"]
     html_pages = stats["html_pages"] or 0
     score = round(100 * (html_pages - with_errors) / html_pages) if html_pages else None
-    meta = {k: db.meta(k) for k in ("sitemaps", "ai_bots_blocked", "llms_txt")}
+    meta = {k: db.meta(k) for k in ("sitemaps", "ai_bots_blocked", "llms_txt", "renderer",
+                                    "render_error")}
     return jsonify(stats=stats, status_codes=status_codes, depths=depths, issues=issues,
                    score=score, meta=meta)
 

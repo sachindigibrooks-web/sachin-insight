@@ -13,7 +13,10 @@ PAGE_COLUMNS = [
     "redirect_to", "title", "titles", "meta_desc", "meta_descs", "h1", "h2s", "canonical",
     "meta_robots", "x_robots", "words", "text_hash", "simhash", "lang", "viewport", "og",
     "jsonld", "jsonld_bad", "hsts", "mixed", "blocked", "resource",
+    "rendered", "raw_words", "raw_links", "render_error",
 ]
+TEXT_COLUMNS = {"url", "source", "error", "content_type", "redirect_to", "title", "meta_desc", "h1",
+                "canonical", "meta_robots", "x_robots", "text_hash", "lang", "render_error"}
 
 
 def folder(*parts):
@@ -79,8 +82,7 @@ class CrawlDB:
         self.lock = threading.Lock()
         self.con = sqlite3.connect(db_path(cid), check_same_thread=False)
         self.con.execute("PRAGMA journal_mode=WAL")
-        cols = ", ".join(f"{c} {'TEXT' if c in ('url','source','error','content_type','redirect_to','title','meta_desc','h1','canonical','meta_robots','x_robots','text_hash','lang') else 'INTEGER'}"
-                         for c in PAGE_COLUMNS)
+        cols = ", ".join(f"{c} {'TEXT' if c in TEXT_COLUMNS else 'INTEGER'}" for c in PAGE_COLUMNS)
         self.con.executescript(f"""
             CREATE TABLE IF NOT EXISTS pages (id INTEGER PRIMARY KEY, {cols}, UNIQUE(url));
             CREATE TABLE IF NOT EXISTS links (src TEXT, dst TEXT, anchor TEXT, nofollow INTEGER,

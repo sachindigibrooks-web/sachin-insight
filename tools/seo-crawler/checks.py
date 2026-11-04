@@ -29,6 +29,15 @@ CHECKS = {
     "robots_unreachable": ("warning", "Response", "robots.txt could not be read", "robots.txt पढ़ा नहीं जा सका",
                            "The crawl went ahead without the site's robots.txt rules. Google pauses crawling when robots.txt errors, so fix the server or file.",
                            "क्रॉल robots.txt के नियमों के बिना हुआ। robots.txt में गड़बड़ी हो तो Google क्रॉल रोक देता है, सर्वर या फ़ाइल ठीक करें।"),
+    "js_content": ("warning", "JavaScript", "Content or links appear only after JavaScript", "कंटेंट या लिंक सिर्फ़ JavaScript के बाद दिखते हैं",
+                   "Google renders JavaScript later and less often, and AI crawlers (ChatGPT, Claude, Perplexity) don't run it at all, so they miss this content. Use server-side rendering or static HTML for the main text and links.",
+                   "Google JavaScript देर से और कम बार चलाता है, और AI क्रॉलर (ChatGPT, Claude, Perplexity) इसे बिल्कुल नहीं चलाते, इसलिए यह कंटेंट उन्हें नहीं दिखता। मुख्य टेक्स्ट और लिंक के लिए server-side rendering या static HTML इस्तेमाल करें।"),
+    "render_failed": ("warning", "JavaScript", "Page failed to render in the browser", "पेज ब्राउज़र में render नहीं हुआ",
+                      "The page errored or hung while its JavaScript ran, so it was checked from raw HTML. Open it in a browser and check the console for errors.",
+                      "JavaScript चलते समय पेज में गड़बड़ी हुई या अटक गया, इसलिए raw HTML से जाँचा गया। ब्राउज़र में खोलकर console की गड़बड़ियाँ देखें।"),
+    "render_unavailable": ("warning", "JavaScript", "JavaScript rendering could not start", "JavaScript rendering शुरू नहीं हुई",
+                           "No usable browser was found, so pages were checked from raw HTML only. Install Google Chrome or Microsoft Edge and crawl again.",
+                           "कोई ब्राउज़र नहीं मिला, इसलिए पेज सिर्फ़ raw HTML से जाँचे गए। Google Chrome या Microsoft Edge इंस्टॉल करके दोबारा क्रॉल करें।"),
     "slow_page": ("warning", "Response", "Slow pages (over 1.5 s to respond)", "धीमे पेज (1.5 सेकंड से ज़्यादा)",
                   "Slow pages lose visitors and rankings. Use caching, a CDN, smaller images and fewer heavy plugins.",
                   "धीमे पेज से विज़िटर और रैंकिंग दोनों घटते हैं। कैशिंग, CDN, छोटी इमेज और कम भारी प्लगइन इस्तेमाल करें।"),
@@ -284,6 +293,14 @@ def analyse(db):
 
     sitemap = {r["url"] for r in db.query("SELECT url FROM sitemap")}
     for p in html:
+        if p["render_error"]:
+            add("render_failed", p["url"], p["render_error"])
+        elif p["rendered"]:
+            words, raw_words = p["words"] or 0, p["raw_words"] or 0
+            links, raw_links = outlinks[p["url"]], p["raw_links"] or 0
+            if (words >= 50 and words > raw_words * 1.5) or links > raw_links + 5:
+                add("js_content", p["url"], f"words {raw_words} → {words}, internal links "
+                    f"{raw_links} → {links} (raw HTML → rendered)")
         if not outlinks[p["url"]]:
             add("no_outlinks", p["url"])
         if p["source"] == "sitemap":
@@ -408,6 +425,8 @@ def analyse(db):
         if https_site and s.get("status") == 200 and not s.get("hsts"):
             add("no_hsts", start[0]["url"])
         root = "{0.scheme}://{0.netloc}".format(urlsplit(start[0]["url"]))
+        if db.meta("render_error"):
+            add("render_unavailable", start[0]["url"], db.meta("render_error"))
         if db.meta("robots_error"):
             add("robots_unreachable", root + "/robots.txt", db.meta("robots_error"))
         blocked = json.loads(db.meta("ai_bots_blocked", "[]"))

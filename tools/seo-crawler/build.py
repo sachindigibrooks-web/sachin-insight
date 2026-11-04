@@ -18,7 +18,10 @@ def build_app():
     sep = ";" if os.name == "nt" else ":"
     subprocess.run([sys.executable, "-m", "PyInstaller", "--noconfirm", "--windowed", "--onedir",
                     "--name", "FreeSEOCrawler", "--add-data", f"web{sep}web",
-                    "--collect-all", "selectolax", "app.py"], cwd=HERE, check=True)
+                    "--collect-all", "selectolax",
+                    # JavaScript rendering: the Playwright driver (the browser itself is the PC's
+                    # Edge / Chrome, or downloaded on first use)
+                    "--collect-all", "playwright", "app.py"], cwd=HERE, check=True)
 
 
 def build_installer():

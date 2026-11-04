@@ -105,7 +105,9 @@
         <label><input type="checkbox" id="images" checked> <span data-t="check_images">Check images</span></label>
         <label><input type="checkbox" id="sitemaps" checked> <span data-t="sitemaps">Use XML sitemaps</span></label>
         <label><input type="checkbox" id="subdomains"> <span data-t="subdomains">Include subdomains</span></label>
+        <label style="grid-column:1/-1"><input type="checkbox" id="renderJs"> <span data-t="render_js">Render JavaScript</span></label>
       </div>
+      <p class="hint" data-t="render_hint"></p>
       <p class="hint" data-t="speed_hint"></p>
     </details>
     <div id="progressBox" class="hidden">
@@ -265,7 +267,8 @@ $("startForm").onsubmit = async e => {
     const { id } = await api("/api/crawl", { method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ url: $("url").value, max_pages: +$("maxPages").value, concurrency: +$("concurrency").value,
         respect_robots: $("robots").checked, check_external: $("external").checked, check_images: $("images").checked,
-        use_sitemaps: $("sitemaps").checked, include_subdomains: $("subdomains").checked }) });
+        use_sitemaps: $("sitemaps").checked, include_subdomains: $("subdomains").checked,
+        render_js: $("renderJs").checked }) });
     crawlId = id;
     $("results").classList.add("hidden");
     await loadCrawls(false);
@@ -334,7 +337,9 @@ function renderSummary(s) {
   bars($("depths"), s.depths, r => r.depth);
   const blocked = JSON.parse(s.meta.ai_bots_blocked || "[]");
   $("aiInfo").textContent = `${t("ai_ready")}: ` + (blocked.length ? "⚠ " + blocked.join(", ") : "✓") +
-    ` · llms.txt ${JSON.parse(s.meta.llms_txt || "false") ? "✓" : "–"}`;
+    ` · llms.txt ${JSON.parse(s.meta.llms_txt || "false") ? "✓" : "–"}` +
+    (s.meta.renderer ? ` · ${t("rendered_with")}: ${s.meta.renderer}` : "") +
+    (s.meta.render_error ? " · ⚠ JavaScript: " + s.meta.render_error.slice(0, 120) : "");
   $("topIssues").innerHTML = s.issues.length ? s.issues.slice(0, 12).map(i =>
     `<div class="hbar" style="grid-template-columns:1fr 60px"><span style="background:none;height:auto"><span class="sev ${i.severity}"></span>` +
     `${esc(lang === "hi" ? i.title_hi : i.title)}</span><span>${i.count}</span></div>`).join("") : esc(t("no_issues"));
@@ -421,7 +426,7 @@ async function showPage(url) {
   const fields = [["URL", p.url], ["Status", p.status || p.error], ["Title", p.title], ["Meta description", p.meta_desc],
     ["H1", (JSON.parse(p.h1 || "[]")).join(" | ")], ["Canonical", (JSON.parse(p.canonical || "[]")).join(" | ")],
     ["Robots", [p.meta_robots, p.x_robots].filter(Boolean).join(" / ")], ["Redirect to", p.redirect_to],
-    ["Words", p.words], ["Depth", p.depth], ["Response", p.time_ms != null ? p.time_ms + " ms" : ""],
+    ["Words", p.rendered ? `${p.words} (raw HTML: ${p.raw_words})` : p.words], ["Depth", p.depth], ["Response", p.time_ms != null ? p.time_ms + " ms" : ""],
     ["Language", p.lang], ["Found via", p.source]].filter(([, v]) => v !== null && v !== undefined && v !== "");
   $("modalBody").innerHTML = `<div class="row" style="justify-content:space-between"><b style="word-break:break-all"></b>
     <span><a target="_blank" rel="noopener">↗</a> &nbsp;<button class="ghost" type="button" id="closeModal">✕</button></span></div>
