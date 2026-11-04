@@ -339,13 +339,17 @@ class Crawl:
 
     async def load_robots(self):
         root = f"{urlsplit(self.start).scheme}://{urlsplit(self.start).netloc}"
-        text = ""
+        text, problem = "", None
         try:
             r = await self.client.get(root + "/robots.txt", follow_redirects=True)
             if r.status_code == 200:
                 text = r.text
-        except httpx.HTTPError:
-            pass
+            elif r.status_code >= 500:
+                problem = f"HTTP {r.status_code}"
+        except httpx.HTTPError as e:
+            problem = f"{type(e).__name__}: {e}"[:200]
+        if problem:  # crawl anyway, but say so: the site's rules were not seen
+            self.db.set_meta("robots_error", problem)
         rp = urllib.robotparser.RobotFileParser()
         rp.parse(text.splitlines())
         self.robots = rp

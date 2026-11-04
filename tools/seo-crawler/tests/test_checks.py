@@ -36,9 +36,15 @@ NOT_EXPECTED = {"title_missing": "/near1", "client_error": "/a", "orphan_page": 
 
 
 def main():
-    threading.Thread(target=lambda: test_site.app.run(port=test_site.PORT, threaded=True),
-                     daemon=True).start()
-    time.sleep(1)
+    from werkzeug.serving import make_server
+    # Listen on IPv4 and IPv6: "localhost" means ::1 first on some systems (macOS).
+    for host in ("127.0.0.1", "::1"):
+        try:
+            srv = make_server(host, test_site.PORT, test_site.app, threaded=True)
+        except OSError:  # no IPv6 here
+            continue
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+    time.sleep(0.5)
     c = crawler.Crawl(crawler.Settings(f"http://localhost:{test_site.PORT}/", concurrency=4))
     t0 = time.time()
     c.run()

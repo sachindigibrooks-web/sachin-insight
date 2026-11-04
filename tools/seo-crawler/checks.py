@@ -26,6 +26,9 @@ CHECKS = {
     "blocked_robots": ("notice", "Response", "Blocked by robots.txt", "robots.txt से ब्लॉक",
                        "Search engines won't crawl these. Fine for private areas; make sure no important page is blocked.",
                        "सर्च इंजन इन्हें क्रॉल नहीं करेंगे। प्राइवेट हिस्सों के लिए ठीक है; ध्यान रखें कि कोई ज़रूरी पेज ब्लॉक न हो।"),
+    "robots_unreachable": ("warning", "Response", "robots.txt could not be read", "robots.txt पढ़ा नहीं जा सका",
+                           "The crawl went ahead without the site's robots.txt rules. Google pauses crawling when robots.txt errors, so fix the server or file.",
+                           "क्रॉल robots.txt के नियमों के बिना हुआ। robots.txt में गड़बड़ी हो तो Google क्रॉल रोक देता है, सर्वर या फ़ाइल ठीक करें।"),
     "slow_page": ("warning", "Response", "Slow pages (over 1.5 s to respond)", "धीमे पेज (1.5 सेकंड से ज़्यादा)",
                   "Slow pages lose visitors and rankings. Use caching, a CDN, smaller images and fewer heavy plugins.",
                   "धीमे पेज से विज़िटर और रैंकिंग दोनों घटते हैं। कैशिंग, CDN, छोटी इमेज और कम भारी प्लगइन इस्तेमाल करें।"),
@@ -405,6 +408,8 @@ def analyse(db):
         if https_site and s.get("status") == 200 and not s.get("hsts"):
             add("no_hsts", start[0]["url"])
         root = "{0.scheme}://{0.netloc}".format(urlsplit(start[0]["url"]))
+        if db.meta("robots_error"):
+            add("robots_unreachable", root + "/robots.txt", db.meta("robots_error"))
         blocked = json.loads(db.meta("ai_bots_blocked", "[]"))
         if blocked:
             add("ai_bots_blocked", root + "/robots.txt", ", ".join(blocked))
