@@ -1,6 +1,7 @@
 # sachin-insight
 ## Tools
 
+- `tools/seo-crawler` — free Screaming Frog-style SEO crawler (made by Sachin Samria): 50+ checks with fixes in English and Hindi, no page limit, crawl compare, Excel export. See its `README.md`.
 - `tools/video-downloader` — free 4K/8K video, playlist & photo downloader (made by Sachin Samria) — desktop app + website (YouTube, Instagram, Facebook, TikTok, X and 1000+ sites), built on yt-dlp. See its `README.md`.
 
 ## Vendored resources
