@@ -13,6 +13,10 @@ if neither is found is Playwright's Chromium downloaded, once.
 import asyncio
 import os
 import subprocess
+import sys
+
+HERE = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+AXE = os.path.join(HERE, "vendor", "axe.min.js")  # axe-core (MPL-2.0), the WCAG checker
 
 # Images, video and fonts don't change the HTML; skipping them makes rendering much faster.
 SKIP = {"image", "media", "font"}
@@ -62,8 +66,8 @@ class Renderer:
         else:
             await route.continue_()
 
-    async def render(self, url):
-        """The page's HTML after its JavaScript ran (or raise RenderError)."""
+    async def render(self, url, axe=False):
+        """{"html": page HTML after its JavaScript ran, "axe": WCAG violations} (or RenderError)."""
         async with self.slots:
             page = await self.context.new_page()
             try:
@@ -73,9 +77,25 @@ class Renderer:
                     if "Timeout" not in type(e).__name__ and "Timeout" not in str(e):
                         raise RenderError(str(e).splitlines()[0][:200])
                     # Pages that keep polling never go idle; use what has loaded so far.
-                return await page.content()
+                html = await page.content()
+                violations = await self.audit(page) if axe else []
+                return {"html": html, "axe": violations}
             finally:
                 await page.close()
+
+    async def audit(self, page):
+        """Run axe-core's WCAG 2 A/AA rules on the loaded page."""
+        if not hasattr(self, "axe_source"):
+            with open(AXE, encoding="utf-8") as f:
+                self.axe_source = f.read()
+        try:
+            await page.add_script_tag(content=self.axe_source)
+            result = await page.evaluate("""() => axe.run(document, {
+                runOnly: {type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]},
+                resultTypes: ["violations"]})""")
+            return result.get("violations", [])
+        except Exception:  # e.g. a strict Content-Security-Policy blocks the script
+            return []
 
     async def stop(self):
         for close in (getattr(self, "context", None), getattr(self, "browser", None)):

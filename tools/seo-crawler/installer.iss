@@ -25,6 +25,7 @@ UninstallDisplayName=Free SEO Crawler (Made by Sachin Samria)
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
+Name: "startup"; Description: "Start with Windows (needed for scheduled crawls and alerts)"; GroupDescription: "Scheduled crawls:"; Flags: unchecked
 
 [Files]
 Source: "dist\FreeSEOCrawler\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -33,6 +34,7 @@ Source: "dist\FreeSEOCrawler\*"; DestDir: "{app}"; Flags: ignoreversion recurses
 Name: "{group}\Free SEO Crawler"; Filename: "{app}\FreeSEOCrawler.exe"
 Name: "{group}\Uninstall Free SEO Crawler"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\Free SEO Crawler"; Filename: "{app}\FreeSEOCrawler.exe"; Tasks: desktopicon
+Name: "{userstartup}\Free SEO Crawler"; Filename: "{app}\FreeSEOCrawler.exe"; Parameters: "--background"; Tasks: startup
 
 [Run]
 Filename: "{app}\FreeSEOCrawler.exe"; Description: "{cm:LaunchProgram,Free SEO Crawler}"; Flags: nowait postinstall skipifsilent

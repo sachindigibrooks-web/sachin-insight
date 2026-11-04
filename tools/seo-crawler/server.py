@@ -15,7 +15,12 @@ from flask import Flask, Response, abort, jsonify, request
 
 import checks
 import crawler
+import gsc
 import i18n
+import logs
+import pagespeed
+import report
+import schedules
 import store
 
 HERE = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -33,10 +38,13 @@ VIEWS = {
     "images": "content_type LIKE 'image/%'",
     "blocked": "blocked = 1",
 }
-SORTABLE = {"url", "status", "depth", "time_ms", "size", "words", "title"}
+SORTABLE = {"url", "status", "depth", "time_ms", "size", "words", "title", "link_score"}
 PAGE_FIELDS = ["url", "status", "content_type", "depth", "time_ms", "size", "words", "title",
                "meta_desc", "h1", "canonical", "meta_robots", "redirect_to", "error", "source",
-               "rendered", "raw_words"]
+               "rendered", "raw_words", "link_score"]
+CUSTOM_KINDS = {"contains", "missing", "css", "xpath", "regex"}
+SECRET_KEYS = {"smtp_password", "telegram_token", "psi_key"}
+jobs = {}  # crawl id -> {"pagespeed": progress text}
 
 
 def db_for(cid):
@@ -56,28 +64,109 @@ def texts():
     return jsonify(ui=i18n.UI, checks={k: [v[2], v[3]] for k, v in checks.CHECKS.items()})
 
 
-@app.post("/api/crawl")
-def start_crawl():
-    data = request.get_json(silent=True) or {}
-    try:
-        s = crawler.Settings(
-            start_url=str(data.get("url", "")).strip(),
-            max_pages=max(1, min(int(data.get("max_pages") or 10000), 1_000_000)),
-            concurrency=max(1, min(int(data.get("concurrency") or 5), 20)),
-            respect_robots=bool(data.get("respect_robots", True)),
-            check_external=bool(data.get("check_external", True)),
-            check_images=bool(data.get("check_images", True)),
-            include_subdomains=bool(data.get("include_subdomains", False)),
-            use_sitemaps=bool(data.get("use_sitemaps", True)),
-            render_js=bool(data.get("render_js", False)))
-        if "://" not in s.start_url:
-            s.start_url = "https://" + s.start_url
-        c = crawler.Crawl(s)
-    except ValueError as e:
-        return jsonify(error=str(e)), 400
+def make_settings(data):
+    """crawler.Settings from a form / schedule (raises ValueError on bad input)."""
+    rules = [{"name": str(r.get("name", ""))[:60], "kind": r.get("kind"), "value": str(r.get("value", ""))[:500]}
+             for r in (data.get("custom") or []) if r.get("kind") in CUSTOM_KINDS and r.get("value")][:20]
+    s = crawler.Settings(
+        start_url=str(data.get("url", "")).strip(),
+        max_pages=max(1, min(int(data.get("max_pages") or 10000), 1_000_000)),
+        concurrency=max(1, min(int(data.get("concurrency") or 5), 20)),
+        respect_robots=bool(data.get("respect_robots", True)),
+        check_external=bool(data.get("check_external", True)),
+        check_images=bool(data.get("check_images", True)),
+        include_subdomains=bool(data.get("include_subdomains", False)),
+        use_sitemaps=bool(data.get("use_sitemaps", True)),
+        render_js=bool(data.get("render_js", False)),
+        accessibility=bool(data.get("accessibility", True)),
+        custom=rules)
+    if "://" not in s.start_url:
+        s.start_url = "https://" + s.start_url
+    return s
+
+
+def launch(settings):
+    c = crawler.Crawl(settings)
     running[c.id] = c
     c.start_thread()
+    return c
+
+
+@app.post("/api/crawl")
+def start_crawl():
+    try:
+        c = launch(make_settings(request.get_json(silent=True) or {}))
+    except ValueError as e:
+        return jsonify(error=str(e)), 400
     return jsonify(id=c.id)
+
+
+# ---------------------------------------------------------------- app settings & schedules
+
+@app.get("/api/settings")
+def get_settings():
+    s = store.load_settings()
+    return jsonify({k: ("••••••" if k in SECRET_KEYS and v else v) for k, v in s.items()})
+
+
+@app.post("/api/settings")
+def set_settings():
+    data = request.get_json(silent=True) or {}
+    allowed = {"psi_key", "telegram_token", "smtp_host", "smtp_port", "smtp_user", "smtp_password",
+               "smtp_from", "alert_lang"}
+    clean = {k: str(v).strip() for k, v in data.items()
+             if k in allowed and not (k in SECRET_KEYS and v == "••••••")}
+    store.save_settings(clean)
+    report.save_branding(data)
+    return jsonify(ok=True)
+
+
+@app.get("/api/schedules")
+def schedule_list():
+    return jsonify(schedules.entries())
+
+
+@app.post("/api/schedules")
+def schedule_add():
+    data = request.get_json(silent=True) or {}
+    try:
+        s = make_settings(data)
+    except ValueError as e:
+        return jsonify(error=str(e)), 400
+    from dataclasses import asdict
+    sid = schedules.add(s.start_url, dict(asdict(s), url=s.start_url),
+                        max(0.04, float(data.get("every_days") or 7)),
+                        data.get("telegram_chat", ""), data.get("email_to", ""),
+                        bool(data.get("only_changes", True)))
+    return jsonify(id=sid)
+
+
+@app.delete("/api/schedules/<sid>")
+def schedule_delete(sid):
+    schedules.remove(sid)
+    return jsonify(ok=True)
+
+
+@app.post("/api/schedules/<sid>/run")
+def schedule_run(sid):
+    entry = next((e for e in schedules.entries() if e["id"] == sid), None)
+    if not entry:
+        abort(404)
+    threading.Thread(target=schedules.run_one, args=(entry, schedule_crawl), daemon=True).start()
+    return jsonify(ok=True)
+
+
+@app.post("/api/alerts/test")
+def alert_test():
+    data = request.get_json(silent=True) or {}
+    errors = schedules.notify({"telegram_chat": data.get("telegram_chat"), "email_to": data.get("email_to"),
+                               "url": "test"}, "✅ Free SEO Crawler: test alert - it works!\n"
+                              "Made by Sachin Samria")
+    return (jsonify(error="; ".join(errors)), 400) if errors else jsonify(ok=True)
+
+
+def schedule_crawl(saved):
+    return launch(make_settings(saved))
 
 
 @app.get("/api/crawls")
@@ -87,7 +176,7 @@ def crawl_list():
 
 @app.delete("/api/crawl/<cid>")
 def delete(cid):
-    if cid in running and running[cid].progress["status"] in ("starting", "running", "analysing"):
+    if cid in running and running[cid].progress["status"] in ("starting", "starting browser", "running", "analysing"):
         return jsonify(error="Stop the crawl first."), 400
     running.pop(cid, None)
     store.delete_crawl(cid)
@@ -129,11 +218,7 @@ def summary(cid):
     depths = db.query(f"SELECT depth, COUNT(*) AS n FROM pages WHERE {checks.HTML_PAGES} "
                       "AND depth IS NOT NULL GROUP BY depth ORDER BY depth")
     issues = checks.summary(db)
-    errors = ",".join(f"'{k}'" for k, v in checks.CHECKS.items() if v[0] == "error")
-    with_errors = db.query(f"SELECT COUNT(DISTINCT url) AS n FROM issues WHERE code IN ({errors}) "
-                           f"AND url IN (SELECT url FROM pages WHERE {checks.HTML_PAGES})")[0]["n"]
-    html_pages = stats["html_pages"] or 0
-    score = round(100 * (html_pages - with_errors) / html_pages) if html_pages else None
+    score = checks.health_score(db)
     meta = {k: db.meta(k) for k in ("sitemaps", "ai_bots_blocked", "llms_txt", "renderer",
                                     "render_error")}
     return jsonify(stats=stats, status_codes=status_codes, depths=depths, issues=issues,
@@ -214,6 +299,127 @@ def compare():
                                  key=lambda v: (checks.SEVERITY_ORDER[v["severity"]], -v["new"])))
 
 
+# ---------------------------------------------------------------- extra data: speed, GSC, logs, custom, graph
+
+@app.post("/api/crawl/<cid>/pagespeed")
+def run_pagespeed(cid):
+    db = db_for(cid)
+    data = request.get_json(silent=True) or {}
+    limit = max(1, min(int(data.get("limit") or 20), 500))
+    strategy = "desktop" if data.get("strategy") == "desktop" else "mobile"
+    urls = [r["url"] for r in db.query(f"SELECT url FROM pages WHERE {checks.HTML_PAGES} "
+                                       f"ORDER BY link_score DESC, depth LIMIT {limit}")]
+    key = store.load_settings().get("psi_key")
+    state = jobs.setdefault(cid, {})
+    if state.get("pagespeed", "").startswith("running"):
+        return jsonify(error="Already running."), 400
+
+    def work():
+        try:
+            pagespeed.run(db, urls, key, strategy,
+                          lambda d, t: state.update(pagespeed=f"running {d}/{t}"))
+            checks.analyse(db)
+            state["pagespeed"] = "done"
+        except Exception as e:
+            state["pagespeed"] = f"error: {e}"
+    state["pagespeed"] = f"running 0/{len(urls)}"
+    threading.Thread(target=work, daemon=True).start()
+    return jsonify(ok=True, urls=len(urls))
+
+
+@app.get("/api/crawl/<cid>/pagespeed")
+def pagespeed_rows(cid):
+    rows = db_for(cid).query("SELECT url, strategy, score, lcp, cls, inp, tbt, fcp, field, error "
+                             "FROM cwv ORDER BY score IS NULL, score")
+    return jsonify(status=jobs.get(cid, {}).get("pagespeed", ""), rows=rows,
+                   has_key=bool(store.load_settings().get("psi_key")))
+
+
+@app.post("/api/crawl/<cid>/gsc")
+def upload_gsc(cid):
+    db = db_for(cid)
+    f = request.files.get("file")
+    if not f:
+        return jsonify(error="Choose the Search Console export file."), 400
+    try:
+        n = gsc.import_into(db, f.read(), f.filename or "")
+    except Exception as e:
+        return jsonify(error=str(e)), 400
+    checks.analyse(db)
+    return jsonify(rows=n)
+
+
+@app.get("/api/crawl/<cid>/gsc")
+def gsc_rows(cid):
+    return jsonify(db_for(cid).query(
+        "SELECT g.url, g.clicks, g.impressions, g.ctr, g.position, p.status, p.title FROM gsc g "
+        "LEFT JOIN pages p ON p.url = g.url ORDER BY g.clicks DESC LIMIT 2000"))
+
+
+@app.post("/api/crawl/<cid>/logs")
+def upload_logs(cid):
+    db = db_for(cid)
+    f = request.files.get("file")
+    if not f:
+        return jsonify(error="Choose a server access log file."), 400
+    start = db.query("SELECT url FROM pages WHERE source = 'start'")
+    try:
+        info = logs.import_into(db, f.read(), start[0]["url"] if start else "")
+    except Exception as e:
+        return jsonify(error=str(e)), 400
+    checks.analyse(db)
+    return jsonify(info)
+
+
+@app.get("/api/crawl/<cid>/logs")
+def log_rows(cid):
+    db = db_for(cid)
+    return jsonify(bots=db.query("SELECT bot, SUM(hits) AS hits, COUNT(*) AS urls FROM logs "
+                                 "GROUP BY bot ORDER BY hits DESC"),
+                   rows=db.query("SELECT l.url, l.bot, l.hits, l.last, l.statuses, p.status FROM logs l "
+                                 "LEFT JOIN pages p ON p.url = l.url ORDER BY l.hits DESC LIMIT 2000"))
+
+
+@app.get("/api/crawl/<cid>/custom")
+def custom_rows(cid):
+    return jsonify(db_for(cid).query("SELECT name, url, value FROM custom ORDER BY name, url LIMIT 20000"))
+
+
+@app.get("/api/crawl/<cid>/graph")
+def graph(cid):
+    """The most important pages (by link score) and the links between them."""
+    db = db_for(cid)
+    nodes = db.query(f"SELECT url, link_score, status, depth, title FROM pages WHERE {checks.HTML_PAGES} "
+                     "ORDER BY link_score DESC LIMIT 150")
+    keep = {n["url"] for n in nodes}
+    edges = {(l["src"], l["dst"]) for l in db.query("SELECT src, dst FROM links WHERE kind = 'a'")
+             if l["src"] in keep and l["dst"] in keep and l["src"] != l["dst"]}
+    tree = db.query(f"SELECT url, status FROM pages WHERE internal = 1 AND resource = 0 LIMIT 50000")
+    return jsonify(nodes=nodes, edges=[list(e) for e in edges], tree=tree)
+
+
+@app.get("/api/branding")
+def get_branding():
+    return jsonify(report.branding())
+
+
+@app.get("/api/crawl/<cid>/report.html")
+def report_html(cid):
+    db_for(cid)
+    return Response(report.build_html(cid), mimetype="text/html")
+
+
+@app.get("/api/crawl/<cid>/report.pdf")
+def report_pdf(cid):
+    db_for(cid)
+    try:
+        pdf = report.build_pdf(cid)
+    except Exception as e:
+        return jsonify(error=str(e)), 400
+    return Response(pdf, mimetype="application/pdf",
+                    headers={"Content-Disposition": f'attachment; filename="seo-report-{cid}.pdf"'})
+
+
 # ---------------------------------------------------------------- export
 
 def export_tables(db):
@@ -226,7 +432,8 @@ def export_tables(db):
                      "(p.status >= 400 OR p.error IS NOT NULL) ORDER BY l.src")
     images = db.query("SELECT l.src AS on_page, l.dst AS image, l.anchor AS alt, p.status, p.size "
                       "FROM links l LEFT JOIN pages p ON p.url = l.dst WHERE l.kind = 'img' ORDER BY l.src")
-    return {"Pages": pages, "Issues": issues, "Broken links": links, "Images": images}
+    custom = db.query("SELECT name, url, value FROM custom ORDER BY name, url")
+    return {"Pages": pages, "Issues": issues, "Broken links": links, "Images": images, "Custom": custom}
 
 
 @app.get("/api/crawl/<cid>/export.xlsx")
@@ -290,6 +497,7 @@ def serve_background(port=8090):
         if not free(port):
             break
         time.sleep(0.1)
+    schedules.start_scheduler(schedule_crawl)
     return port
 
 
@@ -297,4 +505,5 @@ if __name__ == "__main__":
     from waitress import serve
     port = int(os.environ.get("PORT", "8090"))
     print(f"Open http://localhost:{port}")
+    schedules.start_scheduler(schedule_crawl)
     serve(app, host="127.0.0.1", port=port, threads=8)

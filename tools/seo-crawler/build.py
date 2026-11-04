@@ -18,6 +18,7 @@ def build_app():
     sep = ";" if os.name == "nt" else ":"
     subprocess.run([sys.executable, "-m", "PyInstaller", "--noconfirm", "--windowed", "--onedir",
                     "--name", "FreeSEOCrawler", "--add-data", f"web{sep}web",
+                    "--add-data", f"vendor{sep}vendor",  # axe-core for accessibility audits
                     "--collect-all", "selectolax",
                     # JavaScript rendering: the Playwright driver (the browser itself is the PC's
                     # Edge / Chrome, or downloaded on first use)

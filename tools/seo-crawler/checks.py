@@ -175,6 +175,72 @@ CHECKS = {
                    "Without og:title/og:image, links shared on WhatsApp/Facebook look plain.",
                    "og:title/og:image के बिना WhatsApp/Facebook पर शेयर किए लिंक फीके दिखते हैं।"),
     # ---- URLs
+    # ---- links (link score)
+    "few_inlinks": ("notice", "Links", "Pages linked from only one page", "सिर्फ़ एक पेज से लिंक वाले पेज",
+                    "Pages with a single internal link get little link authority. Link important ones from more relevant pages.",
+                    "एक ही अंदरूनी लिंक वाले पेज को कम ताकत मिलती है। ज़रूरी पेजों को और भी मिलते-जुलते पेजों से लिंक करें।"),
+    # ---- structured data (Google rich results)
+    "sd_required": ("error", "Structured data", "Structured data missing required fields", "structured data में ज़रूरी field नहीं",
+                    "Google won't show rich results (stars, prices, FAQs) without these fields. Add the missing properties shown.",
+                    "इन field के बिना Google rich results (स्टार, कीमत, FAQ) नहीं दिखाता। दिखाई गई property जोड़ें।"),
+    "sd_recommended": ("notice", "Structured data", "Structured data missing recommended fields", "structured data में सुझाए गए field नहीं",
+                       "Optional, but adding them makes the result richer and more likely to show.",
+                       "ज़रूरी नहीं, पर जोड़ने से रिज़ल्ट बेहतर और ज़्यादा दिखने लायक बनता है।"),
+    # ---- accessibility
+    "a11y_form_label": ("warning", "Accessibility", "Form fields without a label", "बिना label वाले फ़ॉर्म field",
+                        "Screen-reader users can't tell what to type. Add a <label for=...> or aria-label.",
+                        "स्क्रीन-रीडर वाले यूज़र नहीं जान पाते क्या लिखना है। <label for=...> या aria-label जोड़ें।"),
+    "a11y_link_text": ("warning", "Accessibility", "Links without text", "बिना टेक्स्ट वाले लिंक",
+                       "Icon-only links are announced as just 'link'. Add text, aria-label, or alt on the image.",
+                       "सिर्फ़ आइकन वाले लिंक को स्क्रीन-रीडर बस 'link' बोलता है। टेक्स्ट, aria-label या इमेज पर alt जोड़ें।"),
+    "a11y_button_name": ("warning", "Accessibility", "Buttons without a name", "बिना नाम वाले बटन",
+                         "Give each button visible text or an aria-label.", "हर बटन को दिखने वाला टेक्स्ट या aria-label दें।"),
+    "a11y_empty_heading": ("notice", "Accessibility", "Empty headings", "खाली हेडिंग",
+                           "Headings without text confuse screen readers. Remove them or add text.",
+                           "बिना टेक्स्ट की हेडिंग स्क्रीन-रीडर को उलझाती है। हटाएँ या टेक्स्ट जोड़ें।"),
+    "a11y_heading_skip": ("notice", "Accessibility", "Heading levels skipped (e.g. H2 → H4)", "हेडिंग लेवल छूटे (जैसे H2 → H4)",
+                          "Keep headings in order so the page outline makes sense.", "हेडिंग क्रम से रखें ताकि पेज की रूपरेखा समझ आए।"),
+    "axe_serious": ("error", "Accessibility", "Serious accessibility problems (WCAG, axe)", "गंभीर accessibility गड़बड़ियाँ (WCAG, axe)",
+                    "These block people using screen readers or keyboards, and can be a legal risk. Each line links the rule to fix.",
+                    "ये स्क्रीन-रीडर या कीबोर्ड वाले लोगों को रोकती हैं और कानूनी जोखिम भी हो सकता है। हर लाइन में ठीक करने का नियम है।"),
+    "axe_minor": ("notice", "Accessibility", "Minor accessibility problems (WCAG, axe)", "छोटी accessibility गड़बड़ियाँ (WCAG, axe)",
+                  "Smaller barriers worth fixing when you can.", "छोटी रुकावटें, मौका मिलने पर ठीक करें।"),
+    # ---- custom search
+    "custom_found": ("notice", "Custom search", "Custom search: text found", "कस्टम सर्च: टेक्स्ट मिला",
+                     "Pages containing the text you searched for.", "वे पेज जिनमें आपका खोजा टेक्स्ट है।"),
+    "custom_missing": ("warning", "Custom search", "Custom search: text missing", "कस्टम सर्च: टेक्स्ट नहीं मिला",
+                       "Pages that don't contain the text you expected (e.g. an analytics code).",
+                       "वे पेज जिनमें अपेक्षित टेक्स्ट नहीं (जैसे analytics कोड)।"),
+    # ---- page speed (PageSpeed Insights)
+    "cwv_poor": ("error", "Page speed", "Poor Core Web Vitals", "ख़राब Core Web Vitals",
+                 "Google uses these in ranking. LCP over 4 s or CLS over 0.25 (or INP over 500 ms) is poor: compress images, cut render-blocking scripts, reserve space for ads/images.",
+                 "Google रैंकिंग में इन्हें देखता है। LCP 4 सेकंड से ज़्यादा या CLS 0.25 से ज़्यादा (या INP 500 ms से ज़्यादा) ख़राब है: इमेज कंप्रेस करें, भारी स्क्रिप्ट कम करें, इमेज/विज्ञापन के लिए जगह पहले से रखें।"),
+    "cwv_improve": ("warning", "Page speed", "Core Web Vitals need improvement", "Core Web Vitals में सुधार चाहिए",
+                    "LCP over 2.5 s, CLS over 0.1 or INP over 200 ms. Close to good - small fixes help.",
+                    "LCP 2.5 सेकंड से ज़्यादा, CLS 0.1 से ज़्यादा या INP 200 ms से ज़्यादा। अच्छे के करीब - छोटे सुधार काफ़ी हैं।"),
+    "speed_low": ("warning", "Page speed", "Low PageSpeed score (under 50)", "कम PageSpeed स्कोर (50 से कम)",
+                  "Lighthouse found big speed problems; open the page in PageSpeed Insights for the full list.",
+                  "Lighthouse को बड़ी स्पीड गड़बड़ियाँ मिलीं; पूरी सूची के लिए पेज PageSpeed Insights में खोलें।"),
+    # ---- Search Console
+    "gsc_traffic_problem": ("error", "Search Console", "Pages with Google traffic that have problems", "Google ट्रैफ़िक वाले पेज जिनमें गड़बड़ी है",
+                            "These pages get clicks from Google but are broken, redirecting or noindex now - you are losing that traffic. Fix them first.",
+                            "इन पेजों पर Google से क्लिक आते हैं पर अब ये टूटे, redirect या noindex हैं - ट्रैफ़िक जा रहा है। इन्हें सबसे पहले ठीक करें।"),
+    "gsc_not_linked": ("warning", "Search Console", "Pages Google shows that the crawl didn't reach", "Google में दिखने वाले पेज जिन तक क्रॉल नहीं पहुँचा",
+                       "Google knows these pages but no internal link leads there. Link them from your site.",
+                       "Google इन पेजों को जानता है पर साइट का कोई लिंक यहाँ नहीं आता। साइट से लिंक करें।"),
+    "gsc_low_ctr": ("notice", "Search Console", "High impressions, low click rate", "ज़्यादा impressions, कम क्लिक",
+                    "Shown often on page 1 but rarely clicked. Rewrite the title and description to be more compelling.",
+                    "पहले पेज पर अक्सर दिखता है पर क्लिक कम। टाइटल और description ज़्यादा आकर्षक लिखें।"),
+    # ---- server logs
+    "log_bot_errors": ("warning", "Logs", "Search bots hitting error pages", "सर्च बॉट एरर पेजों पर आ रहे हैं",
+                       "Bots waste their visits on 4xx/5xx URLs. Fix or redirect these and remove links to them.",
+                       "बॉट 4xx/5xx URL पर अपनी विज़िट बर्बाद करते हैं। इन्हें ठीक या redirect करें और लिंक हटाएँ।"),
+    "log_not_seen": ("notice", "Logs", "Pages Googlebot didn't visit (in these logs)", "पेज जिन पर Googlebot नहीं आया (इन लॉग में)",
+                     "Google may not consider them important. Link to them more and add them to the sitemap.",
+                     "Google इन्हें शायद ज़रूरी नहीं मानता। इन पर ज़्यादा लिंक दें और sitemap में जोड़ें।"),
+    "log_param_waste": ("notice", "Logs", "Bots crawling ?parameter URLs", "बॉट ?parameter वाले URL क्रॉल कर रहे हैं",
+                        "Crawl budget goes to filter/sort URLs. Use canonicals, or block useless parameters in robots.txt.",
+                        "क्रॉल बजट filter/sort वाले URL पर जा रहा है। canonical लगाएँ या बेकार parameter robots.txt में ब्लॉक करें।"),
     "url_uppercase": ("notice", "URLs", "URLs with capital letters", "बड़े अक्षर वाले URL",
                       "URLs are case-sensitive; mixed case causes duplicates. Use lower case.",
                       "URL में बड़े-छोटे अक्षर अलग माने जाते हैं, इससे डुप्लिकेट बनते हैं। छोटे अक्षर रखें।"),
@@ -435,9 +501,175 @@ def analyse(db):
         if not json.loads(db.meta("llms_txt", "false")):
             add("llms_txt_missing", root + "/llms.txt")
 
+    link_scores(db, html, by_url)
+    structured_data_checks(db, add)
+    accessibility_checks(db, html, add)
+    for r in db.query("SELECT url, name, value FROM custom"):
+        add("custom_missing" if r["value"] == "missing" else "custom_found", r["url"],
+            f"{r['name']}: {r['value']}")
+    for r in db.query("SELECT url, src_count FROM (SELECT l.dst AS url, COUNT(DISTINCT l.src) "
+                      "AS src_count FROM links l WHERE l.kind = 'a' GROUP BY l.dst)"):
+        p = by_url.get(r["url"])
+        if p and p["url"] in html_urls and p["source"] != "start" and r["src_count"] == 1:
+            add("few_inlinks", p["url"])
+    speed_checks(db, add)
+    search_console_checks(db, by_url, html, indexable, add)
+    log_checks(db, html, indexable, add)
+
     db.executemany("INSERT INTO issues VALUES (?, ?, ?)", rows)
     db.commit()
     return len(rows)
+
+
+def link_scores(db, html, by_url, damping=0.85, rounds=40):
+    """Internal PageRank over <a> links between HTML pages, shown as 0-100 (log scale, like
+    Screaming Frog's Link Score). One hop of redirect is followed."""
+    pages = [p["url"] for p in html]
+    if not pages:
+        return
+    index = {u: i for i, u in enumerate(pages)}
+    out = defaultdict(set)
+    for link in db.query("SELECT src, dst FROM links WHERE kind = 'a' AND nofollow = 0"):
+        dst = link["dst"]
+        target = by_url.get(dst)
+        if target and target["redirect_to"]:
+            dst = target["redirect_to"]
+        if link["src"] in index and dst in index and dst != link["src"]:
+            out[index[link["src"]]].add(index[dst])
+    n = len(pages)
+    rank = [1 / n] * n
+    for _ in range(rounds):
+        nxt = [(1 - damping) / n] * n
+        dangling = sum(rank[i] for i in range(n) if not out[i])
+        for i in range(n):
+            if out[i]:
+                share = damping * rank[i] / len(out[i])
+                for j in out[i]:
+                    nxt[j] += share
+        spread = damping * dangling / n
+        rank = [r + spread for r in nxt]
+    import math
+    lo, hi = math.log(min(rank)), math.log(max(rank))
+    scores = [100 if hi == lo else round(100 * (math.log(r) - lo) / (hi - lo)) for r in rank]
+    db.executemany("UPDATE pages SET link_score = ? WHERE url = ?",
+                   [(sc, u) for u, sc in zip(pages, scores)])
+
+
+# Google rich result types: required (each tuple = one of these) and recommended properties.
+SD_REQUIRED = {
+    "Product": [("name",), ("offers", "review", "aggregateRating")],
+    "Offer": [("price", "priceSpecification"), ("priceCurrency", "priceSpecification")],
+    "AggregateRating": [("ratingValue",), ("ratingCount", "reviewCount")],
+    "Review": [("author",), ("reviewRating",)],
+    "BreadcrumbList": [("itemListElement",)],
+    "ListItem": [("position",)],
+    "FAQPage": [("mainEntity",)],
+    "Question": [("name",), ("acceptedAnswer", "suggestedAnswer")],
+    "Answer": [("text",)],
+    "Event": [("name",), ("startDate",), ("location",)],
+    "Recipe": [("name",), ("image",)],
+    "VideoObject": [("name",), ("thumbnailUrl",), ("uploadDate",)],
+    "JobPosting": [("title",), ("description",), ("datePosted",), ("hiringOrganization",),
+                   ("jobLocation", "applicantLocationRequirements")],
+    "LocalBusiness": [("name",), ("address",)],
+    "SoftwareApplication": [("name",), ("offers",), ("aggregateRating", "review")],
+    "Course": [("name",), ("description",), ("provider",)],
+}
+SD_RECOMMENDED = {
+    "Article": ["headline", "image", "datePublished", "author"],
+    "NewsArticle": ["headline", "image", "datePublished", "author"],
+    "BlogPosting": ["headline", "image", "datePublished", "author"],
+    "Organization": ["name", "url", "logo"],
+    "Product": ["image", "description", "brand"],
+    "LocalBusiness": ["telephone", "openingHoursSpecification", "geo"],
+    "Event": ["image", "description", "endDate", "offers"],
+}
+LOCAL_BUSINESS = {"LocalBusiness", "Restaurant", "Store", "Dentist", "Hotel", "MedicalClinic",
+                  "AutoRepair", "BeautySalon", "LegalService", "RealEstateAgent", "Physician",
+                  "HealthAndBeautyBusiness", "HomeAndConstructionBusiness", "FoodEstablishment",
+                  "ProfessionalService", "Electrician", "Plumber", "Locksmith", "CafeOrCoffeeShop"}
+
+
+def structured_data_checks(db, add):
+    for r in db.query("SELECT url, type, json FROM structured"):
+        node = json.loads(r["json"])
+        kind = "LocalBusiness" if r["type"] in LOCAL_BUSINESS else r["type"]
+        missing = [" or ".join(alts) for alts in SD_REQUIRED.get(kind, [])
+                   if not any(node.get(a) not in (None, "", []) for a in alts)]
+        if missing:
+            add("sd_required", r["url"], f"{r['type']}: missing {', '.join(missing)}")
+        rec = [a for a in SD_RECOMMENDED.get(kind, []) if node.get(a) in (None, "", [])]
+        if rec:
+            add("sd_recommended", r["url"], f"{r['type']}: add {', '.join(rec)}")
+
+
+def accessibility_checks(db, html, add):
+    codes = {"form_field_no_label": "a11y_form_label", "link_no_text": "a11y_link_text",
+             "button_no_name": "a11y_button_name", "empty_heading": "a11y_empty_heading",
+             "heading_skipped": "a11y_heading_skip"}
+    for p in html:
+        for key, n in json.loads(p["a11y"] or "{}").items():
+            if key in codes:
+                add(codes[key], p["url"], f"{n} on this page")
+    for r in db.query("SELECT url, rule, impact, help, count, help_url FROM a11y"):
+        code = "axe_serious" if r["impact"] in ("critical", "serious") else "axe_minor"
+        add(code, r["url"], f"{r['impact']}: {r['help']} ({r['count']}x) - {r['help_url']}")
+
+
+def speed_checks(db, add):
+    for r in db.query("SELECT * FROM cwv WHERE error IS NULL"):
+        field = json.loads(r["field"] or "{}")
+        lcp = field.get("lcp") or r["lcp"]
+        cls = field.get("cls") if field.get("cls") is not None else r["cls"]
+        inp = field.get("inp")
+        detail = (f"{r['strategy']}: LCP {lcp / 1000:.1f} s, CLS {cls:.2f}"
+                  + (f", INP {inp:.0f} ms" if inp else "") + f", score {r['score']}"
+                  + (" (real users)" if field else " (lab test)"))
+        if (lcp or 0) > 4000 or (cls or 0) > 0.25 or (inp or 0) > 500:
+            add("cwv_poor", r["url"], detail)
+        elif (lcp or 0) > 2500 or (cls or 0) > 0.1 or (inp or 0) > 200:
+            add("cwv_improve", r["url"], detail)
+        if r["score"] is not None and r["score"] < 50:
+            add("speed_low", r["url"], detail)
+
+
+def search_console_checks(db, by_url, html, indexable, add):
+    rows = db.query("SELECT * FROM gsc")
+    if not rows:
+        return
+    idx = set(indexable)
+    for g in rows:
+        p = by_url.get(g["url"])
+        if p is None:
+            if (g["impressions"] or 0) > 0:
+                add("gsc_not_linked", g["url"], f"{g['clicks']} clicks, {g['impressions']} impressions")
+            continue
+        if (g["clicks"] or 0) > 0 and (p["status"] != 200 or g["url"] not in idx):
+            why = (p["status"] if p["status"] != 200 else "noindex / canonicalised") or p["error"]
+            add("gsc_traffic_problem", g["url"], f"{g['clicks']} clicks - now {why}")
+        if (g["impressions"] or 0) >= 100 and (g["ctr"] or 0) < 0.01 and (g["position"] or 99) <= 10:
+            add("gsc_low_ctr", g["url"], f"{g['impressions']} impressions, CTR {g['ctr'] * 100:.1f}%, "
+                f"position {g['position']:.1f}")
+
+
+def log_checks(db, html, indexable, add):
+    rows = db.query("SELECT url, bot, hits, statuses FROM logs")
+    if not rows:
+        return
+    google_seen = set()
+    for r in rows:
+        statuses = json.loads(r["statuses"] or "{}")
+        bad = sum(n for code, n in statuses.items() if code[0] in "45")
+        if bad:
+            add("log_bot_errors", r["url"], f"{r['bot']}: {bad} of {r['hits']} hits got 4xx/5xx")
+        if urlsplit(r["url"]).query:
+            add("log_param_waste", r["url"], f"{r['bot']}: {r['hits']} hits")
+        if r["bot"] == "Googlebot":
+            google_seen.add(r["url"])
+    if google_seen:
+        for u in indexable:
+            if u not in google_seen:
+                add("log_not_seen", u)
 
 
 def near_duplicates(pages, max_bits=3):
@@ -465,6 +697,15 @@ def near_duplicates(pages, max_bits=3):
                 if (a, b) not in pairs and bin(hashes[a] ^ hashes[b]).count("1") <= max_bits:
                     pairs.add((a, b))
     return sorted(pairs)
+
+
+def health_score(db):
+    """Percent of HTML pages with no error-level issue (None if there are no pages)."""
+    errors = ",".join(f"'{k}'" for k, v in CHECKS.items() if v[0] == "error")
+    total = db.query(f"SELECT COUNT(*) AS n FROM pages WHERE {HTML_PAGES}")[0]["n"]
+    bad = db.query(f"SELECT COUNT(DISTINCT url) AS n FROM issues WHERE code IN ({errors}) "
+                   f"AND url IN (SELECT url FROM pages WHERE {HTML_PAGES})")[0]["n"]
+    return round(100 * (total - bad) / total) if total else None
 
 
 def summary(db):

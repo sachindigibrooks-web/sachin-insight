@@ -3,9 +3,9 @@
 UI = {
     "app": ["Free SEO Crawler", "फ्री SEO क्रॉलर"],
     "credit": ["Made by Sachin Samria", "निर्माता: Sachin Samria"],
-    "tagline": ["Find broken links, redirects, missing titles and 50+ SEO problems on any website. "
+    "tagline": ["Find broken links, redirects, missing titles and 80+ SEO problems on any website. "
                 "No page limit, free.",
-                "किसी भी वेबसाइट पर टूटे लिंक, redirect, गायब टाइटल और 50+ SEO गड़बड़ियाँ ढूँढें। "
+                "किसी भी वेबसाइट पर टूटे लिंक, redirect, गायब टाइटल और 80+ SEO गड़बड़ियाँ ढूँढें। "
                 "कोई पेज लिमिट नहीं, फ्री।"],
     "url_ph": ["https://example.com", "https://example.com"],
     "start": ["Start crawl", "क्रॉल शुरू करें"],
@@ -85,4 +85,73 @@ UI = {
                "and goes gently by default.",
                "सिर्फ़ अपनी या अनुमति वाली साइट क्रॉल करें। क्रॉलर robots.txt मानता है और धीरे चलता है।"],
     "ai_ready": ["AI search", "AI सर्च"],
+    "accessibility": ["Accessibility audit with axe-core (needs JavaScript rendering)",
+                      "axe-core से accessibility जाँच (JavaScript render ज़रूरी)"],
+    "custom_rules": ["Custom search & extraction", "कस्टम सर्च और extraction"],
+    "custom_hint": ["Find text on every page (e.g. an old analytics code), or pull data out with CSS, "
+                    "XPath or regex (e.g. prices, authors).",
+                    "हर पेज पर टेक्स्ट खोजें (जैसे पुराना analytics कोड), या CSS, XPath या regex से "
+                    "डेटा निकालें (जैसे कीमत, लेखक)।"],
+    "add_rule": ["+ Add rule", "+ नियम जोड़ें"],
+    "k_contains": ["Page contains", "पेज में है"], "k_missing": ["Page does NOT contain", "पेज में नहीं है"],
+    "k_css": ["Extract (CSS selector)", "निकालें (CSS selector)"], "k_xpath": ["Extract (XPath)", "निकालें (XPath)"],
+    "k_regex": ["Extract (regex)", "निकालें (regex)"],
+    "rule_name": ["Name", "नाम"], "rule_value": ["Text / selector / pattern", "टेक्स्ट / selector / pattern"],
+    "app_settings": ["⚙ Settings", "⚙ सेटिंग"],
+    "save": ["Save", "सेव करें"], "saved": ["Saved", "सेव हुआ"], "close": ["Close", "बंद करें"],
+    "psi_key": ["PageSpeed API key (free)", "PageSpeed API key (फ्री)"],
+    "psi_help": ["Get it free: console.cloud.google.com → enable 'PageSpeed Insights API' → Credentials → API key.",
+                 "फ्री में लें: console.cloud.google.com → 'PageSpeed Insights API' चालू करें → Credentials → API key।"],
+    "telegram_token": ["Telegram bot token", "Telegram bot token"],
+    "telegram_help": ["In Telegram, message @BotFather → /newbot → copy the token. Then send any message to "
+                      "your bot and get your chat id from @userinfobot.",
+                      "Telegram में @BotFather को /newbot भेजें → token कॉपी करें। फिर अपने bot को कोई मैसेज भेजें "
+                      "और @userinfobot से अपना chat id लें।"],
+    "smtp": ["E-mail (SMTP) - e.g. Gmail: smtp.gmail.com, port 587, an app password",
+             "ई-मेल (SMTP) - जैसे Gmail: smtp.gmail.com, port 587, app password"],
+    "alert_lang": ["Alert language", "अलर्ट की भाषा"],
+    "branding": ["Report branding (white-label)", "रिपोर्ट ब्रांडिंग (white-label)"],
+    "agency_name": ["Agency / your name", "एजेंसी / आपका नाम"], "agency_website": ["Website", "वेबसाइट"],
+    "logo": ["Logo", "लोगो"], "brand_color": ["Brand colour", "ब्रांड रंग"],
+    "client_name": ["Client name", "क्लाइंट का नाम"], "report_lang": ["Report language", "रिपोर्ट की भाषा"],
+    "t_custom": ["Custom", "कस्टम"], "t_map": ["Site map", "साइट मैप"], "t_speed": ["Speed", "स्पीड"],
+    "t_gsc": ["Search Console", "Search Console"], "t_logs": ["Logs", "लॉग"],
+    "t_schedules": ["Schedules", "शेड्यूल"], "t_report": ["Report", "रिपोर्ट"],
+    "no_custom": ["No custom rules in this crawl. Add them under Settings → Custom search before crawling.",
+                  "इस क्रॉल में कोई कस्टम नियम नहीं। क्रॉल से पहले सेटिंग → कस्टम सर्च में जोड़ें।"],
+    "map_hint": ["The 150 most important pages by link score (bigger = more internal links). Drag to move; "
+                 "click a dot for details. Below: the site's folder structure.",
+                 "link score के हिसाब से 150 सबसे ज़रूरी पेज (बड़ा = ज़्यादा अंदरूनी लिंक)। खींचकर हिलाएँ; "
+                 "डिटेल के लिए बिंदु पर क्लिक करें। नीचे: साइट की फ़ोल्डर बनावट।"],
+    "psi_hint": ["Checks the most important pages with Google PageSpeed Insights (real-user data when "
+                   "Google has it). Add a free API key in Settings for many pages.",
+                   "सबसे ज़रूरी पेजों को Google PageSpeed Insights से जाँचता है (Google के पास हो तो असली यूज़र "
+                   "डेटा)। कई पेजों के लिए सेटिंग में फ्री API key डालें।"],
+    "run_speed": ["Check page speed", "पेज स्पीड जाँचें"], "pages_n": ["pages", "पेज"],
+    "mobile": ["Mobile", "मोबाइल"], "desktop": ["Desktop", "डेस्कटॉप"],
+    "gsc_hint": ["Search Console → Performance → Search results → Pages → Export → Download CSV. Upload "
+                 "the .zip (or Pages.csv) here: pages with traffic get matched with the crawl.",
+                 "Search Console → Performance → Search results → Pages → Export → Download CSV। .zip "
+                 "(या Pages.csv) यहाँ अपलोड करें: ट्रैफ़िक वाले पेज क्रॉल से मिलाए जाएँगे।"],
+    "logs_hint": ["Upload your server's access log (Apache / Nginx, .log or .gz) to see which pages Google "
+                  "and AI bots really visit.",
+                  "सर्वर का access log (Apache / Nginx, .log या .gz) अपलोड करें, देखें Google और AI बॉट "
+                  "असल में कौन-से पेज देखते हैं।"],
+    "upload": ["Upload", "अपलोड"],
+    "sched_hint": ["Re-crawl this site automatically and get a Telegram / e-mail message when something "
+                   "breaks. Uses the URL and settings from the crawl form above. Runs while the app is open "
+                   "(the installer can start it with Windows).",
+                   "यह साइट अपने आप दोबारा क्रॉल करें और कुछ टूटे तो Telegram / ई-मेल मैसेज पाएँ। ऊपर के फ़ॉर्म "
+                   "का URL और सेटिंग इस्तेमाल होती है। ऐप खुला रहने पर चलता है (इंस्टॉलर इसे Windows के साथ शुरू कर सकता है)।"],
+    "every_days": ["Every (days)", "हर (दिन)"], "telegram_chat": ["Telegram chat id", "Telegram chat id"],
+    "email_to": ["E-mail to", "ई-मेल पता"], "only_changes": ["Only when something got worse", "सिर्फ़ तब जब कुछ बिगड़े"],
+    "add_schedule": ["Add schedule", "शेड्यूल जोड़ें"], "test_alert": ["Send test alert", "टेस्ट अलर्ट भेजें"],
+    "run_now": ["Run now", "अभी चलाएँ"], "next_run": ["Next run", "अगली बार"], "last_result": ["Last result", "पिछला नतीजा"],
+    "report_hint": ["A branded audit report for your client: health score, what to fix first with "
+                    "examples, page speed, Search Console and accessibility. Set your logo and colours in Settings.",
+                    "क्लाइंट के लिए आपकी ब्रांडिंग वाली ऑडिट रिपोर्ट: हेल्थ स्कोर, पहले क्या ठीक करें (उदाहरण सहित), "
+                    "पेज स्पीड, Search Console और accessibility। लोगो और रंग सेटिंग में डालें।"],
+    "open_report": ["Open report", "रिपोर्ट खोलें"], "pdf": ["Download PDF", "PDF डाउनलोड"],
+    "making_pdf": ["Making the PDF...", "PDF बन रहा है..."],
+    "link_score": ["Link score", "लिंक स्कोर"],
 }

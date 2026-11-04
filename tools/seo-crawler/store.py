@@ -13,10 +13,10 @@ PAGE_COLUMNS = [
     "redirect_to", "title", "titles", "meta_desc", "meta_descs", "h1", "h2s", "canonical",
     "meta_robots", "x_robots", "words", "text_hash", "simhash", "lang", "viewport", "og",
     "jsonld", "jsonld_bad", "hsts", "mixed", "blocked", "resource",
-    "rendered", "raw_words", "raw_links", "render_error",
+    "rendered", "raw_words", "raw_links", "render_error", "a11y", "link_score",
 ]
 TEXT_COLUMNS = {"url", "source", "error", "content_type", "redirect_to", "title", "meta_desc", "h1",
-                "canonical", "meta_robots", "x_robots", "text_hash", "lang", "render_error"}
+                "canonical", "meta_robots", "x_robots", "text_hash", "lang", "render_error", "a11y"}
 
 
 def folder(*parts):
@@ -29,6 +29,25 @@ def folder(*parts):
     path = os.path.join(base, "FreeSEOCrawler", *parts)
     os.makedirs(path, exist_ok=True)
     return path
+
+
+def load_settings():
+    """App settings: PageSpeed key, Telegram / e-mail alerts, report branding."""
+    try:
+        with open(os.path.join(folder(), "settings.json"), encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+def save_settings(values):
+    data = load_settings()
+    data.update(values)
+    path = os.path.join(folder(), "settings.json")
+    with open(path + ".tmp", "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+    os.replace(path + ".tmp", path)
+    return data
 
 
 def _index():
@@ -74,6 +93,19 @@ def db_path(cid):
     return os.path.join(folder("crawls"), cid + ".db")
 
 
+def flatten_jsonld(item):
+    """Every typed object in a JSON-LD block (top level, @graph lists and nested values)."""
+    if isinstance(item, list):
+        for x in item:
+            yield from flatten_jsonld(x)
+    elif isinstance(item, dict):
+        if "@type" in item:
+            yield item
+        for key, value in item.items():
+            if key != "@type" and isinstance(value, (dict, list)):
+                yield from flatten_jsonld(value)
+
+
 class CrawlDB:
     """All data of one crawl. Safe to use from several threads (one lock)."""
 
@@ -93,6 +125,17 @@ class CrawlDB:
             CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT);
             CREATE TABLE IF NOT EXISTS issues (code TEXT, url TEXT, detail TEXT);
             CREATE INDEX IF NOT EXISTS issues_code ON issues(code);
+            CREATE TABLE IF NOT EXISTS structured (url TEXT, type TEXT, json TEXT);
+            CREATE TABLE IF NOT EXISTS custom (url TEXT, name TEXT, value TEXT);
+            CREATE TABLE IF NOT EXISTS a11y (url TEXT, rule TEXT, impact TEXT, help TEXT,
+                                             count INTEGER, help_url TEXT);
+            CREATE TABLE IF NOT EXISTS cwv (url TEXT, strategy TEXT, score INTEGER, lcp REAL,
+                                            cls REAL, inp REAL, tbt REAL, fcp REAL,
+                                            field TEXT, error TEXT, checked REAL);
+            CREATE TABLE IF NOT EXISTS gsc (url TEXT PRIMARY KEY, clicks INTEGER,
+                                            impressions INTEGER, ctr REAL, position REAL);
+            CREATE TABLE IF NOT EXISTS logs (url TEXT, bot TEXT, hits INTEGER, last TEXT,
+                                             statuses TEXT);
         """)
 
     def add_page(self, row, resource=False):
@@ -107,6 +150,28 @@ class CrawlDB:
             self.con.executemany("INSERT INTO links VALUES (?, ?, ?, ?, ?)",
                                  [(src, dst, anchor, nofollow, kind)
                                   for dst, anchor, nofollow, kind in links])
+
+    def add_structured(self, url, items):
+        rows = []
+        for item in items:
+            for node in flatten_jsonld(item):
+                types = node.get("@type")
+                for t in (types if isinstance(types, list) else [types]):
+                    if isinstance(t, str):
+                        rows.append((url, t, json.dumps(node, ensure_ascii=False)[:20000]))
+        with self.lock:
+            self.con.executemany("INSERT INTO structured VALUES (?, ?, ?)", rows)
+
+    def add_custom(self, url, results):
+        with self.lock:
+            self.con.executemany("INSERT INTO custom VALUES (?, ?, ?)",
+                                 [(url, n, v) for n, v in results])
+
+    def add_accessibility(self, url, violations):
+        with self.lock:
+            self.con.executemany("INSERT INTO a11y VALUES (?, ?, ?, ?, ?, ?)", [
+                (url, v["id"], v.get("impact"), v.get("help"), len(v.get("nodes", [])),
+                 v.get("helpUrl")) for v in violations])
 
     def add_sitemap_urls(self, urls):
         with self.lock:

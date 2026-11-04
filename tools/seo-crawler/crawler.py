@@ -40,6 +40,10 @@ class Settings:
     include_subdomains: bool = False
     use_sitemaps: bool = True
     render_js: bool = False  # also open pages in a headless browser (for React/Vue/Next.js sites)
+    accessibility: bool = True  # with render_js: run the axe-core WCAG audit on every page
+    # Custom search / extraction rules: [{"name", "kind", "value"}], kind is one of
+    # contains | missing | css | xpath | regex (see custom_rules()).
+    custom: list = None
     timeout: float = 20.0
     user_agent: str = USER_AGENT
 
@@ -111,12 +115,14 @@ def parse_html(html, url):
                   for c in tree.css("link[rel]")
                   if "canonical" in (c.attributes.get("rel") or "").lower().split()]
     jsonld_ok = jsonld_bad = 0
+    structured = []
     for s in tree.css('script[type="application/ld+json"]'):
         try:
-            json.loads(s.text() or "")
+            structured.append(json.loads(s.text() or ""))
             jsonld_ok += 1
         except ValueError:
             jsonld_bad += 1
+    a11y = static_accessibility(tree)
 
     links = []
     for a in tree.css("a[href]"):
@@ -160,8 +166,79 @@ def parse_html(html, url):
         "viewport": int("viewport" in metas),
         "og": int("og:title" in metas),
         "jsonld": jsonld_ok, "jsonld_bad": jsonld_bad,
-        "links": links, "images": images,
+        "a11y": json.dumps(a11y) if a11y else None,
+        "links": links, "images": images, "structured": structured,
     }
+
+
+def static_accessibility(tree):
+    """Accessibility problems visible in the HTML itself (no browser needed): {problem: count}."""
+    out = {}
+
+    def bump(key, n=1):
+        if n:
+            out[key] = out.get(key, 0) + n
+
+    labelled = {lab.attributes.get("for") for lab in tree.css("label[for]")}
+    for field in tree.css("input, select, textarea"):
+        a = field.attributes
+        if (a.get("type") or "").lower() in ("hidden", "submit", "button", "reset", "image"):
+            continue
+        has_label = (a.get("id") in labelled or a.get("aria-label") or a.get("aria-labelledby")
+                     or a.get("title") or (field.parent and field.parent.tag == "label"))
+        bump("form_field_no_label", 0 if has_label else 1)
+    for link in tree.css("a[href]"):
+        named = text_of(link) or link.attributes.get("aria-label") or link.attributes.get("title") or any(
+            (img.attributes.get("alt") or "").strip() for img in link.css("img"))
+        bump("link_no_text", 0 if named else 1)
+    for btn in tree.css("button"):
+        named = text_of(btn) or btn.attributes.get("aria-label") or btn.attributes.get("title")
+        bump("button_no_name", 0 if named else 1)
+    last = 0
+    for h in tree.css("h1, h2, h3, h4, h5, h6"):
+        level = int(h.tag[1])
+        if not text_of(h):
+            bump("empty_heading")
+        if last and level > last + 1:
+            bump("heading_skipped")
+        last = level
+    return out
+
+
+def custom_rules(html, rules):
+    """Run custom search / extraction rules on a page's HTML: [(name, value)] to store."""
+    out = []
+    low = None
+    for rule in rules or []:
+        name, kind, value = rule.get("name") or rule.get("value", "")[:40], rule.get("kind"), rule.get("value", "")
+        if not value:
+            continue
+        try:
+            if kind in ("contains", "missing"):
+                low = low if low is not None else html.lower()
+                n = low.count(value.lower())
+                if kind == "contains" and n:
+                    out.append((name, f"found {n} time(s)"))
+                elif kind == "missing" and not n:
+                    out.append((name, "missing"))
+            elif kind == "regex":
+                found = [m if isinstance(m, str) else " ".join(m) for m in re.findall(value, html)[:20]]
+                out += [(name, v.strip()[:500]) for v in found if v.strip()]
+            elif kind == "css":
+                tree = LexborHTMLParser(html)
+                for node in tree.css(value)[:20]:
+                    v = text_of(node) or node.attributes.get("content") or node.attributes.get("href") or ""
+                    if v:
+                        out.append((name, v[:500]))
+            elif kind == "xpath":
+                import lxml.html
+                for node in lxml.html.fromstring(html).xpath(value)[:20]:
+                    v = node if isinstance(node, str) else " ".join(node.text_content().split())
+                    if str(v).strip():
+                        out.append((name, str(v).strip()[:500]))
+        except Exception as e:  # a bad rule shouldn't stop the crawl
+            out.append((name, f"rule error: {e}"[:200]))
+    return out
 
 
 # ---------------------------------------------------------------- crawl
@@ -318,17 +395,28 @@ class Crawl:
         if not body:
             self.db.add_page(row)
             return
-        page = parse_html(body.decode(r.encoding or "utf-8", errors="replace"), url)
+        html = body.decode(r.encoding or "utf-8", errors="replace")
+        page = parse_html(html, url)
+        violations = []
         if self.renderer:
             # Keep what the raw HTML had, then check the page as the browser built it.
             row["raw_words"] = page["words"]
             row["raw_links"] = sum(1 for d, _, _, k in page["links"] if k == "a" and self.internal(d))
             try:
-                page = parse_html(await self.renderer.render(url), url)
+                result = await self.renderer.render(url, axe=self.s.accessibility)
+                html, violations = result["html"], result["axe"]
+                page = parse_html(html, url)
                 row["rendered"] = 1
             except Exception as e:
                 row["render_error"] = str(e)[:300]
         links, images = page.pop("links"), page.pop("images")
+        structured = page.pop("structured")
+        if structured:
+            self.db.add_structured(url, structured)
+        if violations:
+            self.db.add_accessibility(url, violations)
+        if self.s.custom:
+            self.db.add_custom(url, custom_rules(html, self.s.custom))
         if url.startswith("https://"):
             row["mixed"] = sum(1 for d, _, _, k in links if k != "a" and d.startswith("http://"))
         row.update(page)

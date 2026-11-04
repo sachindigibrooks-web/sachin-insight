@@ -35,6 +35,9 @@ jobs:
       - name: Test - crawl the test site and check every planted problem is found
         run: python tests/test_checks.py
 
+      - name: Test - custom search, structured data, accessibility, link score, GSC, logs, speed, report, alerts
+        run: python tests/test_features.py
+
       - name: Build (Windows) - installer and portable zip
         if: runner.os == 'Windows'
         run: |

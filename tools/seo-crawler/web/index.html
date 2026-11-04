@@ -84,6 +84,7 @@
   <h1><span>🕷</span> <span data-t="app" style="color:inherit">Free SEO Crawler</span></h1>
   <span class="credit" data-t="credit">Made by Sachin Samria</span>
   <span class="grow"></span>
+  <button class="ghost" id="settingsBtn" type="button" data-t="app_settings">⚙ Settings</button>
   <button class="ghost" id="langBtn" type="button">हिंदी</button>
 </header>
 
@@ -108,6 +109,11 @@
         <label style="grid-column:1/-1"><input type="checkbox" id="renderJs"> <span data-t="render_js">Render JavaScript</span></label>
       </div>
       <p class="hint" data-t="render_hint"></p>
+      <label class="hint" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="a11y" checked> <span data-t="accessibility"></span></label>
+      <div style="margin-top:12px"><b data-t="custom_rules">Custom search & extraction</b>
+        <p class="hint" data-t="custom_hint" style="margin:2px 0 6px"></p>
+        <div id="rules"></div>
+        <button class="ghost" type="button" id="addRule" data-t="add_rule">+ Add rule</button></div>
       <p class="hint" data-t="speed_hint"></p>
     </details>
     <div id="progressBox" class="hidden">
@@ -130,7 +136,14 @@
       <button data-tab="overview" class="on" data-t="overview">Overview</button>
       <button data-tab="issues" data-t="issues">Issues</button>
       <button data-tab="pages" data-t="pages">Pages</button>
+      <button data-tab="custom" data-t="t_custom">Custom</button>
+      <button data-tab="map" data-t="t_map">Site map</button>
+      <button data-tab="speed" data-t="t_speed">Speed</button>
+      <button data-tab="gsc" data-t="t_gsc">Search Console</button>
+      <button data-tab="logs" data-t="t_logs">Logs</button>
       <button data-tab="compare" data-t="compare">Compare</button>
+      <button data-tab="schedules" data-t="t_schedules">Schedules</button>
+      <button data-tab="report" data-t="t_report">Report</button>
       <button data-tab="export" data-t="export">Export</button>
     </div>
 
@@ -188,6 +201,55 @@
       </div>
     </section>
 
+    <section id="tab-custom" class="hidden"><div class="card"><div class="tablewrap"><table id="customTable"></table></div></div></section>
+
+    <section id="tab-map" class="hidden"><div class="card">
+      <p class="hint" data-t="map_hint" style="margin-top:0"></p>
+      <canvas id="graph" style="width:100%;height:520px;background:var(--soft);border-radius:10px;touch-action:none"></canvas>
+      <div id="graphInfo" class="hint" style="margin-top:6px"></div>
+      <div id="tree" style="margin-top:12px;font-size:13px;max-height:420px;overflow:auto"></div>
+    </div></section>
+
+    <section id="tab-speed" class="hidden"><div class="card">
+      <p class="hint" data-t="psi_hint" style="margin-top:0"></p>
+      <div class="row"><select id="speedStrategy"><option value="mobile" data-t="mobile">Mobile</option><option value="desktop" data-t="desktop">Desktop</option></select>
+        <input type="number" id="speedLimit" value="20" min="1" max="500" style="width:90px"> <span class="hint" data-t="pages_n">pages</span>
+        <button type="button" id="speedBtn" data-t="run_speed">Check page speed</button> <span class="hint" id="speedStatus"></span></div>
+      <div class="tablewrap" style="margin-top:12px"><table id="speedTable"></table></div>
+    </div></section>
+
+    <section id="tab-gsc" class="hidden"><div class="card">
+      <p class="hint" data-t="gsc_hint" style="margin-top:0"></p>
+      <div class="row"><input type="file" id="gscFile" accept=".zip,.csv"><button type="button" id="gscBtn" data-t="upload">Upload</button><span class="hint" id="gscStatus"></span></div>
+      <div class="tablewrap" style="margin-top:12px"><table id="gscTable"></table></div>
+    </div></section>
+
+    <section id="tab-logs" class="hidden"><div class="card">
+      <p class="hint" data-t="logs_hint" style="margin-top:0"></p>
+      <div class="row"><input type="file" id="logFile"><button type="button" id="logBtn" data-t="upload">Upload</button><span class="hint" id="logStatus"></span></div>
+      <div id="botSummary" style="margin-top:12px"></div>
+      <div class="tablewrap" style="margin-top:12px"><table id="logTable"></table></div>
+    </div></section>
+
+    <section id="tab-schedules" class="hidden"><div class="card">
+      <p class="hint" data-t="sched_hint" style="margin-top:0"></p>
+      <div class="opts">
+        <label><span data-t="every_days">Every (days)</span> <input type="number" id="schEvery" value="7" min="1"></label>
+        <label><span data-t="telegram_chat">Telegram chat id</span> <input type="text" id="schChat"></label>
+        <label><span data-t="email_to">E-mail to</span> <input type="text" id="schEmail"></label>
+        <label><input type="checkbox" id="schOnly" checked> <span data-t="only_changes">Only when something got worse</span></label>
+      </div>
+      <div class="row" style="margin-top:10px"><button type="button" id="schAdd" data-t="add_schedule">Add schedule</button>
+        <button type="button" class="ghost" id="schTest" data-t="test_alert">Send test alert</button><span class="hint" id="schStatus"></span></div>
+      <div class="tablewrap" style="margin-top:12px"><table id="schTable"></table></div>
+    </div></section>
+
+    <section id="tab-report" class="hidden"><div class="card">
+      <p class="hint" data-t="report_hint" style="margin-top:0"></p>
+      <div class="row"><a id="reportOpen" target="_blank"><button type="button" class="ghost" data-t="open_report">Open report</button></a>
+        <button type="button" id="reportPdf" data-t="pdf">Download PDF</button><span class="hint" id="reportStatus"></span></div>
+    </div></section>
+
     <section id="tab-export" class="hidden">
       <div class="card">
         <p class="hint" data-t="export_hint" style="margin-top:0"></p>
@@ -201,8 +263,29 @@
 
 <div class="modal hidden" id="modal"><div class="card" id="modalBody"></div></div>
 
+<div class="modal hidden" id="settingsModal"><div class="card">
+  <div class="row" style="justify-content:space-between"><b data-t="app_settings">Settings</b><button class="ghost" type="button" id="settingsClose" data-t="close">Close</button></div>
+  <div class="opts" style="grid-template-columns:1fr">
+    <label style="flex-direction:column;align-items:stretch"><span data-t="psi_key">PageSpeed API key</span><input type="text" id="s_psi_key"><small class="hint" data-t="psi_help"></small></label>
+    <label style="flex-direction:column;align-items:stretch"><span data-t="telegram_token">Telegram bot token</span><input type="text" id="s_telegram_token"><small class="hint" data-t="telegram_help"></small></label>
+    <b data-t="smtp" style="font-size:13px"></b>
+    <div class="row"><input type="text" id="s_smtp_host" placeholder="smtp.gmail.com"><input type="text" id="s_smtp_port" placeholder="587" style="width:80px">
+      <input type="text" id="s_smtp_user" placeholder="user"><input type="password" id="s_smtp_password" placeholder="password"><input type="text" id="s_smtp_from" placeholder="from"></div>
+    <label><span data-t="alert_lang">Alert language</span> <select id="s_alert_lang"><option value="en">English</option><option value="hi">हिंदी</option></select></label>
+    <b data-t="branding" style="margin-top:8px">Report branding</b>
+    <div class="row"><label><span data-t="agency_name">Agency</span> <input type="text" id="s_agency_name"></label>
+      <label><span data-t="agency_website">Website</span> <input type="text" id="s_agency_website"></label></div>
+    <div class="row"><label><span data-t="client_name">Client</span> <input type="text" id="s_client_name"></label>
+      <label><span data-t="brand_color">Colour</span> <input type="color" id="s_brand_color" value="#1f7a4d"></label>
+      <label><span data-t="report_lang">Report language</span> <select id="s_report_lang"><option value="en">English</option><option value="hi">हिंदी</option></select></label></div>
+    <div class="row"><span data-t="logo">Logo</span> <input type="file" id="s_logo" accept="image/*"><img id="logoPreview" style="max-height:40px"></div>
+  </div>
+  <div class="row" style="margin-top:12px"><button type="button" id="settingsSave" data-t="save">Save</button><span class="hint" id="settingsStatus"></span></div>
+</div></div>
+
 <script>
 const $ = id => document.getElementById(id);
+const ACTIVE = ["starting", "starting browser", "running", "analysing"];
 let T = null, lang = "en", crawlId = null, crawls = [], pollTimer = null, summaryData = null, lastProgress = null;
 let pageState = { view: "html", q: "", sort: "url", desc: false, page: 0, total: 0 };
 try { lang = localStorage.getItem("seoLang") || "en"; } catch (e) {}
@@ -268,7 +351,7 @@ $("startForm").onsubmit = async e => {
       body: JSON.stringify({ url: $("url").value, max_pages: +$("maxPages").value, concurrency: +$("concurrency").value,
         respect_robots: $("robots").checked, check_external: $("external").checked, check_images: $("images").checked,
         use_sitemaps: $("sitemaps").checked, include_subdomains: $("subdomains").checked,
-        render_js: $("renderJs").checked }) });
+        render_js: $("renderJs").checked, accessibility: $("a11y").checked, custom: readRules() }) });
     crawlId = id;
     $("results").classList.add("hidden");
     await loadCrawls(false);
@@ -292,7 +375,7 @@ function watch(id) {
     const total = p.crawled + p.queued;
     $("bar").style.width = (total ? 100 * p.crawled / total : 5) + "%";
     showProgress(p);
-    if (!["starting", "running", "analysing"].includes(p.status)) {
+    if (!ACTIVE.includes(p.status)) {
       clearInterval(pollTimer);
       $("startBtn").disabled = false; $("stopBtn").classList.add("hidden");
       $("bar").style.width = "100%";
@@ -307,12 +390,14 @@ async function openCrawl(id) {
   crawlId = id;
   for (const b of $("crawlList").children) b.classList.toggle("on", crawls[[...$("crawlList").children].indexOf(b)]?.id === id);
   const p = await api(`/api/crawl/${id}/progress`).catch(() => null);
-  if (p && ["starting", "running", "analysing"].includes(p.status)) return watch(id);
+  if (p && ACTIVE.includes(p.status)) return watch(id);
   summaryData = await api(`/api/crawl/${id}/summary`);
   $("results").classList.remove("hidden");
   renderSummary(summaryData);
   pageState.page = 0; loadPages();
   renderExport();
+  const tab = document.querySelector(".tabs button.on").dataset.tab;
+  if (tabLoaders[tab]) tabLoaders[tab]();
 }
 
 // ------------------------------------------------------------ overview
@@ -386,7 +471,7 @@ async function showIssue(i) {
 
 // ------------------------------------------------------------ pages
 
-const COLS = [["status", "Status"], ["url", "URL"], ["title", "Title"], ["words", "Words"], ["depth", "Depth"],
+const COLS = [["status", "Status"], ["url", "URL"], ["title", "Title"], ["link_score", "Link score"], ["words", "Words"], ["depth", "Depth"],
   ["time_ms", "ms"], ["size", "Size"]];
 
 async function loadPages() {
@@ -407,7 +492,7 @@ async function loadPages() {
     const tr = document.createElement("tr"); tr.className = "click";
     const status = r.status || (r.error ? "ERR" : "–");
     const size = r.size ? (r.size > 1048576 ? (r.size / 1048576).toFixed(1) + " MB" : Math.round(r.size / 1024) + " KB") : "";
-    for (const v of [status, r.url, r.title || r.redirect_to || r.error || "", r.words ?? "", r.depth ?? "", r.time_ms ?? "", size]) {
+    for (const v of [status, r.url, r.title || r.redirect_to || r.error || "", r.link_score ?? "", r.words ?? "", r.depth ?? "", r.time_ms ?? "", size]) {
       const td = document.createElement("td"); td.textContent = v; tr.append(td);
     }
     tr.children[0].className = "code c" + String(r.status || 0)[0];
@@ -468,13 +553,215 @@ $("cmpBtn").onclick = async () => {
 function renderExport() {
   const base = `/api/crawl/${crawlId}`;
   $("exportLinks").innerHTML = `<a href="${base}/export.xlsx"><button type="button">⬇ ${esc(t("excel"))}</button></a>` +
-    ["pages", "issues", "broken-links", "images"].map(n => `<a href="${base}/export/${n}.csv"><button class="ghost" type="button">⬇ ${n}.csv</button></a>`).join("");
+    ["pages", "issues", "broken-links", "images", "custom"].map(n => `<a href="${base}/export/${n}.csv"><button class="ghost" type="button">⬇ ${n}.csv</button></a>`).join("");
 }
 
 for (const b of document.querySelectorAll(".tabs button")) b.onclick = () => {
   for (const x of document.querySelectorAll(".tabs button")) x.classList.toggle("on", x === b);
   for (const s of document.querySelectorAll("main section")) s.classList.toggle("hidden", s.id !== "tab-" + b.dataset.tab);
+  if (tabLoaders[b.dataset.tab]) tabLoaders[b.dataset.tab]();
 };
+
+// ------------------------------------------------------------ custom rules (crawl settings)
+
+const KINDS = ["contains", "missing", "css", "xpath", "regex"];
+function addRule(rule = {}) {
+  const row = document.createElement("div"); row.className = "row rule"; row.style.marginBottom = "6px";
+  row.innerHTML = `<input type="text" class="rname" style="width:150px"><select class="rkind">${KINDS.map(k =>
+    `<option value="${k}" data-t="k_${k}">${esc(t("k_" + k))}</option>`).join("")}</select>
+    <input type="text" class="rvalue" style="flex:1"><button type="button" class="ghost">✕</button>`;
+  row.querySelector(".rname").placeholder = t("rule_name"); row.querySelector(".rvalue").placeholder = t("rule_value");
+  row.querySelector(".rname").value = rule.name || ""; row.querySelector(".rkind").value = rule.kind || "contains";
+  row.querySelector(".rvalue").value = rule.value || "";
+  row.querySelector("button").onclick = () => row.remove();
+  $("rules").append(row);
+}
+const readRules = () => [...document.querySelectorAll(".rule")].map(r => ({ name: r.querySelector(".rname").value,
+  kind: r.querySelector(".rkind").value, value: r.querySelector(".rvalue").value })).filter(r => r.value);
+$("addRule").onclick = () => addRule();
+
+// ------------------------------------------------------------ app settings
+
+const SETTING_IDS = ["psi_key", "telegram_token", "smtp_host", "smtp_port", "smtp_user", "smtp_password",
+  "smtp_from", "alert_lang", "agency_name", "agency_website", "client_name", "brand_color", "report_lang"];
+let logoData = null;
+$("settingsBtn").onclick = async () => {
+  const [s, b] = await Promise.all([api("/api/settings"), api("/api/branding")]);
+  for (const k of SETTING_IDS) { const v = s[k] ?? b[k.replace("agency_name", "agency").replace("agency_website", "website")
+    .replace("client_name", "client").replace("brand_color", "color").replace("report_lang", "lang")]; if (v != null) $("s_" + k).value = v; }
+  $("logoPreview").src = b.logo || ""; logoData = null; $("settingsStatus").textContent = "";
+  $("settingsModal").classList.remove("hidden");
+};
+$("settingsClose").onclick = () => $("settingsModal").classList.add("hidden");
+$("s_logo").onchange = () => {
+  const f = $("s_logo").files[0]; if (!f) return;
+  const r = new FileReader(); r.onload = () => { logoData = r.result; $("logoPreview").src = logoData; }; r.readAsDataURL(f);
+};
+$("settingsSave").onclick = async () => {
+  const body = Object.fromEntries(SETTING_IDS.map(k => [k, $("s_" + k).value]));
+  if (logoData) body.agency_logo = logoData;
+  await api("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  $("settingsStatus").textContent = "✓ " + t("saved");
+};
+
+// ------------------------------------------------------------ result tabs
+
+function fillTable(el, head, rows, cells, onRow) {
+  el.innerHTML = "<thead><tr>" + head.map(h => `<th>${esc(h)}</th>`).join("") + "</tr></thead><tbody></tbody>";
+  const tb = el.querySelector("tbody");
+  for (const r of rows) {
+    const tr = document.createElement("tr");
+    for (const v of cells(r)) { const td = document.createElement("td"); td.textContent = v ?? ""; tr.append(td); }
+    if (onRow) { tr.className = "click"; tr.onclick = () => onRow(r); }
+    tb.append(tr);
+  }
+  if (!rows.length) tb.innerHTML = `<tr><td class="hint" colspan="${head.length}">–</td></tr>`;
+}
+const pct = v => v == null ? "" : (v * 100).toFixed(1) + "%";
+const secs = v => v == null ? "" : (v / 1000).toFixed(1) + " s";
+
+const tabLoaders = {
+  async custom() {
+    const rows = await api(`/api/crawl/${crawlId}/custom`);
+    if (!rows.length) { $("customTable").innerHTML = `<tr><td class="hint">${esc(t("no_custom"))}</td></tr>`; return; }
+    fillTable($("customTable"), [t("rule_name"), "URL", "Value"], rows, r => [r.name, r.url, r.value], r => showPage(r.url));
+  },
+  async map() {
+    const d = await api(`/api/crawl/${crawlId}/graph`);
+    drawGraph(d.nodes, d.edges);
+    drawTree(d.tree);
+  },
+  async speed() {
+    const d = await api(`/api/crawl/${crawlId}/pagespeed`);
+    $("speedStatus").textContent = d.status + (d.has_key ? "" : " · " + t("psi_key") + ": –");
+    fillTable($("speedTable"), ["Score", "URL", "LCP", "CLS", "INP", "TBT", ""], d.rows, r => {
+      const f = JSON.parse(r.field || "{}");
+      return [r.score, r.url, secs(f.lcp ?? r.lcp), (f.cls ?? r.cls)?.toFixed?.(2), f.inp ? f.inp + " ms" : "",
+        r.tbt != null ? Math.round(r.tbt) + " ms" : "", r.error || (r.field ? "real users" : "lab")];
+    }, r => showPage(r.url));
+    if (d.status.startsWith("running")) setTimeout(() => !$("tab-speed").classList.contains("hidden") && tabLoaders.speed(), 2000);
+  },
+  async gsc() {
+    const rows = await api(`/api/crawl/${crawlId}/gsc`);
+    fillTable($("gscTable"), ["Clicks", "Impressions", "CTR", "Position", "Status", "URL"], rows,
+      r => [r.clicks, r.impressions, pct(r.ctr), r.position?.toFixed(1), r.status ?? "not crawled", r.url]);
+  },
+  async logs() {
+    const d = await api(`/api/crawl/${crawlId}/logs`);
+    $("botSummary").innerHTML = d.bots.map(b => `<span class="chip">${esc(b.bot)}: ${b.hits} hits · ${b.urls} URLs</span>`).join(" ");
+    fillTable($("logTable"), ["Bot", "Hits", "Status codes", "Last visit", "URL"], d.rows,
+      r => [r.bot, r.hits, Object.entries(JSON.parse(r.statuses || "{}")).map(([k, v]) => `${k}×${v}`).join(" "), r.last, r.url]);
+  },
+  async schedules() {
+    const rows = await api("/api/schedules");
+    $("schTable").innerHTML = "";
+    fillTable($("schTable"), ["URL", t("every_days"), t("next_run"), t("last_result"), "", ""], rows,
+      r => [r.url, r.every_days, fmtTime(r.next_run), r.last_result || "", "", ""]);
+    [...$("schTable").querySelectorAll("tbody tr")].forEach((tr, i) => {
+      const r = rows[i]; if (!r) return;
+      const run = document.createElement("button"); run.type = "button"; run.className = "ghost"; run.textContent = t("run_now");
+      run.onclick = async () => { await api(`/api/schedules/${r.id}/run`, { method: "POST" }); $("schStatus").textContent = "✓ " + t("crawling"); };
+      const del = document.createElement("button"); del.type = "button"; del.className = "ghost"; del.textContent = t("delete");
+      del.onclick = async () => { await api(`/api/schedules/${r.id}`, { method: "DELETE" }); tabLoaders.schedules(); };
+      tr.children[4].append(run); tr.children[5].append(del);
+    });
+  },
+  report() { $("reportOpen").href = `/api/crawl/${crawlId}/report.html`; },
+};
+
+$("speedBtn").onclick = async () => {
+  try { await api(`/api/crawl/${crawlId}/pagespeed`, { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ strategy: $("speedStrategy").value, limit: +$("speedLimit").value }) }); } catch (e) { return alert(e.message); }
+  tabLoaders.speed();
+};
+async function upload(kind, input, status) {
+  const f = $(input).files[0]; if (!f) return;
+  const fd = new FormData(); fd.append("file", f);
+  $(status).textContent = "…";
+  try {
+    const d = await api(`/api/crawl/${crawlId}/${kind}`, { method: "POST", body: fd });
+    $(status).textContent = "✓ " + JSON.stringify(d).replace(/[{}"]/g, " ");
+    summaryData = await api(`/api/crawl/${crawlId}/summary`); renderSummary(summaryData); tabLoaders[kind]();
+  } catch (e) { $(status).textContent = "⚠ " + e.message; }
+}
+$("gscBtn").onclick = () => upload("gsc", "gscFile", "gscStatus");
+$("logBtn").onclick = () => upload("logs", "logFile", "logStatus");
+const crawlForm = () => ({ url: $("url").value || (crawls.find(c => c.id === crawlId) || {}).start_url, max_pages: +$("maxPages").value,
+  concurrency: +$("concurrency").value, respect_robots: $("robots").checked, check_external: $("external").checked,
+  check_images: $("images").checked, use_sitemaps: $("sitemaps").checked, include_subdomains: $("subdomains").checked,
+  render_js: $("renderJs").checked, accessibility: $("a11y").checked, custom: readRules() });
+$("schAdd").onclick = async () => {
+  try { await api("/api/schedules", { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...crawlForm(), every_days: +$("schEvery").value, telegram_chat: $("schChat").value,
+      email_to: $("schEmail").value, only_changes: $("schOnly").checked }) }); } catch (e) { return alert(e.message); }
+  tabLoaders.schedules();
+};
+$("schTest").onclick = async () => {
+  $("schStatus").textContent = "…";
+  try { await api("/api/alerts/test", { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ telegram_chat: $("schChat").value, email_to: $("schEmail").value }) }); $("schStatus").textContent = "✓"; }
+  catch (e) { $("schStatus").textContent = "⚠ " + e.message; }
+};
+$("reportPdf").onclick = async () => {
+  $("reportStatus").textContent = t("making_pdf");
+  const r = await fetch(`/api/crawl/${crawlId}/report.pdf`);
+  if (!r.ok) { $("reportStatus").textContent = "⚠ " + ((await r.json().catch(() => ({}))).error || r.statusText); return; }
+  const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(await r.blob()), download: `seo-report-${crawlId}.pdf` });
+  a.click(); $("reportStatus").textContent = "✓";
+};
+
+// ------------------------------------------------------------ site map: force graph + folder tree
+
+function drawGraph(nodes, edges) {
+  const cv = $("graph"), dpr = devicePixelRatio || 1;
+  const W = cv.clientWidth, H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr;
+  const ctx = cv.getContext("2d"); ctx.scale(dpr, dpr);
+  const css = getComputedStyle(document.documentElement);
+  const col = { ok: css.getPropertyValue("--accent"), bad: css.getPropertyValue("--err"), line: css.getPropertyValue("--line"), text: css.getPropertyValue("--text") };
+  const idx = new Map(nodes.map((n, i) => [n.url, i]));
+  const P = nodes.map((n, i) => ({ ...n, x: W / 2 + Math.cos(i) * (40 + i), y: H / 2 + Math.sin(i) * (40 + i), vx: 0, vy: 0,
+    r: 3 + (n.link_score || 0) / 12 }));
+  const E = edges.map(([a, b]) => [idx.get(a), idx.get(b)]).filter(([a, b]) => a != null && b != null);
+  let drag = null, frames = 0;
+  function step() {
+    for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) {
+      const a = P[i], b = P[j]; let dx = a.x - b.x, dy = a.y - b.y; const d2 = dx * dx + dy * dy + 0.01;
+      if (d2 > 40000) continue; const f = 120 / d2; a.vx += dx * f; a.vy += dy * f; b.vx -= dx * f; b.vy -= dy * f;
+    }
+    for (const [i, j] of E) { const a = P[i], b = P[j]; const dx = b.x - a.x, dy = b.y - a.y; a.vx += dx * 0.002; a.vy += dy * 0.002; b.vx -= dx * 0.002; b.vy -= dy * 0.002; }
+    for (const p of P) { if (p === drag) continue; p.vx += (W / 2 - p.x) * 0.002; p.vy += (H / 2 - p.y) * 0.002;
+      p.vx *= 0.82; p.vy *= 0.82; p.x = Math.max(8, Math.min(W - 8, p.x + p.vx)); p.y = Math.max(8, Math.min(H - 8, p.y + p.vy)); }
+  }
+  function paint() {
+    ctx.clearRect(0, 0, W, H); ctx.strokeStyle = col.line; ctx.lineWidth = 0.6;
+    for (const [i, j] of E) { ctx.beginPath(); ctx.moveTo(P[i].x, P[i].y); ctx.lineTo(P[j].x, P[j].y); ctx.stroke(); }
+    for (const p of P) { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7); ctx.fillStyle = p.status === 200 ? col.ok : col.bad; ctx.fill(); }
+    ctx.fillStyle = col.text; ctx.font = "11px system-ui";
+    for (const p of P.slice(0, 12)) ctx.fillText(new URL(p.url).pathname.slice(0, 30), p.x + p.r + 3, p.y + 3);
+  }
+  (function loop() { step(); paint(); if (++frames < 400 || drag) requestAnimationFrame(loop); })();
+  const at = e => { const b = cv.getBoundingClientRect(); const x = e.clientX - b.left, y = e.clientY - b.top;
+    return P.find(p => (p.x - x) ** 2 + (p.y - y) ** 2 < (p.r + 4) ** 2); };
+  cv.onpointerdown = e => { drag = at(e); if (drag) { frames = 0; $("graphInfo").textContent = `${drag.url} · ${t("link_score")} ${drag.link_score} · ${drag.title || ""}`; } };
+  cv.onpointermove = e => { if (!drag) return; const b = cv.getBoundingClientRect(); drag.x = e.clientX - b.left; drag.y = e.clientY - b.top; };
+  cv.onpointerup = () => { drag = null; };
+  cv.ondblclick = e => { const p = at(e); if (p) showPage(p.url); };
+}
+
+function drawTree(rows) {
+  const root = { kids: {}, n: 0, bad: 0 };
+  for (const r of rows) {
+    let node = root; node.n++; if (r.status !== 200) node.bad++;
+    const u = new URL(r.url);
+    for (const part of [u.host, ...u.pathname.split("/").filter(Boolean)]) {
+      node = node.kids[part] = node.kids[part] || { kids: {}, n: 0, bad: 0 }; node.n++; if (r.status !== 200) node.bad++;
+    }
+  }
+  const render = (node, depth) => Object.entries(node.kids).sort((a, b) => b[1].n - a[1].n).slice(0, 60).map(([name, k]) =>
+    Object.keys(k.kids).length ? `<details ${depth < 1 ? "open" : ""} style="margin-left:${depth ? 14 : 0}px"><summary>📁 ${esc(name)} <span class="hint">${k.n}${k.bad ? ` · <span style="color:var(--err)">${k.bad} ⚠</span>` : ""}</span></summary>${render(k, depth + 1)}</details>`
+      : `<div style="margin-left:${depth ? 28 : 0}px">📄 ${esc(name)}${k.bad ? ' <span style="color:var(--err)">⚠</span>' : ""}</div>`).join("");
+  $("tree").innerHTML = render(root, 0);
+}
 
 api("/api/i18n").then(d => { T = d; applyLang(); loadCrawls(true); });
 </script>

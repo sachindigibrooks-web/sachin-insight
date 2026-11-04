@@ -1,8 +1,11 @@
 """Desktop launcher: starts the dashboard in the background and opens it in the browser.
 
 The dashboard only listens on this PC (127.0.0.1). Closing this window stops it.
+With --background (used when it starts with Windows) the window starts minimised and
+no browser opens; scheduled crawls run.
 """
 
+import sys
 import tkinter as tk
 import webbrowser
 from tkinter import ttk
@@ -29,7 +32,11 @@ def main():
     ttk.Label(body, text="Keep this window open while crawling. Close it to quit.\n"
                          "क्रॉल के दौरान यह विंडो खुली रखें। बंद करने पर ऐप बंद हो जाएगा।",
               foreground="gray", justify="center").pack(pady=(8, 0))
-    root.after(600, lambda: webbrowser.open(url))
+    if "--background" in sys.argv:
+        # Started with Windows for scheduled crawls: stay out of the way.
+        root.iconify()
+    else:
+        root.after(600, lambda: webbrowser.open(url))
     root.mainloop()
 
 

@@ -2,7 +2,7 @@
 
 **Made by Sachin Samria**
 
-Screaming Frog jaisa website crawler — poori website crawl karke 50+ SEO gadbadiyan dhundhta
+Screaming Frog jaisa website crawler — poori website crawl karke 80+ SEO gadbadiyan dhundhta
 hai, har gadbadi ke saath "kyun zaroori hai aur kaise theek karein" (English + Hindi).
 **Koi page limit nahi**, free, data aapke PC par hi rehta hai.
 
@@ -33,6 +33,21 @@ Dashboard me:
   status aur title ke badlaav
 - **Export** — Excel (Pages, Issues, Broken links, Images sheets) ya CSV
 - **हिंदी / English** button
+
+## Paid tools ke features — yahan free
+
+| Feature | Kahan | Kya karta hai |
+|---|---|---|
+| **White-label PDF report** | Report tab · ⚙ Settings me branding | Aapka/agency ka naam, logo, rang, client ka naam, English ya Hindi. Health score, "pehle kya theek karein" (examples ke saath), page speed, Search Console, accessibility. PDF PC ke Edge/Chrome se banta hai. |
+| **Scheduled crawl + alerts** | Schedules tab · ⚙ Settings me Telegram / e-mail | Har N din me site apne aap crawl, pichhle crawl se tulna, aur Telegram ya e-mail par message (hamesha, ya sirf jab kuch bigde). App khuli honi chahiye — installer me "Start with Windows" tick karo. |
+| **Custom search & extraction** | Settings → Custom search | Har page par text dhundho ("page contains" / "does NOT contain", jaise purana analytics code) ya CSS / XPath / regex se data nikalo (price, author…). Custom tab + Excel/CSV. |
+| **Internal link score (PageRank)** | Pages table "Link score" | Har page ko andar ke links se kitni taqat milti hai (0–100). "Sirf ek page se linked" pages bhi dikhte hain. |
+| **Site map (graph + folders)** | Site map tab | 150 sabse zaroori pages ka link graph (drag karo, double-click = details) aur folder tree jisme har folder ke errors. |
+| **Core Web Vitals** | Speed tab · ⚙ Settings me PageSpeed key | Google PageSpeed Insights se sabse zaroori pages ke LCP, CLS, INP, score (asli users ka data jab Google ke paas ho). Free key: console.cloud.google.com → "PageSpeed Insights API" enable → Credentials. |
+| **Search Console data** | Search Console tab | GSC ka Pages export (.zip/.csv) upload karo: traffic wale pages jo ab toote / noindex hain, Google me dikhne wale par site se unlinked pages, high impressions + low CTR. |
+| **Log file analysis** | Logs tab | Apache/Nginx access log (.log/.gz) upload karo: Googlebot, Bing, GPTBot, ClaudeBot… asal me kaunse pages dekhte hain, error pages par bots, ?parameter URLs par crawl budget, aur kaunse pages Googlebot ne dekhe hi nahi. |
+| **Accessibility audit** | Issues → Accessibility | Bina browser: bina label ke form fields, bina text ke links/buttons, khali / chhoote headings. JavaScript rendering ke saath **axe-core** (WCAG 2.1 A/AA) ka poora audit. |
+| **Structured data validation** | Issues → Structured data | Product, Offer, Review, FAQ, Breadcrumb, Article, Event, Recipe, Video, Job, LocalBusiness… Google rich results ke zaroori aur suggested fields check. |
 
 ## Chalana
 
@@ -84,5 +99,9 @@ Normal PC par lagbhag 20–40 pages / second (site ki speed par depend). Ek 1,20
 ## Test
 
 `python tests/test_checks.py` — ek nakli website (`tests/test_site.py`) jisme jaan-boojh kar
-37 tarah ki gadbadiyan daali hain, crawl karta hai aur check karta hai ki har ek pakdi gayi.
-GitHub par har build se pehle ye test chalta hai.
+37 tarah ki gadbadiyan daali hain, crawl karta hai (raw HTML aur JavaScript rendering dono) aur
+check karta hai ki har ek pakdi gayi. `python tests/test_features.py` — custom search, structured
+data, accessibility (axe bhi), link score, Search Console, logs, PageSpeed, PDF report aur alerts.
+GitHub par har build se pehle dono test chalte hain.
+
+axe-core (`vendor/`, MPL-2.0, Deque Systems) bina badlaav ke use hota hai.

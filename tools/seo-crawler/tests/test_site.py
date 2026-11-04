@@ -44,7 +44,7 @@ def home():
         <a href="/near1">N1</a> <a href="/near2">N2</a> <a href="/redirect1">R</a>
         <a href="/loop1">L</a> <a href="/missing">gone</a> <a href="/error">err</a>
         <a href="/slow">slow</a> <a href="/deep1">deep</a> <a href="/blocked/page">blocked</a>
-        <a href="/Upper_Case">U</a> <a href="/params?x=1">P</a> <a href="/js">JS app</a>
+        <a href="/Upper_Case">U</a> <a href="/params?x=1">P</a> <a href="/js">JS app</a> <a href="/shop">Shop</a>
         <a href="{ext}/ext-missing">external broken</a> <a href="{ext}/ext-ok">external ok</a>
         <a href="mailto:x@example.com">mail</a>""",
                 head='<link rel="canonical" href="/">')
@@ -146,6 +146,22 @@ def js_page():
 @app.get("/js-child")
 def js_child():
     return page(title="Child page only linked from JavaScript", body=f"<p>{text(300)}</p><a href='/'>h</a>")
+
+
+@app.get("/shop")
+def shop():
+    """Structured data and accessibility problems, plus things for custom search to find."""
+    product = '{"@context": "https://schema.org", "@type": "Product", "name": "Blue shoe"}'
+    article = ('{"@context": "https://schema.org", "@type": "Article", "headline": "News",'
+               ' "datePublished": "2026-01-01", "author": {"@type": "Person", "name": "Sachin"}}')
+    return page(title="Shop page with products for the crawler test",
+                head=f'<script type="application/ld+json">{product}</script>'
+                     f'<script type="application/ld+json">{article}</script>'
+                     "<script>var tracking = 'UA-12345-1';</script>",
+                body=f"""<p>{text(300)}</p><p class="price">Rs. 499</p>
+        <form><input type="text" name="q"><label for="e">Email</label><input id="e"></form>
+        <a href="/"><svg></svg></a><button></button><h2></h2><h4>Skipped level</h4>
+        <img src="/img/ok.png"><a href="/">home</a>""")
 
 
 @app.get("/ext-ok")
