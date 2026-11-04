@@ -101,13 +101,13 @@ def wrap(d, text, font, width):
 
 
 # ---------- 1. pre-purchase checklist ----------
-im = canvas('Your Pre-Purchase Checklist', 'Run through these five points before you add to basket')
+im = canvas('Before You Hit Checkout', 'Five quick things worth a look')
 checks = [
-    ('Fit', 'Match the inner diameter to your wand head.'),
-    ('Material', 'TPE, silicone or vinyl each feel and clean differently.'),
-    ('Shape', 'External, dual, insertable or designed for men.'),
-    ('Lube', 'Start with water based, and wash after every use.'),
-    ('Seller', 'Buy genuine, with clear compatibility details and a warranty.'),
+    ('Measure up', 'Compare the opening size with your wand before ordering.'),
+    ('Know the feel', 'Each material has its own texture and cleaning routine.'),
+    ('Pick a style', 'Outer contact, both at once, internal, or made for him.'),
+    ('Right lube', 'Reach for water based first, then rinse after each session.'),
+    ('Shop genuine', 'Look for proper sizing info and a real warranty.'),
 ]
 y = 150
 for i, (t, body) in enumerate(checks):
@@ -116,12 +116,12 @@ for i, (t, body) in enumerate(checks):
     d.ellipse((136, y + 18, 186, y + 68), fill=BLUE)
     centered(d, 161, y + 22, str(i + 1), fX(26), WHITE)
     d.text((212, y + 24), t, font=fX(28), fill=NAVY)
-    d.text((390, y + 31), body, font=fS(20), fill=GREY)
+    d.text((440, y + 31), body, font=fS(20), fill=GREY)
     y += 98
 save(im, 'wand-attachment-pre-purchase-checklist')
 
 # ---------- 2. standard head or compact ----------
-im = canvas('Standard Head or Compact?', 'Most attachments are sized for full-size wand heads')
+im = canvas('Full-Size Head or Compact?', 'Know your wand before you shop for add-ons')
 wands = [
     ('mw1.jpg', 'Rechargeable', '£159.95', True), ('mwp.jpg', 'Plus', '£129.95', True),
     ('mwm5.jpg', 'Mini', '£94.95', False), ('mwu2.jpg', 'Micro', '£64.95', False),
@@ -133,7 +133,7 @@ for i, (f, name, price, std) in enumerate(wands):
     card(im, (x, 146, x + cw, 566))
     d = ImageDraw.Draw(im)
     o = cutout(P + f, 60)
-    o = o.rotate(90 if o.width > o.height else 0, resample=Image.BICUBIC, expand=True)
+    o = o.rotate(-90 if o.width > o.height else 0, resample=Image.BICUBIC, expand=True)
     o = fit(o.crop(o.getbbox()), h=210 if std else 145, w=cw - 70)
     im.alpha_composite(o, (x + (cw - o.width) // 2, 375 - o.height))
     d = ImageDraw.Draw(im)
@@ -141,23 +141,23 @@ for i, (f, name, price, std) in enumerate(wands):
     centered(d, x + cw / 2, 416, name, fX(26), NAVY)
     centered(d, x + cw / 2, 456, price, fB(20), BLUE)
     col = GREEN if std else AMBER
-    tag = 'Standard head' if std else 'Smaller head'
+    tag = 'Full-size head' if std else 'Compact head'
     tw = d.textlength(tag, font=fB(17))
     d.rounded_rectangle((x + cw / 2 - tw / 2 - 16, 504, x + cw / 2 + tw / 2 + 16, 542), 19, fill=col)
     centered(d, x + cw / 2, 511, tag, fB(17), WHITE)
 d = ImageDraw.Draw(im)
-centered(d, W / 2, 590, 'Standard head: still check each attachment listing before ordering.', fS(19), GREY)
-centered(d, W / 2, 620, 'Smaller head: contact the team first to confirm a fit.', fB(19), NAVY)
+centered(d, W / 2, 590, 'Full-size head: give each product page a quick check anyway.', fS(19), GREY)
+centered(d, W / 2, 620, 'Mini or Micro? Message the team first and they will confirm.', fB(19), NAVY)
 save(im, 'wand-attachment-standard-vs-compact')
 
 # ---------- 3. style finder ----------
-im = canvas('Pick a Style That Suits You', 'A few popular options from the range')
+im = canvas('Find Your Favourite', 'Popular picks from the attachment range')
 styles = [
-    ('lily3.webp', 'Lily Pod', 'External, textured', 'TPE', '£39.95'),
-    ('rt3.webp', 'Rabbit Tip', 'Dual stimulation', 'TPE', '£49.95'),
-    ('eu2.webp', 'Euphoria', 'Dual stimulation', 'Silicone', '£59.95'),
-    ('twin.jpg', 'Twin Turbo', 'Designed for men', '2 in 1 stroker', '£49.95'),
-    ('assist.jpg', 'Wand Assist', 'Hands-free holder', 'Gooseneck', '£89.95'),
+    ('lily3.webp', 'Lily Pod', 'Textured outer cup', 'TPE', '£39.95'),
+    ('rt3.webp', 'Rabbit Tip', 'Inner and outer', 'TPE', '£49.95'),
+    ('eu2.webp', 'Euphoria', 'Two-petal design', 'Silicone', '£59.95'),
+    ('twin.jpg', 'Twin Turbo', 'Made for him', 'Double stroker', '£49.95'),
+    ('assist.jpg', 'Wand Assist', 'Holds the wand for you', 'Gooseneck', '£89.95'),
 ]
 cw, gap = 196, 18
 x0 = (W - (5 * cw + 4 * gap)) // 2
@@ -177,6 +177,6 @@ for i, (f, name, use, mat, price) in enumerate(styles):
     d.rounded_rectangle((x + cw / 2 - tw / 2 - 18, 522, x + cw / 2 + tw / 2 + 18, 564), 21, fill=BLUE)
     centered(d, x + cw / 2, 530, price, fB(19), WHITE)
 d = ImageDraw.Draw(im)
-centered(d, W / 2, 612, 'New to attachments? Start with one style and see how you get on.', fS(18), GREY)
+centered(d, W / 2, 612, 'First time? One attachment is plenty to begin with.', fS(18), GREY)
 save(im, 'wand-attachment-style-finder')
 print('done')
